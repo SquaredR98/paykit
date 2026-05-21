@@ -1,0 +1,31 @@
+import type { ThemeVariables } from './types.js';
+
+const VARIABLE_MAP: Record<keyof ThemeVariables, string> = {
+  colorPrimary: '--paykit-color-primary',
+  colorBackground: '--paykit-color-background',
+  colorText: '--paykit-color-text',
+  colorDanger: '--paykit-color-danger',
+  colorSuccess: '--paykit-color-success',
+  borderRadius: '--paykit-border-radius',
+  fontFamily: '--paykit-font-family',
+  fontSize: '--paykit-font-size',
+  spacingUnit: '--paykit-spacing-unit',
+};
+
+export function applyThemeToElement(element: HTMLElement, variables?: ThemeVariables): void {
+  if (!variables) return;
+  for (const [key, cssVar] of Object.entries(VARIABLE_MAP)) {
+    const value = variables[key as keyof ThemeVariables];
+    if (value) element.style.setProperty(cssVar, value);
+  }
+}
+
+export function themeVariablesToStyle(variables?: ThemeVariables): Record<string, string> {
+  if (!variables) return {};
+  const style: Record<string, string> = {};
+  for (const [key, cssVar] of Object.entries(VARIABLE_MAP)) {
+    const value = variables[key as keyof ThemeVariables];
+    if (value) style[cssVar] = value;
+  }
+  return style;
+}

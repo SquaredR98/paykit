@@ -1,0 +1,54 @@
+{
+  "name": "@squaredr/paykit-react",
+  "version": "0.1.0",
+  "description": "React components and hooks for @squaredr/paykit",
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit",
+    "clean": "rimraf dist"
+  },
+  "keywords": ["payments", "paykit", "react", "components", "hooks", "frontend"],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/squaredr/paykit.git",
+    "directory": "packages/react"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "peerDependencies": {
+    "@squaredr/paykit": ">=0.1.0",
+    "@squaredr/paykit-js": ">=0.1.0",
+    "react": "^18.0.0 || ^19.0.0",
+    "react-dom": "^18.0.0 || ^19.0.0"
+  },
+  "devDependencies": {
+    "@squaredr/paykit": "*",
+    "@squaredr/paykit-js": "*",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.0.0",
+    "@types/react": "^18.3.0",
+    "@types/react-dom": "^18.3.0",
+    "jsdom": "^24.0.0",
+    "react": "^18.3.0",
+    "react-dom": "^18.3.0"
+  }
+}

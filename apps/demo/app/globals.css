@@ -1,0 +1,158 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --font-heading: var(--font-geist-sans);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --color-sr-accent: var(--sr-accent);
+  --color-sr-accent-dim: var(--sr-accent-dim);
+  --color-sr-surface: var(--sr-surface);
+  --color-sr-surface-hover: var(--sr-surface-hover);
+  --color-sr-text-dim: var(--sr-text-dim);
+  --color-sr-text-muted: var(--sr-text-muted);
+  --color-sr-border-strong: var(--sr-border-strong);
+  --color-sr-success: var(--sr-success);
+  --color-sr-warn: var(--sr-warn);
+  --color-sr-error: var(--sr-error);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+}
+
+/* SquaredR dark-first design system */
+:root {
+  /* INK palette (cool neutrals) */
+  --sr-ink-950: #0a0a0b;
+  --sr-ink-900: #111113;
+  --sr-ink-850: #17171a;
+  --sr-ink-800: #1c1c20;
+  --sr-ink-700: #26262c;
+  --sr-ink-600: #34343c;
+  --sr-ink-500: #5a5a66;
+  --sr-ink-400: #8a8a95;
+  --sr-ink-300: #b4b4bc;
+  --sr-ink-200: #d4d4d9;
+  --sr-ink-100: #e8e8ea;
+  --sr-ink-50: #f4f4f5;
+
+  /* Accent colors */
+  --sr-accent: oklch(0.82 0.14 210);
+  --sr-accent-dim: oklch(0.62 0.10 210);
+  --sr-accent-amber: oklch(0.82 0.16 75);
+
+  /* Semantic */
+  --sr-success: oklch(0.78 0.16 150);
+  --sr-warn: oklch(0.82 0.16 75);
+  --sr-error: oklch(0.68 0.22 25);
+
+  /* Surface roles */
+  --sr-surface: var(--sr-ink-900);
+  --sr-surface-hover: var(--sr-ink-850);
+  --sr-border-strong: var(--sr-ink-700);
+  --sr-text-dim: var(--sr-ink-400);
+  --sr-text-muted: var(--sr-ink-500);
+
+  /* shadcn mapping → squaredr dark */
+  --background: var(--sr-ink-950);
+  --foreground: var(--sr-ink-100);
+  --card: var(--sr-ink-900);
+  --card-foreground: var(--sr-ink-100);
+  --popover: var(--sr-ink-900);
+  --popover-foreground: var(--sr-ink-100);
+  --primary: var(--sr-accent);
+  --primary-foreground: var(--sr-ink-950);
+  --secondary: var(--sr-ink-850);
+  --secondary-foreground: var(--sr-ink-100);
+  --muted: var(--sr-ink-900);
+  --muted-foreground: var(--sr-ink-400);
+  --accent: var(--sr-ink-850);
+  --accent-foreground: var(--sr-ink-100);
+  --destructive: var(--sr-error);
+  --border: var(--sr-ink-800);
+  --input: var(--sr-ink-800);
+  --ring: var(--sr-accent);
+  --radius: 6px;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "ss01", "cv11";
+    -webkit-font-smoothing: antialiased;
+  }
+  html {
+    @apply font-sans antialiased;
+  }
+}
+
+/* PayKit card input container */
+[data-paykit-card-input] {
+  min-height: 44px;
+  border: 1px solid var(--sr-ink-700);
+  border-radius: 6px;
+  padding: 12px;
+  background: var(--sr-ink-950);
+  transition: border-color 200ms;
+}
+[data-paykit-card-input]:focus-within {
+  border-color: var(--sr-accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--sr-accent), transparent 80%);
+}
+
+/* PayKit submit button */
+[data-paykit-submit] {
+  width: 100%;
+  height: 40px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 200ms;
+  background: var(--sr-accent);
+  color: var(--sr-ink-950);
+  border: none;
+}
+[data-paykit-submit]:hover:not(:disabled) {
+  filter: brightness(1.1);
+  box-shadow: 0 0 24px -4px color-mix(in srgb, var(--sr-accent), transparent 60%);
+}
+[data-paykit-submit]:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+[data-paykit-submit]:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+/* Dotgrid background */
+.sr-dotgrid {
+  background-image: radial-gradient(var(--sr-ink-800) 1px, transparent 1px);
+  background-size: 16px 16px;
+}
