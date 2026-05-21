@@ -45,7 +45,7 @@ git clone https://github.com/YOUR_USERNAME/paykit.git
 cd paykit
 
 # Add upstream remote
-git remote add upstream https://github.com/squaredr/paykit.git
+git remote add upstream https://github.com/SquaredR98/paykit.git
 
 # Install dependencies
 npm install
@@ -221,7 +221,7 @@ cd packages/adapter/your-provider
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/squaredr/paykit.git",
+    "url": "https://github.com/SquaredR98/paykit.git",
     "directory": "packages/adapter/your-provider"
   },
   "peerDependencies": {
@@ -835,9 +835,9 @@ Use package names as scope:
 
 ## Questions?
 
-- **Bug reports**: [GitHub Issues](https://github.com/squaredr/paykit/issues)
-- **Feature requests**: [GitHub Discussions](https://github.com/squaredr/paykit/discussions)
-- **General questions**: [GitHub Discussions](https://github.com/squaredr/paykit/discussions)
+- **Bug reports**: [GitHub Issues](https://github.com/SquaredR98/paykit/issues)
+- **Feature requests**: [GitHub Discussions](https://github.com/SquaredR98/paykit/discussions)
+- **General questions**: [GitHub Discussions](https://github.com/SquaredR98/paykit/discussions)
 
 ---
 

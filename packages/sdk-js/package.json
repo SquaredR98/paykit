@@ -35,9 +35,10 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/squaredr/paykit.git",
+    "url": "https://github.com/SquaredR98/paykit.git",
     "directory": "packages/sdk-js"
   },
+  "homepage": "https://squaredr.tech/products/paykit",
   "publishConfig": {
     "access": "public",
     "registry": "https://registry.npmjs.org/"

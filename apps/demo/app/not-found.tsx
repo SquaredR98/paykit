@@ -46,7 +46,7 @@ export default function NotFound() {
           <p className="text-center text-xs text-sr-text-muted">
             Need help?{' '}
             <a
-              href="https://github.com/squaredr/paykit/issues"
+              href="https://github.com/SquaredR98/paykit/issues"
               target="_blank"
               rel="noopener noreferrer"
               className="text-sr-accent hover:underline"

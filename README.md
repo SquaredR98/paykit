@@ -4,7 +4,7 @@
 
 [![npm version](https://img.shields.io/npm/v/@squaredr/paykit.svg)](https://www.npmjs.com/package/@squaredr/paykit)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Tests](https://github.com/squaredr/paykit/actions/workflows/test.yml/badge.svg)](https://github.com/squaredr/paykit/actions/workflows/test.yml)
+[![Tests](https://github.com/SquaredR98/paykit/actions/workflows/test.yml/badge.svg)](https://github.com/SquaredR98/paykit/actions/workflows/test.yml)
 
 PayKit provides a single, type-safe API for accepting payments across multiple payment providers. Write your integration once, swap providers without changing code.
 
@@ -236,7 +236,7 @@ This is a [Turborepo](https://turbo.build/repo) monorepo using npm workspaces.
 
 ```bash
 # Clone the repository
-git clone https://github.com/squaredr/paykit.git
+git clone https://github.com/SquaredR98/paykit.git
 cd paykit
 
 # Install dependencies
@@ -384,10 +384,10 @@ Contributions are welcome! Please read [CONTRIBUTING.md](CONTRIBUTING.md) before
 
 ## Support
 
-- **Issues**: [GitHub Issues](https://github.com/squaredr/paykit/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/squaredr/paykit/discussions)
+- **Issues**: [GitHub Issues](https://github.com/SquaredR98/paykit/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/SquaredR98/paykit/discussions)
 - **Docs**: [Documentation](https://squaredr.tech/products/paykit/docs)
 
 ---
 
-Built with ❤️ by [SquaredR](https://github.com/squaredr)
+Built with ❤️ by [SquaredR](https://github.com/SquaredR98)
