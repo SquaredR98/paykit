@@ -1,6 +1,6 @@
 {
   "name": "@squaredr/paykit-js",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Vanilla JavaScript/TypeScript frontend SDK for @squaredr/paykit",
   "type": "module",
   "main": "./dist/index.cjs",
@@ -23,7 +23,9 @@
       "require": "./dist/providers/razorpay.cjs"
     }
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "tsup",
     "test": "vitest run",
@@ -31,7 +33,15 @@
     "typecheck": "tsc --noEmit",
     "clean": "rimraf dist"
   },
-  "keywords": ["payments", "paykit", "frontend", "sdk", "javascript", "typescript", "headless"],
+  "keywords": [
+    "payments",
+    "paykit",
+    "frontend",
+    "sdk",
+    "javascript",
+    "typescript",
+    "headless"
+  ],
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -44,7 +54,7 @@
     "registry": "https://registry.npmjs.org/"
   },
   "peerDependencies": {
-    "@squaredr/paykit": ">=0.1.0"
+    "@squaredr/paykit": ">=0.2.0"
   },
   "devDependencies": {
     "@squaredr/paykit": "*",

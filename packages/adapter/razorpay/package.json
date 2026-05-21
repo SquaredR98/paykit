@@ -1,6 +1,6 @@
 {
   "name": "@squaredr/paykit-razorpay",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Razorpay adapter for @squaredr/paykit — unified payment SDK",
   "type": "module",
   "exports": {
@@ -18,7 +18,9 @@
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "tsup",
     "test": "vitest run",
@@ -26,7 +28,14 @@
     "typecheck": "tsc --noEmit",
     "clean": "rimraf dist"
   },
-  "keywords": ["payments", "razorpay", "paykit", "payment-gateway", "india", "upi"],
+  "keywords": [
+    "payments",
+    "razorpay",
+    "paykit",
+    "payment-gateway",
+    "india",
+    "upi"
+  ],
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -39,7 +48,7 @@
     "registry": "https://registry.npmjs.org/"
   },
   "peerDependencies": {
-    "@squaredr/paykit": ">=0.1.0"
+    "@squaredr/paykit": ">=0.2.0"
   },
   "dependencies": {
     "razorpay": "^2.9.6"

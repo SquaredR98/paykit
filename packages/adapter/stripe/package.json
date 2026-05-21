@@ -1,6 +1,6 @@
 {
   "name": "@squaredr/paykit-stripe",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Stripe adapter for @squaredr/paykit — unified payment SDK",
   "type": "module",
   "main": "./dist/index.cjs",
@@ -28,7 +28,9 @@
       }
     }
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "tsup",
     "test": "vitest run",
@@ -36,7 +38,12 @@
     "typecheck": "tsc --noEmit",
     "clean": "rimraf dist"
   },
-  "keywords": ["payments", "stripe", "paykit", "payment-gateway"],
+  "keywords": [
+    "payments",
+    "stripe",
+    "paykit",
+    "payment-gateway"
+  ],
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -49,7 +56,7 @@
     "registry": "https://registry.npmjs.org/"
   },
   "peerDependencies": {
-    "@squaredr/paykit": ">=0.1.0"
+    "@squaredr/paykit": ">=0.2.0"
   },
   "dependencies": {
     "stripe": "^17.0.0"
