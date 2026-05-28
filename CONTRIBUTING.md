@@ -143,14 +143,14 @@ paykit/
 │   │   └── __tests__/            # Tests
 │   │
 │   ├── adapter/
-│   │   ├── stripe/               # @squaredr/paykit-stripe
+│   │   ├── stripe/               # @squaredr/paykit/stripe
 │   │   │   ├── src/
 │   │   │   │   ├── adapter.ts    # StripeAdapter (server-side)
 │   │   │   │   ├── client/       # StripeClientAdapter (browser)
 │   │   │   │   └── mappers/      # Stripe → Unified type mappers
 │   │   │   └── __tests__/
 │   │   │
-│   │   └── razorpay/             # @squaredr/paykit-razorpay
+│   │   └── razorpay/             # @squaredr/paykit/razorpay
 │   │       └── ...               # Same structure as Stripe
 │   │
 │   ├── sdk-js/                   # @squaredr/paykit-js
@@ -795,8 +795,8 @@ chore(deps): upgrade vitest to v3.2.1
 
 Use package names as scope:
 - `core` — @squaredr/paykit
-- `stripe` — @squaredr/paykit-stripe
-- `razorpay` — @squaredr/paykit-razorpay
+- `stripe` — @squaredr/paykit/stripe
+- `razorpay` — @squaredr/paykit/razorpay
 - `sdk-js` — @squaredr/paykit-js
 - `react` — @squaredr/paykit-react
 - `demo` — demo app

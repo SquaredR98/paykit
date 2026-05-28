@@ -11,7 +11,7 @@ PayKit provides a single, type-safe API for accepting payments across multiple p
 ```ts
 // Backend — works with Stripe, Razorpay, PayPal, etc.
 import { PayKit } from '@squaredr/paykit';
-import { StripeAdapter } from '@squaredr/paykit-stripe';
+import { StripeAdapter } from '@squaredr/paykit/stripe';
 
 const paykit = new PayKit({ adapter: new StripeAdapter({ secretKey: '...' }) });
 const charge = await paykit.charges.create({ amount: 5000, currency: 'usd' });
@@ -20,7 +20,7 @@ const charge = await paykit.charges.create({ amount: 5000, currency: 'usd' });
 ```tsx
 // Frontend — React components or vanilla JS
 import { PayKitProvider, CheckoutForm } from '@squaredr/paykit-react';
-import { StripeClientAdapter } from '@squaredr/paykit-stripe/client';
+import { StripeClientAdapter } from '@squaredr/paykit/stripe/client';
 
 <PayKitProvider clientAdapter={new StripeClientAdapter(publicKey)}>
   <CheckoutForm clientSecret={charge.clientSecret} onSuccess={handleSuccess} />
@@ -51,8 +51,8 @@ This monorepo contains 5 npm packages, all free and open source:
 | Package | Description | Version |
 |---------|-------------|---------|
 | [`@squaredr/paykit`](packages/core) | Core SDK with unified types and adapter system | ![npm](https://img.shields.io/npm/v/@squaredr/paykit) |
-| [`@squaredr/paykit-stripe`](packages/adapter/stripe) | Stripe adapter — charges + webhooks | ![npm](https://img.shields.io/npm/v/@squaredr/paykit-stripe) |
-| [`@squaredr/paykit-razorpay`](packages/adapter/razorpay) | Razorpay adapter — charges + webhooks | ![npm](https://img.shields.io/npm/v/@squaredr/paykit-razorpay) |
+| `@squaredr/paykit/stripe` | Stripe adapter — charges + webhooks (subpath export) | Included in `@squaredr/paykit` |
+| `@squaredr/paykit/razorpay` | Razorpay adapter — charges + webhooks (subpath export) | Included in `@squaredr/paykit` |
 | [`@squaredr/paykit-js`](packages/sdk-js) | Vanilla JS/TS frontend SDK (headless) | ![npm](https://img.shields.io/npm/v/@squaredr/paykit-js) |
 | [`@squaredr/paykit-react`](packages/react) | React components and hooks | ![npm](https://img.shields.io/npm/v/@squaredr/paykit-react) |
 
@@ -94,17 +94,17 @@ Advanced features available in separate Pro packages:
 
 ```bash
 # Backend
-npm install @squaredr/paykit @squaredr/paykit-stripe
+npm install @squaredr/paykit
 
 # Frontend (React)
-npm install @squaredr/paykit-react @squaredr/paykit-stripe
+npm install @squaredr/paykit @squaredr/paykit-react
 ```
 
 ### 2. Backend: Create a payment intent
 
 ```ts
 import { PayKit } from '@squaredr/paykit';
-import { StripeAdapter } from '@squaredr/paykit-stripe';
+import { StripeAdapter } from '@squaredr/paykit/stripe';
 
 const paykit = new PayKit({
   adapter: new StripeAdapter({ secretKey: process.env.STRIPE_SECRET_KEY! })
@@ -124,7 +124,7 @@ console.log(charge.clientSecret); // Send to frontend
 
 ```tsx
 import { PayKitProvider, CheckoutForm } from '@squaredr/paykit-react';
-import { StripeClientAdapter } from '@squaredr/paykit-stripe/client';
+import { StripeClientAdapter } from '@squaredr/paykit/stripe/client';
 
 function App() {
   const [clientSecret, setClientSecret] = useState<string>();
@@ -184,7 +184,7 @@ PayKit uses an **adapter pattern** to provide a unified API:
 ┌─────────────────┐  ┌──────────┐  ┌───────┐
 │ StripeAdapter   │  │ Razorpay │  │ etc.  │
 │ @squaredr/      │  │ Adapter  │  │       │
-│ paykit-stripe   │  │          │  │       │
+│ paykit/stripe   │  │          │  │       │
 │ (FREE)          │  │ (FREE)   │  │       │
 └─────────────────┘  └──────────┘  └───────┘
          │                   │
@@ -259,9 +259,9 @@ paykit/
 ├── packages/
 │   ├── core/              # @squaredr/paykit
 │   ├── adapter/
-│   │   ├── stripe/        # @squaredr/paykit-stripe (free)
+│   │   ├── stripe/        # @squaredr/paykit/stripe (free)
 │   │   ├── stripe-pro/    # @squaredr/paykit-stripe-pro (commercial)
-│   │   ├── razorpay/      # @squaredr/paykit-razorpay (free)
+│   │   ├── razorpay/      # @squaredr/paykit/razorpay (free)
 │   │   └── razorpay-pro/  # @squaredr/paykit-razorpay-pro (commercial)
 │   ├── sdk-js/            # @squaredr/paykit-js
 │   └── react/             # @squaredr/paykit-react
@@ -365,7 +365,7 @@ MIT License — see [LICENSE](LICENSE) for details.
 
 **Open Source (MIT):**
 - Core SDK (`@squaredr/paykit`)
-- All base adapters (`@squaredr/paykit-stripe`, `@squaredr/paykit-razorpay`, etc.)
+- All base adapters (`@squaredr/paykit/stripe`, `@squaredr/paykit/razorpay`, etc.)
 - Frontend SDKs (`@squaredr/paykit-js`, `@squaredr/paykit-react`)
 
 **Commercial License (one-time purchase):**

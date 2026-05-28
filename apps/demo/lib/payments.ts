@@ -1,7 +1,7 @@
 import 'server-only';
 import { UnifiedPayments } from '@squaredr/paykit';
-import '@squaredr/paykit-stripe';
-import '@squaredr/paykit-razorpay';
+import '@squaredr/paykit/stripe';
+import '@squaredr/paykit/razorpay';
 import { registerMockAdapter } from './mock-adapter';
 
 const isMock = process.env.MOCK_PAYMENTS === 'true';

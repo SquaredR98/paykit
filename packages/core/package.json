@@ -1,7 +1,7 @@
 {
   "name": "@squaredr/paykit",
   "version": "0.2.0",
-  "description": "Unified payment SDK — Stripe-like DX across 25+ providers",
+  "description": "Unified payment SDK — Stripe-like DX across 25+ providers. One API for Stripe, Razorpay, PayPal, and more.",
   "type": "module",
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
@@ -25,6 +25,46 @@
       "require": {
         "types": "./dist/testing/index.d.cts",
         "default": "./dist/testing/index.cjs"
+      }
+    },
+    "./stripe": {
+      "import": {
+        "types": "./dist/adapters/stripe/index.d.ts",
+        "default": "./dist/adapters/stripe/index.js"
+      },
+      "require": {
+        "types": "./dist/adapters/stripe/index.d.cts",
+        "default": "./dist/adapters/stripe/index.cjs"
+      }
+    },
+    "./stripe/client": {
+      "import": {
+        "types": "./dist/adapters/stripe/client/index.d.ts",
+        "default": "./dist/adapters/stripe/client/index.js"
+      },
+      "require": {
+        "types": "./dist/adapters/stripe/client/index.d.cts",
+        "default": "./dist/adapters/stripe/client/index.cjs"
+      }
+    },
+    "./razorpay": {
+      "import": {
+        "types": "./dist/adapters/razorpay/index.d.ts",
+        "default": "./dist/adapters/razorpay/index.js"
+      },
+      "require": {
+        "types": "./dist/adapters/razorpay/index.d.cts",
+        "default": "./dist/adapters/razorpay/index.cjs"
+      }
+    },
+    "./razorpay/client": {
+      "import": {
+        "types": "./dist/adapters/razorpay/client/index.d.ts",
+        "default": "./dist/adapters/razorpay/client/index.js"
+      },
+      "require": {
+        "types": "./dist/adapters/razorpay/client/index.d.cts",
+        "default": "./dist/adapters/razorpay/client/index.cjs"
       }
     }
   },
@@ -58,8 +98,21 @@
     "access": "public",
     "registry": "https://registry.npmjs.org/"
   },
-  "peerDependencies": {},
+  "peerDependencies": {
+    "stripe": "^17.0.0",
+    "razorpay": "^2.9.6"
+  },
+  "peerDependenciesMeta": {
+    "stripe": {
+      "optional": true
+    },
+    "razorpay": {
+      "optional": true
+    }
+  },
   "devDependencies": {
+    "stripe": "^17.0.0",
+    "razorpay": "^2.9.6",
     "tsup": "^8.3.0",
     "typescript": "^5.7.0",
     "vitest": "^3.0.0",

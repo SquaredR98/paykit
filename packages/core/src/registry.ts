@@ -14,7 +14,7 @@ const adapterRegistry = new Map<string, AdapterConstructor>();
  * Register a payment adapter. Called by adapter packages on import.
  *
  * @example
- * // Inside @squaredr/paykit-stripe
+ * // Inside @squaredr/paykit/stripe
  * import { registerAdapter } from '@squaredr/paykit';
  * registerAdapter('stripe', StripeAdapter);
  */

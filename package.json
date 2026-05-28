@@ -5,7 +5,6 @@
   "description": "Unified payment SDK — Stripe-like DX across 25+ providers",
   "workspaces": [
     "packages/core",
-    "packages/adapter/*",
     "packages/sdk-js",
     "packages/react",
     "apps/demo"

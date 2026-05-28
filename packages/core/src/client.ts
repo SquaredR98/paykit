@@ -42,7 +42,7 @@ function isMultiProvider(config: ProviderConfig): config is MultiProviderConfig 
  *
  * @example
  * import { UnifiedPayments } from '@squaredr/paykit';
- * import '@squaredr/paykit-stripe';
+ * import '@squaredr/paykit/stripe';
  *
  * const payments = new UnifiedPayments({
  *   provider: 'stripe',

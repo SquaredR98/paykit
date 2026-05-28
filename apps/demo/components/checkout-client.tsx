@@ -1,8 +1,8 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
-import { StripeClientAdapter } from '@squaredr/paykit-stripe/client';
-import { RazorpayClientAdapter } from '@squaredr/paykit-razorpay/client';
+import { StripeClientAdapter } from '@squaredr/paykit/stripe/client';
+import { RazorpayClientAdapter } from '@squaredr/paykit/razorpay/client';
 import { PayKitProvider, CheckoutForm } from '@squaredr/paykit-react';
 import type { PaymentConfirmResult } from '@squaredr/paykit';
 import { PaymentResult } from './payment-result';
