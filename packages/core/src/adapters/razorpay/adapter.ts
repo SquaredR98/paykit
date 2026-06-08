@@ -49,6 +49,15 @@ export class RazorpayAdapter implements PaymentAdapter {
 
   private razorpay!: InstanceType<typeof Razorpay>;
 
+  constructor(credentials?: ProviderCredentials) {
+    if (credentials?.keyId && credentials?.keySecret) {
+      this.razorpay = new Razorpay({
+        key_id: credentials.keyId,
+        key_secret: credentials.keySecret,
+      });
+    }
+  }
+
   async initialize(credentials: ProviderCredentials): Promise<void> {
     if (!credentials.keyId || !credentials.keySecret) {
       throw new Error('Razorpay adapter requires "keyId" and "keySecret" in credentials');

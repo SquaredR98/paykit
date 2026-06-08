@@ -62,7 +62,9 @@ export type { ProviderCapabilities } from './capabilities.js';
 
 // Classes
 export { PaymentError, NotSupportedError } from './errors.js';
-export { UnifiedPayments } from './client.js';
+export { UnifiedPayments, UnifiedPayments as PayKit } from './client.js';
+export type { AdapterConfig, ConstructWebhookParams, ExtendedWebhookOperations } from './client.js';
+export { PaymentRouter } from './payment-router.js';
 
 // Utilities
 export { toSmallestUnit, fromSmallestUnit } from './currency.js';
