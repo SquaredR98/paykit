@@ -1,6 +1,6 @@
 {
   "name": "@squaredr/paykit-js",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Vanilla JavaScript/TypeScript frontend SDK for @squaredr/paykit",
   "type": "module",
   "main": "./dist/index.cjs",

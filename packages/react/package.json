@@ -1,6 +1,6 @@
 {
   "name": "@squaredr/paykit-react",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "React components and hooks for @squaredr/paykit",
   "type": "module",
   "main": "./dist/index.cjs",

@@ -1,6 +1,6 @@
 {
   "name": "@squaredr/paykit",
-  "version": "0.5.5",
+  "version": "0.6.0",
   "description": "Unified payment SDK — Stripe-like DX across 25+ providers. One API for Stripe, Razorpay, PayPal, and more.",
   "type": "module",
   "main": "./dist/index.cjs",
