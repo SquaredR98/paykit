@@ -1,15 +1,14 @@
 # PayKit
 
-> Unified payment SDK — Stripe-like DX across 25+ providers
+> Unified payment SDK for Node.js — one type-safe API for Stripe, Razorpay, and more.
 
 [![npm version](https://img.shields.io/npm/v/@squaredr/paykit.svg)](https://www.npmjs.com/package/@squaredr/paykit)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Tests](https://github.com/SquaredR98/paykit/actions/workflows/test.yml/badge.svg)](https://github.com/SquaredR98/paykit/actions/workflows/test.yml)
 
-PayKit provides a single, type-safe API for accepting payments across multiple payment providers. Write your integration once, swap providers without changing code.
+PayKit provides a single, type-safe API for accepting payments across multiple providers. Write your integration once, swap providers without changing code.
 
 ```ts
-// Backend — works with Stripe, Razorpay, PayPal, etc.
 import { PayKit } from '@squaredr/paykit';
 import { StripeAdapter } from '@squaredr/paykit/stripe';
 
@@ -18,7 +17,6 @@ const charge = await paykit.charges.create({ amount: 5000, currency: 'usd' });
 ```
 
 ```tsx
-// Frontend — React components or vanilla JS
 import { PayKitProvider, CheckoutForm } from '@squaredr/paykit-react';
 import { StripeClientAdapter } from '@squaredr/paykit/stripe/client';
 
@@ -31,90 +29,77 @@ import { StripeClientAdapter } from '@squaredr/paykit/stripe/client';
 
 ## Features
 
-- **Unified API** — One interface for accepting payments across providers
-- **Type-safe** — Full TypeScript support with generics for provider-specific types
-- **Framework-agnostic** — Works with Next.js, Express, vanilla Node.js, Deno, Bun
-- **Frontend SDK** — React components + headless vanilla JS SDK
-- **Provider routing** — Route payments by currency, region, or custom rules
-- **Webhook normalization** — Unified webhook events across providers
-- **Tree-shakeable** — Only bundle what you use (adapters, client code separate)
-- **Open Core** — All adapters open source. Advanced features in Pro packages (one-time purchase).
+- **Unified API** -- One interface for charges, refunds, customers, subscriptions, and webhooks
+- **Type-safe** -- Full TypeScript coverage with normalized types across providers
+- **Adapter pattern** -- Swap providers without changing business logic
+- **Webhook normalization** -- Unified webhook events regardless of provider
+- **Multi-provider routing** -- Route payments by currency or region
+- **React components** -- Drop-in `<CheckoutForm>`, `<CardInput>`, and hooks
+- **Lightweight** -- Tree-shakeable subpath exports; only bundle what you use
 
 ---
 
 ## Packages
 
-### Open Source (MIT License)
+| Package | Description | npm |
+|---------|-------------|-----|
+| [`@squaredr/paykit`](packages/core) | Core SDK + Stripe & Razorpay adapters | [![npm](https://img.shields.io/npm/v/@squaredr/paykit)](https://www.npmjs.com/package/@squaredr/paykit) |
+| [`@squaredr/paykit-react`](packages/react) | React components and hooks | [![npm](https://img.shields.io/npm/v/@squaredr/paykit-react)](https://www.npmjs.com/package/@squaredr/paykit-react) |
+| [`@squaredr/paykit-js`](packages/sdk-js) | Vanilla JS/TS frontend SDK (headless) | [![npm](https://img.shields.io/npm/v/@squaredr/paykit-js)](https://www.npmjs.com/package/@squaredr/paykit-js) |
 
-This monorepo contains 5 npm packages, all free and open source:
+**Adapters included in `@squaredr/paykit` (free, MIT licensed):**
 
-| Package | Description | Version |
-|---------|-------------|---------|
-| [`@squaredr/paykit`](packages/core) | Core SDK with unified types and adapter system | ![npm](https://img.shields.io/npm/v/@squaredr/paykit) |
-| `@squaredr/paykit/stripe` | Stripe adapter — charges + webhooks (subpath export) | Included in `@squaredr/paykit` |
-| `@squaredr/paykit/razorpay` | Razorpay adapter — charges + webhooks (subpath export) | Included in `@squaredr/paykit` |
-| [`@squaredr/paykit-js`](packages/sdk-js) | Vanilla JS/TS frontend SDK (headless) | ![npm](https://img.shields.io/npm/v/@squaredr/paykit-js) |
-| [`@squaredr/paykit-react`](packages/react) | React components and hooks | ![npm](https://img.shields.io/npm/v/@squaredr/paykit-react) |
+| Subpath Export | Provider SDK | Status |
+|---------------|-------------|--------|
+| `@squaredr/paykit/stripe` | `stripe` (peer dep) | Stable |
+| `@squaredr/paykit/razorpay` | `razorpay` (peer dep) | Stable |
+| `@squaredr/paykit/stripe/client` | Frontend adapter | Stable |
+| `@squaredr/paykit/razorpay/client` | Frontend adapter | Stable |
+| `@squaredr/paykit/testing` | Mock adapter | Stable |
 
-**What's included in free adapters:**
-- ✅ Create payment sessions and charge customers
-- ✅ Retrieve payment status
-- ✅ Webhook signature verification and basic event handling
-- ✅ Frontend integration (Payment Element, Checkout modal)
-- ✅ 3D Secure / SCA support
+**Free adapters include:** charges, refunds, customers, subscriptions, payment methods, webhooks, health checks, and frontend integration.
 
-### Pro Packages (Commercial License)
+### Paid Adapter Bundles
 
-Advanced features available in separate Pro packages:
+Additional payment providers (Square, Adyen, Cashfree, PhonePe, Mollie, and more) will be available as paid adapter bundles -- one-time purchase, no subscriptions.
 
-| Package | Description | License |
-|---------|-------------|---------|
-| `@squaredr/paykit-stripe-pro` | Refunds, payouts, subscriptions, dashboard | Commercial |
-| `@squaredr/paykit-razorpay-pro` | Refunds, payouts, subscriptions, dashboard | Commercial |
+| Bundle | Price | Includes |
+|--------|-------|----------|
+| Individual adapter | $19 | Single provider |
+| India Pack | $49 | Cashfree, PhonePe, Paytm |
+| Global Pack | $79 | Square, Adyen, Mollie + more |
+| All Access | $149 | All current and future adapters |
 
-**Pro features:**
-- 🔥 Refunds and payouts
-- 🔥 Full subscription lifecycle management
-- 🔥 Transaction dashboard with analytics
-- 🔥 Customer portal and payment method management
-- 🔥 Dispute management and reconciliation
-
-**Pricing (one-time payment):**
-- **Single Adapter:** $29 (e.g., Stripe Pro only)
-- **Starter Bundle:** $79 (up to 3 adapters)
-- **All Access:** $249 (all current & future adapters + priority support)
-
-[Learn more about PayKit Pro →](https://squaredr.tech/products/paykit#pricing)
+[View pricing](https://squaredr.tech/products/paykit#pricing)
 
 ---
 
 ## Quick Start
 
-### 1. Install packages
+### 1. Install
 
 ```bash
-# Backend
-npm install @squaredr/paykit
+# Backend (pick your provider)
+npm install @squaredr/paykit stripe
 
 # Frontend (React)
-npm install @squaredr/paykit @squaredr/paykit-react
+npm install @squaredr/paykit-react
 ```
 
-### 2. Backend: Create a payment intent
+### 2. Backend: Create a charge
 
 ```ts
 import { PayKit } from '@squaredr/paykit';
 import { StripeAdapter } from '@squaredr/paykit/stripe';
 
 const paykit = new PayKit({
-  adapter: new StripeAdapter({ secretKey: process.env.STRIPE_SECRET_KEY! })
+  adapter: new StripeAdapter({ secretKey: process.env.STRIPE_SECRET_KEY! }),
 });
 
-// Create a charge
 const charge = await paykit.charges.create({
   amount: 5000,
   currency: 'usd',
-  metadata: { orderId: 'order_123' }
+  metadata: { orderId: 'order_123' },
 });
 
 console.log(charge.clientSecret); // Send to frontend
@@ -127,43 +112,40 @@ import { PayKitProvider, CheckoutForm } from '@squaredr/paykit-react';
 import { StripeClientAdapter } from '@squaredr/paykit/stripe/client';
 
 function App() {
-  const [clientSecret, setClientSecret] = useState<string>();
-
-  useEffect(() => {
-    fetch('/api/create-payment')
-      .then(r => r.json())
-      .then(data => setClientSecret(data.clientSecret));
-  }, []);
-
-  if (!clientSecret) return <div>Loading...</div>;
-
   return (
     <PayKitProvider clientAdapter={new StripeClientAdapter(process.env.NEXT_PUBLIC_STRIPE_KEY!)}>
       <CheckoutForm
         clientSecret={clientSecret}
-        onSuccess={(result) => console.log('Payment succeeded:', result)}
-        onError={(error) => console.error('Payment failed:', error)}
+        onSuccess={(result) => console.log('Paid!', result)}
+        onError={(error) => console.error(error)}
       />
     </PayKitProvider>
   );
 }
 ```
 
----
+### 4. Handle webhooks
 
-## Documentation
+```ts
+const event = paykit.webhooks.construct({
+  payload: rawBody,
+  signature: req.headers['stripe-signature'],
+  secret: process.env.STRIPE_WEBHOOK_SECRET!,
+});
 
-- **[Core SDK](packages/core/README.md)** — Unified types, adapter system, provider routing
-- **[Stripe Adapter](packages/adapter/stripe/README.md)** — Stripe integration (charges, subscriptions, webhooks)
-- **[Razorpay Adapter](packages/adapter/razorpay/README.md)** — Razorpay integration (orders, UPI, netbanking)
-- **[Frontend SDK](packages/sdk-js/README.md)** — Vanilla JS/TS headless SDK
-- **[React Components](packages/react/README.md)** — `<CheckoutForm>`, `<CardInput>`, hooks
+switch (event.type) {
+  case 'charge.succeeded':
+    // Fulfill order
+    break;
+  case 'charge.failed':
+    // Handle failure
+    break;
+}
+```
 
 ---
 
 ## Architecture
-
-PayKit uses an **adapter pattern** to provide a unified API:
 
 ```
 ┌─────────────────────────────────────────────┐
@@ -171,55 +153,30 @@ PayKit uses an **adapter pattern** to provide a unified API:
 │  (Express, Next.js, Fastify, etc.)          │
 └──────────────────┬──────────────────────────┘
                    │
-                   ▼
+                   v
 ┌─────────────────────────────────────────────┐
 │  @squaredr/paykit (Core)                    │
-│  • Unified types (UnifiedCharge, etc.)      │
-│  • PayKit client                            │
-│  • Provider registry & routing              │
+│  - PayKit client                            │
+│  - Unified types                            │
+│  - PaymentRouter                            │
+│  - Error normalization                      │
 └──────────────────┬──────────────────────────┘
                    │
-         ┌─────────┴─────────┬─────────┐
-         ▼                   ▼         ▼
-┌─────────────────┐  ┌──────────┐  ┌───────┐
-│ StripeAdapter   │  │ Razorpay │  │ etc.  │
-│ @squaredr/      │  │ Adapter  │  │       │
-│ paykit/stripe   │  │          │  │       │
-│ (FREE)          │  │ (FREE)   │  │       │
-└─────────────────┘  └──────────┘  └───────┘
-         │                   │
-         ▼                   ▼
+         ┌─────────┴─────────┐
+         v                   v
 ┌─────────────────┐  ┌──────────────────┐
-│ Stripe SDK      │  │ Razorpay SDK     │
+│ StripeAdapter   │  │ RazorpayAdapter  │
+│ (subpath export)│  │ (subpath export) │
+└────────┬────────┘  └────────┬─────────┘
+         │                    │
+         v                    v
+┌─────────────────┐  ┌──────────────────┐
+│ stripe (npm)    │  │ razorpay (npm)   │
+│ (peer dep)      │  │ (peer dep)       │
 └─────────────────┘  └──────────────────┘
-
-For advanced features:
-         ┌─────────────────────┬──────────────────────┐
-         ▼                     ▼                      ▼
-┌──────────────────┐  ┌───────────────────┐  ┌──────────┐
-│ StripeProAdapter │  │ RazorpayProAdapter│  │ etc.     │
-│ (extends base)   │  │ (extends base)    │  │          │
-│ • Refunds        │  │ • Refunds         │  │          │
-│ • Payouts        │  │ • Payouts         │  │          │
-│ • Dashboard UI   │  │ • Dashboard UI    │  │          │
-└──────────────────┘  └───────────────────┘  └──────────┘
 ```
 
-### Open Core Model
-
-**Free Adapters** (open source) provide core payment acceptance:
-- Create payment sessions
-- Charge customers
-- Retrieve payment status
-- Handle webhooks
-
-**Pro Adapters** (commercial) extend free adapters with:
-- Refunds and payouts
-- Full subscription management
-- Transaction dashboard with analytics
-- Customer portal and payment method management
-
-Each adapter implements the same interface (`PaymentAdapter`), allowing you to swap providers without changing application code. Pro adapters extend the free adapters with additional methods and UI components.
+Each adapter wraps the official provider SDK and translates requests/responses into PayKit's unified types. The adapters are real implementations -- `StripeAdapter` calls `stripe.paymentIntents.create()`, `RazorpayAdapter` calls `razorpay.orders.create()`, etc.
 
 ---
 
@@ -229,84 +186,47 @@ This is a [Turborepo](https://turbo.build/repo) monorepo using npm workspaces.
 
 ### Prerequisites
 
-- **Node.js** ≥ 20.0.0
-- **npm** ≥ 11.0.0
+- **Node.js** >= 20.0.0
+- **npm** >= 11.0.0
 
 ### Setup
 
 ```bash
-# Clone the repository
 git clone https://github.com/SquaredR98/paykit.git
 cd paykit
-
-# Install dependencies
 npm install
-
-# Build all packages
 npm run build
-
-# Run all tests
 npm test
-
-# Run demo app (with hot reload)
-npm run dev --workspace=apps/demo
 ```
 
-### Project structure
+### Project Structure
 
 ```
 paykit/
 ├── packages/
-│   ├── core/              # @squaredr/paykit
-│   ├── adapter/
-│   │   ├── stripe/        # @squaredr/paykit/stripe (free)
-│   │   ├── stripe-pro/    # @squaredr/paykit-stripe-pro (commercial)
-│   │   ├── razorpay/      # @squaredr/paykit/razorpay (free)
-│   │   └── razorpay-pro/  # @squaredr/paykit-razorpay-pro (commercial)
-│   ├── sdk-js/            # @squaredr/paykit-js
-│   └── react/             # @squaredr/paykit-react
+│   ├── core/        # @squaredr/paykit (core + adapters)
+│   ├── sdk-js/      # @squaredr/paykit-js
+│   └── react/       # @squaredr/paykit-react
 ├── apps/
-│   └── demo/              # Next.js demo application
-├── turbo.json             # Turborepo config
-└── package.json           # Workspace root
+│   └── demo/        # Next.js demo application
+├── turbo.json
+└── package.json
 ```
 
-**Note:** Pro packages (`*-pro`) will be released separately and are not yet available in this repository.
-
-### Available commands
+### Commands
 
 ```bash
-# Build all packages
-npm run build
-
-# Run tests across all packages
-npm test
-
-# Run tests in watch mode
-npm run test:watch
-
-# Type check all packages
-npm run typecheck
-
-# Lint with Biome
-npm run lint
-
-# Format code
-npm run format
-
-# Clean all build artifacts
-npm run clean
+npm run build          # Build all packages
+npm test               # Run all tests
+npm run test:watch     # Watch mode
+npm run typecheck      # Type check
+npm run lint           # Lint with Biome
+npm run clean          # Clean build artifacts
 ```
-
-### Adding a new adapter
-
-See [CONTRIBUTING.md](CONTRIBUTING.md) for the full guide on creating custom adapters.
 
 ---
 
 ## Demo App
-
-A full-stack Next.js demo is included in [`apps/demo`](apps/demo):
 
 ```bash
 cd apps/demo
@@ -314,71 +234,49 @@ cp .env.example .env.local  # Add your API keys
 npm run dev
 ```
 
-The demo includes:
-- Provider selection page
-- Checkout flow with Stripe Payment Element and Razorpay Checkout
-- 3D Secure redirect handling
-- Payment status polling
-- Mock adapter for offline development
+Includes: provider selection, Stripe Payment Element, Razorpay Checkout modal, 3D Secure handling, payment status polling, and mock adapter for offline dev.
 
 ---
 
 ## Testing
 
-All packages use [Vitest](https://vitest.dev/) for testing:
+All packages use [Vitest](https://vitest.dev/). 252 tests passing across all packages.
 
 ```bash
-# Run all tests
-npm test
-
-# Run tests for a specific package
-npm test --workspace=packages/core
-
-# Watch mode
-npm run test:watch
+npm test                              # All tests
+npm test --workspace=packages/core    # Core only
+npm run test:watch                    # Watch mode
 ```
-
-Current test coverage: **320 tests passing** across 15 test files.
 
 ---
 
-## Publishing
+## Documentation
 
-This monorepo uses [Changesets](https://github.com/changesets/changesets) for version management and publishing.
+Full docs at [squaredr.tech/products/paykit/docs](https://squaredr.tech/products/paykit/docs)
 
-```bash
-# Create a changeset
-npx changeset
-
-# Version packages (bumps versions, updates CHANGELOG)
-npx changeset version
-
-# Publish to npm
-npx changeset publish
-```
+- [Installation](https://squaredr.tech/products/paykit/docs/getting-started/installation)
+- [Quick Start](https://squaredr.tech/products/paykit/docs/getting-started/quick-start)
+- [Stripe Guide](https://squaredr.tech/products/paykit/docs/guides/stripe)
+- [Razorpay Guide](https://squaredr.tech/products/paykit/docs/guides/razorpay)
+- [Webhooks](https://squaredr.tech/products/paykit/docs/guides/webhooks)
+- [Multi-Provider Routing](https://squaredr.tech/products/paykit/docs/guides/multi-provider)
+- [API Reference](https://squaredr.tech/products/paykit/docs/reference)
 
 ---
 
 ## License
 
-MIT License — see [LICENSE](LICENSE) for details.
+MIT License -- see [LICENSE](LICENSE) for details.
 
-**Open Source (MIT):**
-- Core SDK (`@squaredr/paykit`)
-- All base adapters (`@squaredr/paykit/stripe`, `@squaredr/paykit/razorpay`, etc.)
-- Frontend SDKs (`@squaredr/paykit-js`, `@squaredr/paykit-react`)
+**Free (MIT):** Core SDK, Stripe adapter, Razorpay adapter, PayPal adapter (coming soon), React components, JS SDK.
 
-**Commercial License (one-time purchase):**
-- Pro adapters (`@squaredr/paykit-*-pro`) with advanced features
-- Includes refunds, payouts, subscriptions, dashboards, and analytics
-- Single adapter $29 / Starter bundle $79 / All Access $249
-- Purchase at: [squaredr.tech/products/paykit](https://squaredr.tech/products/paykit#pricing)
+**Paid (one-time purchase):** Additional provider adapters via adapter bundles. [View pricing](https://squaredr.tech/products/paykit#pricing).
 
 ---
 
 ## Contributing
 
-Contributions are welcome! Please read [CONTRIBUTING.md](CONTRIBUTING.md) before submitting PRs.
+Contributions welcome! Please read [CONTRIBUTING.md](CONTRIBUTING.md) before submitting PRs.
 
 ---
 
@@ -386,8 +284,8 @@ Contributions are welcome! Please read [CONTRIBUTING.md](CONTRIBUTING.md) before
 
 - **Issues**: [GitHub Issues](https://github.com/SquaredR98/paykit/issues)
 - **Discussions**: [GitHub Discussions](https://github.com/SquaredR98/paykit/discussions)
-- **Docs**: [Documentation](https://squaredr.tech/products/paykit/docs)
+- **Docs**: [squaredr.tech/products/paykit/docs](https://squaredr.tech/products/paykit/docs)
 
 ---
 
-Built with ❤️ by [SquaredR](https://github.com/SquaredR98)
+Built by [SquaredR](https://github.com/SquaredR98)

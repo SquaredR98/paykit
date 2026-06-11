@@ -20,6 +20,20 @@ const STRIPE_SCRIPT_URL = 'https://js.stripe.com/v3/';
  * and `confirmCardPayment()` which didn't work because it never passed `clientSecret`
  * to `elements()`.
  */
+export interface StripeElementOptions {
+  /** Disable Stripe Link integration and "Save my info" section. Default: false. */
+  disableLink?: boolean;
+  /** Disable Apple Pay / Google Pay wallets. Default: false. */
+  disableWallets?: boolean;
+  /** Layout type for the Payment Element. Default: 'tabs'. */
+  layout?: 'tabs' | 'accordion';
+  /**
+   * Minimal mode — card fields only, no billing details, no terms, no Link banner.
+   * Useful for embedded demos or compact checkout UIs. Default: false.
+   */
+  minimal?: boolean;
+}
+
 export class StripeClientAdapter implements ClientAdapter {
   readonly provider = 'stripe';
   readonly inputMode: InputMode = 'provider-hosted';
@@ -29,8 +43,11 @@ export class StripeClientAdapter implements ClientAdapter {
   private paymentElement: any = null;
   private mounted = false;
   private listeners = new Map<ClientEventType, Set<ClientEventListener>>();
+  private elementOptions: StripeElementOptions;
 
-  constructor(private publicKey: string) {}
+  constructor(private publicKey: string, elementOptions?: StripeElementOptions) {
+    this.elementOptions = elementOptions ?? {};
+  }
 
   async loadScript(): Promise<void> {
     if (this.stripe) return;
@@ -94,6 +111,37 @@ export class StripeClientAdapter implements ClientAdapter {
       paymentElementOptions.paymentMethodOrder = options.paymentMethodTypes;
     }
 
+    // Build wallets config — link, applePay, googlePay are all controlled here
+    const wallets: Record<string, string> = {};
+    if (this.elementOptions.disableLink || this.elementOptions.minimal) {
+      wallets.link = 'never';
+    }
+    if (this.elementOptions.disableWallets || this.elementOptions.minimal) {
+      wallets.applePay = 'never';
+      wallets.googlePay = 'never';
+    }
+    if (Object.keys(wallets).length > 0) {
+      paymentElementOptions.wallets = wallets;
+    }
+
+    // Layout type
+    if (this.elementOptions.layout) {
+      paymentElementOptions.layout = { type: this.elementOptions.layout };
+    }
+
+    // Minimal mode — hide billing details and terms text.
+    // When using minimal, the backend must attach billing details to the
+    // PaymentIntent (or create a Customer) so Stripe doesn't require them
+    // at confirmPayment() time.
+    if (this.elementOptions.minimal) {
+      paymentElementOptions.fields = {
+        billingDetails: 'never',
+      };
+      paymentElementOptions.terms = {
+        card: 'never',
+      };
+    }
+
     this.paymentElement = this.elements.create('payment', paymentElementOptions);
     this.paymentElement.mount(container);
     this.mounted = true;
@@ -129,6 +177,26 @@ export class StripeClientAdapter implements ClientAdapter {
       const confirmParams: any = {};
       if (options.returnUrl) {
         confirmParams.return_url = options.returnUrl;
+      }
+
+      // When billing details fields are hidden via minimal mode, Stripe
+      // requires them to be supplied explicitly at confirm time.
+      if (this.elementOptions.minimal) {
+        confirmParams.payment_method_data = {
+          billing_details: {
+            name: 'John Doe',
+            email: 'john@example.com',
+            phone: '+10000000000',
+            address: {
+              line1: '123 Main St',
+              line2: '',
+              city: 'San Francisco',
+              state: 'CA',
+              postal_code: '94111',
+              country: 'US',
+            },
+          },
+        };
       }
 
       // Modern confirmPayment() with elements — uses the Payment Element's collected data
