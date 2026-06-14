@@ -1,5 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { PaymentError, NotSupportedError } from '../src/errors';
+import { ERROR_SUGGESTIONS } from '../src/types/error';
+import type { PaymentErrorCode } from '../src/types/error';
 
 describe('PaymentError', () => {
   it('creates an error with all fields', () => {
@@ -71,6 +73,64 @@ describe('PaymentError', () => {
     expect(err.stack).toBeDefined();
     expect(err.stack).toContain('Declined');
   });
+
+  it('auto-populates suggestion from ERROR_SUGGESTIONS', () => {
+    const err = new PaymentError({
+      code: 'card_declined',
+      message: 'Your card was declined',
+      provider: 'stripe',
+    });
+
+    expect(err.suggestion).toBe(ERROR_SUGGESTIONS['card_declined']);
+    expect(err.suggestion).toContain('Try a different card');
+  });
+
+  it('allows custom suggestion to override default', () => {
+    const err = new PaymentError({
+      code: 'card_declined',
+      message: 'Your card was declined',
+      provider: 'stripe',
+      suggestion: 'Please use a Visa card instead.',
+    });
+
+    expect(err.suggestion).toBe('Please use a Visa card instead.');
+  });
+
+  it('provides suggestions for all error codes', () => {
+    const codes: PaymentErrorCode[] = [
+      'card_declined',
+      'insufficient_funds',
+      'invalid_card',
+      'expired_card',
+      'processing_error',
+      'authentication_required',
+      'rate_limit',
+      'network_error',
+      'invalid_request',
+      'provider_unavailable',
+      'not_supported',
+      'not_found',
+      'duplicate_transaction',
+      'fraud_detected',
+      'currency_not_supported',
+      'amount_too_small',
+      'amount_too_large',
+      'already_captured',
+      'already_refunded',
+    ];
+
+    for (const code of codes) {
+      const err = new PaymentError({
+        code,
+        message: `Error: ${code}`,
+        provider: 'test',
+      });
+
+      expect(err.suggestion).toBeTruthy();
+      expect(typeof err.suggestion).toBe('string');
+      expect(err.suggestion.length).toBeGreaterThan(10);
+    }
+  });
 });
 
 describe('NotSupportedError', () => {
@@ -85,5 +145,41 @@ describe('NotSupportedError', () => {
     expect(err.provider).toBe('phonepe');
     expect(err.message).toBe('phonepe does not support subscriptions');
     expect(err.isRetryable).toBe(false);
+  });
+
+  it('has auto-populated suggestion', () => {
+    const err = new NotSupportedError('phonepe', 'subscriptions');
+    expect(err.suggestion).toBe(ERROR_SUGGESTIONS['not_supported']);
+  });
+});
+
+describe('ERROR_SUGGESTIONS', () => {
+  it('has a suggestion for every PaymentErrorCode', () => {
+    const expectedCodes: PaymentErrorCode[] = [
+      'card_declined',
+      'insufficient_funds',
+      'invalid_card',
+      'expired_card',
+      'processing_error',
+      'authentication_required',
+      'rate_limit',
+      'network_error',
+      'invalid_request',
+      'provider_unavailable',
+      'not_supported',
+      'not_found',
+      'duplicate_transaction',
+      'fraud_detected',
+      'currency_not_supported',
+      'amount_too_small',
+      'amount_too_large',
+      'already_captured',
+      'already_refunded',
+    ];
+
+    for (const code of expectedCodes) {
+      expect(ERROR_SUGGESTIONS[code]).toBeDefined();
+      expect(typeof ERROR_SUGGESTIONS[code]).toBe('string');
+    }
   });
 });

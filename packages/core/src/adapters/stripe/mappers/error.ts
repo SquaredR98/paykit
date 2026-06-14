@@ -16,6 +16,15 @@ const ERROR_CODE_MAP: Record<string, PaymentErrorCode> = {
   invalid_request_error: 'invalid_request',
   amount_too_small: 'amount_too_small',
   amount_too_large: 'amount_too_large',
+  resource_missing: 'not_found',
+  charge_already_captured: 'already_captured',
+  charge_already_refunded: 'already_refunded',
+};
+
+// Stripe error.type → unified code (for types not covered by err.code)
+const ERROR_TYPE_MAP: Record<string, PaymentErrorCode> = {
+  StripeConnectionError: 'network_error',
+  StripeRateLimitError: 'rate_limit',
 };
 
 const RETRYABLE_CODES = new Set<string>([
@@ -24,16 +33,24 @@ const RETRYABLE_CODES = new Set<string>([
   'lock_timeout',
 ]);
 
+const RETRYABLE_TYPES = new Set<string>([
+  'StripeConnectionError',
+  'StripeRateLimitError',
+]);
+
 export function mapStripeError(err: Stripe.errors.StripeError): PaymentError {
   const code = err.code ?? err.type ?? 'processing_error';
 
+  const unifiedCode: PaymentErrorCode =
+    ERROR_CODE_MAP[code] ?? ERROR_TYPE_MAP[err.type] ?? 'processing_error';
+
   return new PaymentError({
-    code: ERROR_CODE_MAP[code] ?? 'processing_error',
+    code: unifiedCode,
     message: err.message,
     provider: 'stripe',
     providerCode: code,
     providerMessage: err.message,
-    isRetryable: RETRYABLE_CODES.has(code),
+    isRetryable: RETRYABLE_CODES.has(code) || RETRYABLE_TYPES.has(err.type),
     httpStatus: err.statusCode,
     _raw: err,
   });

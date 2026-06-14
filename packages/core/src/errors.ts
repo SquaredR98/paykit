@@ -1,4 +1,5 @@
 import type { PaymentErrorCode } from './types/error.js';
+import { ERROR_SUGGESTIONS } from './types/error.js';
 
 /**
  * Options for constructing a PaymentError.
@@ -11,6 +12,7 @@ export interface PaymentErrorOptions {
   providerMessage?: string;
   isRetryable?: boolean;
   httpStatus?: number;
+  suggestion?: string;
   _raw?: unknown;
 }
 
@@ -23,6 +25,7 @@ export class PaymentError extends Error {
   readonly providerCode?: string;
   readonly providerMessage?: string;
   readonly isRetryable: boolean;
+  readonly suggestion: string;
   readonly httpStatus?: number;
   readonly _raw?: unknown;
 
@@ -34,6 +37,7 @@ export class PaymentError extends Error {
     this.providerCode = options.providerCode;
     this.providerMessage = options.providerMessage;
     this.isRetryable = options.isRetryable ?? false;
+    this.suggestion = options.suggestion ?? ERROR_SUGGESTIONS[options.code];
     this.httpStatus = options.httpStatus;
     this._raw = options._raw;
   }
