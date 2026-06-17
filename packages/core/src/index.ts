@@ -51,6 +51,8 @@ export type {
 	PayoutStatus,
 } from './types/payout.js';
 export type { UnifiedWebhookEvent, WebhookEventType } from './types/webhook.js';
+export { WEBHOOK_EVENTS } from './types/webhook.js';
+export type { ProviderName } from './types/provider.js';
 export type { PaymentErrorCode } from './types/error.js';
 export { ERROR_SUGGESTIONS } from './types/error.js';
 export type { AppearanceConfig, ThemeVariables } from './types/appearance.js';
@@ -93,7 +95,15 @@ export type {
 export { PaymentRouter } from './payment-router.js';
 
 // Utilities
-export { toSmallestUnit, fromSmallestUnit } from './currency.js';
+export type { CurrencyCode, CurrencyInfo } from './currency.js';
+export {
+	toSmallestUnit,
+	fromSmallestUnit,
+	getCurrencyInfo,
+	formatAmount,
+	isSupportedCurrency,
+	getDecimalPlaces,
+} from './currency.js';
 
 // Adapter registration
 export { registerAdapter, getAdapter } from './registry.js';

@@ -1,4 +1,25 @@
 /**
+ * Top 30 ISO 4217 currency codes as a union type.
+ */
+export type CurrencyCode =
+  | 'USD' | 'EUR' | 'GBP' | 'INR' | 'JPY'
+  | 'CNY' | 'BRL' | 'MXN' | 'KRW' | 'AUD'
+  | 'CAD' | 'CHF' | 'HKD' | 'SGD' | 'SEK'
+  | 'NOK' | 'DKK' | 'NZD' | 'ZAR' | 'THB'
+  | 'MYR' | 'IDR' | 'PHP' | 'VND' | 'TWD'
+  | 'AED' | 'SAR' | 'EGP' | 'NGN' | 'KES';
+
+/**
+ * Currency metadata returned by getCurrencyInfo().
+ */
+export interface CurrencyInfo {
+  code: string;
+  symbol: string;
+  name: string;
+  decimalPlaces: number;
+}
+
+/**
  * Map of ISO 4217 currency codes to their decimal places.
  * Used to convert between human-readable amounts and smallest units.
  *
@@ -21,11 +42,97 @@ const CURRENCY_DECIMALS: Record<string, number> = {
 };
 
 /**
+ * Currency metadata — symbol, name, decimal places.
+ */
+const CURRENCY_DATA: Record<string, { symbol: string; name: string }> = {
+  USD: { symbol: '$', name: 'US Dollar' },
+  EUR: { symbol: '€', name: 'Euro' },
+  GBP: { symbol: '£', name: 'British Pound' },
+  INR: { symbol: '₹', name: 'Indian Rupee' },
+  JPY: { symbol: '¥', name: 'Japanese Yen' },
+  CNY: { symbol: '¥', name: 'Chinese Yuan' },
+  BRL: { symbol: 'R$', name: 'Brazilian Real' },
+  MXN: { symbol: '$', name: 'Mexican Peso' },
+  KRW: { symbol: '₩', name: 'South Korean Won' },
+  AUD: { symbol: 'A$', name: 'Australian Dollar' },
+  CAD: { symbol: 'C$', name: 'Canadian Dollar' },
+  CHF: { symbol: 'CHF', name: 'Swiss Franc' },
+  HKD: { symbol: 'HK$', name: 'Hong Kong Dollar' },
+  SGD: { symbol: 'S$', name: 'Singapore Dollar' },
+  SEK: { symbol: 'kr', name: 'Swedish Krona' },
+  NOK: { symbol: 'kr', name: 'Norwegian Krone' },
+  DKK: { symbol: 'kr', name: 'Danish Krone' },
+  NZD: { symbol: 'NZ$', name: 'New Zealand Dollar' },
+  ZAR: { symbol: 'R', name: 'South African Rand' },
+  THB: { symbol: '฿', name: 'Thai Baht' },
+  MYR: { symbol: 'RM', name: 'Malaysian Ringgit' },
+  IDR: { symbol: 'Rp', name: 'Indonesian Rupiah' },
+  PHP: { symbol: '₱', name: 'Philippine Peso' },
+  VND: { symbol: '₫', name: 'Vietnamese Dong' },
+  TWD: { symbol: 'NT$', name: 'New Taiwan Dollar' },
+  AED: { symbol: 'د.إ', name: 'UAE Dirham' },
+  SAR: { symbol: '﷼', name: 'Saudi Riyal' },
+  EGP: { symbol: 'E£', name: 'Egyptian Pound' },
+  NGN: { symbol: '₦', name: 'Nigerian Naira' },
+  KES: { symbol: 'KSh', name: 'Kenyan Shilling' },
+  BHD: { symbol: 'BD', name: 'Bahraini Dinar' },
+  KWD: { symbol: 'KD', name: 'Kuwaiti Dinar' },
+  OMR: { symbol: 'OMR', name: 'Omani Rial' },
+  JOD: { symbol: 'JD', name: 'Jordanian Dinar' },
+};
+
+/**
  * Get the number of decimal places for a currency.
  * Defaults to 2 if not explicitly listed.
  */
 export function getDecimalPlaces(currency: string): number {
   return CURRENCY_DECIMALS[currency.toUpperCase()] ?? 2;
+}
+
+/**
+ * Get metadata for a currency code.
+ *
+ * @example
+ * getCurrencyInfo('USD') // { code: 'USD', symbol: '$', name: 'US Dollar', decimalPlaces: 2 }
+ * getCurrencyInfo('JPY') // { code: 'JPY', symbol: '¥', name: 'Japanese Yen', decimalPlaces: 0 }
+ */
+export function getCurrencyInfo(code: string): CurrencyInfo {
+  const upper = code.toUpperCase();
+  const data = CURRENCY_DATA[upper];
+  return {
+    code: upper,
+    symbol: data?.symbol ?? upper,
+    name: data?.name ?? upper,
+    decimalPlaces: getDecimalPlaces(upper),
+  };
+}
+
+/**
+ * Format an amount in smallest units to a human-readable currency string.
+ *
+ * @example
+ * formatAmount(4900, 'USD')    // '$49.00'
+ * formatAmount(409900, 'INR')  // '₹4,099.00'
+ * formatAmount(5000, 'JPY')    // '¥5,000'
+ * formatAmount(1500, 'BHD')    // 'BD1.500'
+ */
+export function formatAmount(amountInSmallestUnit: number, currency: string): string {
+  const info = getCurrencyInfo(currency);
+  const value = amountInSmallestUnit / 10 ** info.decimalPlaces;
+
+  const formatted = value.toLocaleString('en-US', {
+    minimumFractionDigits: info.decimalPlaces,
+    maximumFractionDigits: info.decimalPlaces,
+  });
+
+  return `${info.symbol}${formatted}`;
+}
+
+/**
+ * Check if a currency code is in the supported CurrencyCode list.
+ */
+export function isSupportedCurrency(code: string): boolean {
+  return code.toUpperCase() in CURRENCY_DATA;
 }
 
 /**
