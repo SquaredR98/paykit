@@ -57,3 +57,25 @@ export class NotSupportedError extends PaymentError {
     this.name = 'NotSupportedError';
   }
 }
+
+/**
+ * Thrown when input parameters fail validation before reaching the provider.
+ *
+ * @example
+ * throw new ValidationError('amount must be greater than 0');
+ * throw new ValidationError('currency is required', { field: 'currency' });
+ */
+export class ValidationError extends PaymentError {
+  readonly field?: string;
+
+  constructor(message: string, options?: { field?: string }) {
+    super({
+      code: 'invalid_request',
+      message,
+      provider: 'paykit',
+      isRetryable: false,
+    });
+    this.name = 'ValidationError';
+    this.field = options?.field;
+  }
+}

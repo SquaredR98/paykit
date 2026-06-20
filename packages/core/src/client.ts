@@ -28,7 +28,7 @@ import type {
 } from './adapter.js';
 import { getAdapter } from './registry.js';
 import { resolveProvider } from './router.js';
-import { NotSupportedError } from './errors.js';
+import { NotSupportedError, ValidationError } from './errors.js';
 
 /**
  * Direct adapter configuration — pass an already-instantiated adapter.
@@ -71,6 +71,24 @@ function isSingleProvider(config: ProviderConfig): config is SingleProviderConfi
 
 function isMultiProvider(config: ProviderConfig): config is MultiProviderConfig {
   return 'providers' in config;
+}
+
+/**
+ * Validate charges.create parameters before hitting the provider.
+ */
+function validateChargeParams(params: CreateChargeParams): void {
+  if (typeof params.amount !== 'number' || !Number.isFinite(params.amount) || params.amount <= 0) {
+    throw new ValidationError('amount must be a positive number', { field: 'amount' });
+  }
+  if (!Number.isInteger(params.amount)) {
+    throw new ValidationError('amount must be an integer (in smallest currency unit, e.g. cents)', { field: 'amount' });
+  }
+  if (typeof params.currency !== 'string' || params.currency.trim() === '') {
+    throw new ValidationError('currency is required', { field: 'currency' });
+  }
+  if (params.description !== undefined && typeof params.description !== 'string') {
+    throw new ValidationError('description must be a string', { field: 'description' });
+  }
 }
 
 /**
@@ -128,7 +146,10 @@ export class UnifiedPayments {
 
     // Bind all resource operations
     this.charges = {
-      create: (params: CreateChargeParams) => this.withAdapter(params._provider, params.currency, (a) => a.charges.create(params)),
+      create: async (params: CreateChargeParams) => {
+        validateChargeParams(params);
+        return this.withAdapter(params._provider, params.currency, (a) => a.charges.create(params));
+      },
       retrieve: (id: string) => this.withDefaultAdapter((a) => a.charges.retrieve(id)),
       capture: (id: string, params?: CaptureParams) => this.withDefaultAdapter((a) => a.charges.capture(id, params)),
       cancel: (id: string, options?: RequestOptions) => this.withDefaultAdapter((a) => a.charges.cancel(id, options)),

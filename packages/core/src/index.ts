@@ -85,7 +85,7 @@ export type {
 export type { ProviderCapabilities } from './capabilities.js';
 
 // Classes
-export { PaymentError, NotSupportedError } from './errors.js';
+export { PaymentError, NotSupportedError, ValidationError } from './errors.js';
 export { UnifiedPayments, UnifiedPayments as PayKit } from './client.js';
 export type {
 	AdapterConfig,
