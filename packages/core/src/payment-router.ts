@@ -60,7 +60,7 @@ export class PaymentRouter {
    * currency/region or explicit `_provider` override.
    */
   async createCharge(params: CreateChargeParams): Promise<UnifiedCharge> {
-    const adapter = this.resolveAdapter(params._provider, params.currency);
+    const adapter = this.resolveAdapter({ provider: params._provider, currency: params.currency });
     return adapter.charges.create(params);
   }
 
@@ -94,8 +94,15 @@ export class PaymentRouter {
 
   /**
    * Resolve which adapter to use based on routing rules.
+   * Public so callers can preview routing decisions without creating a charge.
+   *
+   * @example
+   * const adapter = router.resolveAdapter({ currency: 'INR' });
+   * console.log(adapter.name); // 'razorpay'
    */
-  private resolveAdapter(explicitProvider?: string, currency?: string): PaymentAdapter {
+  resolveAdapter(options?: { provider?: string; currency?: string; region?: string }): PaymentAdapter {
+    const { provider: explicitProvider, currency, region } = options ?? {};
+
     // Explicit override
     if (explicitProvider) {
       const adapter = this.adapterMap.get(explicitProvider);
@@ -107,6 +114,11 @@ export class PaymentRouter {
     for (const route of this.routes) {
       if (route.currency && currency) {
         if (route.currency.toUpperCase() === currency.toUpperCase()) {
+          return route.adapter;
+        }
+      }
+      if (route.region && region) {
+        if (route.region.toLowerCase() === region.toLowerCase()) {
           return route.adapter;
         }
       }

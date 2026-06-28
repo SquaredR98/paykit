@@ -18,6 +18,7 @@ export interface UnifiedRefund {
   status: RefundStatus;
   reason?: string;
   metadata?: Record<string, string>;
+  requestId?: string;
   createdAt: Date;
   _raw: unknown;
 }

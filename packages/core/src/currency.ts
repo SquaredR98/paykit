@@ -162,3 +162,44 @@ export function fromSmallestUnit(amount: number, currency: string): number {
   const decimals = getDecimalPlaces(currency);
   return amount / 10 ** decimals;
 }
+
+/**
+ * Pluggable currency conversion interface.
+ * Implement this to integrate with your own exchange rate source.
+ *
+ * @example
+ * const converter: CurrencyConverter = {
+ *   async convert(amount, from, to) {
+ *     const rate = await fetchRate(from, to);
+ *     return { amount: Math.round(amount * rate), rate };
+ *   },
+ * };
+ */
+export interface CurrencyConverter {
+  convert(amount: number, from: string, to: string): Promise<{ amount: number; rate: number }>;
+}
+
+/**
+ * Known currencies supported by each built-in provider.
+ */
+const PROVIDER_CURRENCIES: Record<string, readonly string[]> = {
+  stripe: [
+    'USD', 'EUR', 'GBP', 'INR', 'JPY', 'CNY', 'BRL', 'MXN', 'KRW', 'AUD',
+    'CAD', 'CHF', 'HKD', 'SGD', 'SEK', 'NOK', 'DKK', 'NZD', 'ZAR', 'THB',
+    'MYR', 'IDR', 'PHP', 'VND', 'TWD', 'AED', 'SAR', 'EGP', 'NGN', 'KES',
+    'BHD', 'KWD', 'OMR', 'JOD',
+  ],
+  razorpay: ['INR', 'USD', 'EUR', 'GBP', 'SGD', 'AED', 'MYR'],
+};
+
+/**
+ * Get the list of currencies a specific provider supports.
+ * Returns an empty array for unknown providers.
+ *
+ * @example
+ * getProviderCurrencies('stripe')   // ['USD', 'EUR', 'GBP', ...]
+ * getProviderCurrencies('razorpay') // ['INR', 'USD', 'EUR', ...]
+ */
+export function getProviderCurrencies(providerName: string): readonly string[] {
+  return PROVIDER_CURRENCIES[providerName.toLowerCase()] ?? [];
+}

@@ -85,7 +85,13 @@ export type {
 export type { ProviderCapabilities } from './capabilities.js';
 
 // Classes
-export { PaymentError, NotSupportedError, ValidationError } from './errors.js';
+export {
+  PaymentError,
+  NotSupportedError,
+  ValidationError,
+  PaymentTimeoutError,
+  ProviderUnavailableError,
+} from './errors.js';
 export { UnifiedPayments, UnifiedPayments as PayKit } from './client.js';
 export type {
 	AdapterConfig,
@@ -94,8 +100,12 @@ export type {
 } from './client.js';
 export { PaymentRouter } from './payment-router.js';
 
+// Debug & introspection
+export type { ProviderInfo } from './debug.js';
+export { debug, getProviderInfo } from './debug.js';
+
 // Utilities
-export type { CurrencyCode, CurrencyInfo } from './currency.js';
+export type { CurrencyCode, CurrencyInfo, CurrencyConverter } from './currency.js';
 export {
 	toSmallestUnit,
 	fromSmallestUnit,
@@ -103,6 +113,7 @@ export {
 	formatAmount,
 	isSupportedCurrency,
 	getDecimalPlaces,
+	getProviderCurrencies,
 } from './currency.js';
 
 // Adapter registration

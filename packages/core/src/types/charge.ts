@@ -31,6 +31,7 @@ export interface UnifiedCharge {
   paymentMethod?: PaymentMethodSummary;
   metadata?: Record<string, string>;
   redirectUrl?: string;
+  requestId?: string;
   createdAt: Date;
   updatedAt: Date;
   _raw: unknown;

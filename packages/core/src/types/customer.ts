@@ -11,6 +11,7 @@ export interface UnifiedCustomer {
   name?: string;
   phone?: string;
   metadata?: Record<string, string>;
+  requestId?: string;
   createdAt: Date;
   _raw: unknown;
 }

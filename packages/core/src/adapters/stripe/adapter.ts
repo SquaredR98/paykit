@@ -57,7 +57,10 @@ export class StripeAdapter implements PaymentAdapter {
 
   async initialize(credentials: ProviderCredentials): Promise<void> {
     if (!credentials.secretKey) {
-      throw new Error('Stripe adapter requires "secretKey" in credentials');
+      throw new Error(
+        'Missing secretKey for Stripe adapter. ' +
+        'Set STRIPE_SECRET_KEY in your environment or pass { secretKey: "sk_..." } in credentials.',
+      );
     }
     this.stripe = new Stripe(credentials.secretKey);
   }

@@ -34,6 +34,7 @@ export interface UnifiedSubscription {
   currentPeriodEnd: Date;
   cancelAtPeriodEnd: boolean;
   metadata?: Record<string, string>;
+  requestId?: string;
   createdAt: Date;
   _raw: unknown;
 }

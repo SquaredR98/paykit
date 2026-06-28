@@ -60,7 +60,13 @@ export class RazorpayAdapter implements PaymentAdapter {
 
   async initialize(credentials: ProviderCredentials): Promise<void> {
     if (!credentials.keyId || !credentials.keySecret) {
-      throw new Error('Razorpay adapter requires "keyId" and "keySecret" in credentials');
+      const missing = [];
+      if (!credentials.keyId) missing.push('keyId (set RAZORPAY_KEY_ID in your environment)');
+      if (!credentials.keySecret) missing.push('keySecret (set RAZORPAY_KEY_SECRET in your environment)');
+      throw new Error(
+        `Missing credentials for Razorpay adapter: ${missing.join(', ')}. ` +
+        'Pass { keyId: "rzp_...", keySecret: "..." } in credentials.',
+      );
     }
     this.razorpay = new Razorpay({
       key_id: credentials.keyId,

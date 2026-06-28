@@ -1,5 +1,12 @@
-// @squaredr/paykit/testing — Shared conformance test suite for adapter authors
-// This will be implemented in Phase 5
+// @squaredr/paykit/testing — Mock adapter, factories, and test utilities
+
+export { MockAdapter } from './mock-adapter.js';
+export {
+  createMockCharge,
+  createMockRefund,
+  createMockCustomer,
+  createMockWebhookEvent,
+} from './factories.js';
 
 export function runAdapterConformanceTests(
   _adapterClass: unknown,

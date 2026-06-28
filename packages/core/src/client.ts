@@ -29,6 +29,9 @@ import type {
 import { getAdapter } from './registry.js';
 import { resolveProvider } from './router.js';
 import { NotSupportedError, ValidationError } from './errors.js';
+import { getProviderInfo as _getProviderInfo, debug as _debug } from './debug.js';
+import type { ProviderInfo } from './debug.js';
+import { isSupportedCurrency } from './currency.js';
 
 /**
  * Direct adapter configuration — pass an already-instantiated adapter.
@@ -88,6 +91,43 @@ function validateChargeParams(params: CreateChargeParams): void {
   }
   if (params.description !== undefined && typeof params.description !== 'string') {
     throw new ValidationError('description must be a string', { field: 'description' });
+  }
+  if (!isSupportedCurrency(params.currency)) {
+    console.warn(
+      `[PayKit] Warning: currency "${params.currency}" is not in the known currency list. ` +
+      'The charge will still be attempted, but the provider may reject it.',
+    );
+  }
+}
+
+/**
+ * Validate refunds.create parameters before hitting the provider.
+ */
+function validateRefundParams(params: CreateRefundParams): void {
+  if (typeof params.chargeId !== 'string' || params.chargeId.trim() === '') {
+    throw new ValidationError('chargeId is required', { field: 'chargeId' });
+  }
+  if (params.amount !== undefined) {
+    if (typeof params.amount !== 'number' || !Number.isFinite(params.amount) || params.amount <= 0) {
+      throw new ValidationError('amount must be a positive number', { field: 'amount' });
+    }
+    if (!Number.isInteger(params.amount)) {
+      throw new ValidationError('amount must be an integer (in smallest currency unit)', { field: 'amount' });
+    }
+  }
+}
+
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+/**
+ * Validate customers.create parameters before hitting the provider.
+ */
+function validateCustomerParams(params: CreateCustomerParams): void {
+  if (params.email !== undefined && (typeof params.email !== 'string' || !EMAIL_RE.test(params.email))) {
+    throw new ValidationError('email must be a valid email address', { field: 'email' });
+  }
+  if (params.name !== undefined && (typeof params.name !== 'string' || params.name.length > 100)) {
+    throw new ValidationError('name must be a string with 100 characters or fewer', { field: 'name' });
   }
 }
 
@@ -157,13 +197,19 @@ export class UnifiedPayments {
     };
 
     this.refunds = {
-      create: (params: CreateRefundParams) => this.withDefaultAdapter((a) => a.refunds.create(params)),
+      create: async (params: CreateRefundParams) => {
+        validateRefundParams(params);
+        return this.withDefaultAdapter((a) => a.refunds.create(params));
+      },
       retrieve: (id: string) => this.withDefaultAdapter((a) => a.refunds.retrieve(id)),
       list: (params?: ListParams) => this.withDefaultAdapter((a) => a.refunds.list(params)),
     };
 
     this.customers = {
-      create: (params: CreateCustomerParams) => this.withDefaultAdapter((a) => a.customers.create(params)),
+      create: async (params: CreateCustomerParams) => {
+        validateCustomerParams(params);
+        return this.withDefaultAdapter((a) => a.customers.create(params));
+      },
       retrieve: (id: string) => this.withDefaultAdapter((a) => a.customers.retrieve(id)),
       update: (id: string, params: UpdateCustomerParams) => this.withDefaultAdapter((a) => a.customers.update(id, params)),
       delete: (id: string) => this.withDefaultAdapter((a) => a.customers.delete(id)),
@@ -266,6 +312,22 @@ export class UnifiedPayments {
       );
     }
     return new AdapterClass().capabilities;
+  }
+
+  /**
+   * Get structured info about the default provider (name, capabilities, health).
+   */
+  async getProviderInfo(): Promise<ProviderInfo> {
+    const adapter = this.directAdapter ?? this.getDefaultAdapterSync();
+    return _getProviderInfo(adapter);
+  }
+
+  /**
+   * Get a human-readable debug summary of the default provider.
+   */
+  async debug(): Promise<string> {
+    const adapter = this.directAdapter ?? this.getDefaultAdapterSync();
+    return _debug(adapter);
   }
 
   /**
