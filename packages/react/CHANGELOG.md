@@ -1,5 +1,17 @@
 # @squaredr/paykit-react
 
+## 1.1.0
+
+### Minor Changes
+
+- `paymentMethodTypes` prop on `<CardInput>` and `<CheckoutForm>`
+
+### Patch Changes
+
+- Updated dependencies
+  - @squaredr/paykit@0.10.0
+  - @squaredr/paykit-js@1.1.0
+
 ## 1.0.1
 
 ### Patch Changes

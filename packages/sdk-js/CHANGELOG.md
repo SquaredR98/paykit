@@ -1,5 +1,21 @@
 # @squaredr/paykit-js
 
+## 1.1.0
+
+### Minor Changes
+
+- PayPal provider bridge — dual-mode Buttons + Advanced Card Fields
+- `paypal` added to `SupportedProvider` type
+- `PaymentMethodType` re-exported from `@squaredr/paykit`
+- `./providers/paypal` subpath export
+
+### Patch Changes
+
+- Improved mount safety across all providers — mounting guard, `assertMounted()`, proper cleanup
+- Script loader validates global availability after load
+- Updated dependencies
+  - @squaredr/paykit@0.10.0
+
 ## 1.0.1
 
 ### Patch Changes
