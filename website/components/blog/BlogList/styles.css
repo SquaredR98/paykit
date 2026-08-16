@@ -18,6 +18,7 @@ h1.pk-page {
   @apply font-display font-bold text-[length:var(--text-5xl)] leading-(--leading-tight);
   @apply tracking-(--tracking-tighter) text-pk-strong;
   @apply mt-(--space-4) mb-0;
+  @apply max-sm:text-[length:var(--text-3xl)];
 }
 
 .pk-lede {

@@ -10,11 +10,18 @@
   @apply flex flex-col items-start gap-(--space-4) p-(--space-10);
   @apply border-r border-pk-grid;
   @apply max-lg:p-(--space-6) max-lg:border-r-0 max-lg:border-b max-lg:border-pk-grid;
+  @apply max-sm:p-(--space-4);
 }
 
 .pk-feat__txt h2 {
   @apply m-0 tracking-(--tracking-tighter) text-pk-strong;
   font: var(--type-display-1);
+}
+
+@media (max-width: 639px) {
+  .pk-feat__txt h2 {
+    font-size: var(--text-2xl);
+  }
 }
 
 .pk-feat__txt h2 a {
@@ -32,9 +39,22 @@
 }
 
 .pk-feat__art {
-  @apply flex items-center p-(--space-8);
+  @apply flex items-center p-(--space-8) min-w-0 overflow-hidden;
   @apply max-lg:p-(--space-6);
+  @apply max-sm:p-(--space-4);
 }
 
-/* Terminal classes (.pk-term, .pk-term__bar, .pk-term__file, .pk-term__code)
-   are defined globally in globals.css — use those classes in the markup. */
+.pk-feat__art .pk-term {
+  @apply w-full min-w-0;
+}
+
+.pk-feat__art .pk-term__code {
+  @apply overflow-x-auto;
+}
+
+/* Inline code token colors for featured post code snippet */
+.pk-feat__art .k  { color: var(--code-keyword); }
+.pk-feat__art .f  { color: var(--code-fn); }
+.pk-feat__art .s  { color: var(--code-string); }
+.pk-feat__art .cm { color: var(--code-comment); }
+.pk-feat__art .p  { color: var(--code-prop); }

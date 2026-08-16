@@ -5,7 +5,7 @@
 .pk-docs__sidebar {
   @apply sticky top-14 flex flex-col overflow-y-auto border-r border-pk-grid
          gap-(--space-6) px-(--space-5) py-(--space-6)
-         max-md:hidden;
+         max-lg:hidden;
   height: calc(100vh - 56px);
 }
 

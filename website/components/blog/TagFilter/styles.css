@@ -1,7 +1,8 @@
 @reference "../../../app/globals.css";
 
 .pk-filters {
-  @apply flex gap-(--space-2) items-center py-(--space-3) px-(--space-10);
+  @apply flex flex-wrap gap-(--space-2) items-center py-(--space-3) px-(--space-10)
+         max-sm:px-(--space-4);
   background: var(--surface-sunken);
   border-bottom: 1px solid var(--border-grid);
 }

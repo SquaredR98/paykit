@@ -6,11 +6,11 @@
 
 .pk-docs {
   @apply grid items-start mx-auto max-w-[1240px]
-         max-md:grid-cols-1;
+         max-lg:grid-cols-1;
   grid-template-columns: var(--sidebar-w) minmax(0, 1fr) var(--onpage-w);
 }
 
-@media (max-width: 1199px) {
+@media (max-width: 1199px) and (min-width: 1024px) {
   .pk-docs {
     grid-template-columns: var(--sidebar-w) minmax(0, 1fr);
   }
