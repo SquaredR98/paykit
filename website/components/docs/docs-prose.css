@@ -39,9 +39,14 @@
   font: var(--type-body-lg);
 }
 
-.pk-docs__prose ul,
+.pk-docs__prose ul {
+  @apply mt-(--space-4) pl-(--space-6) max-w-(--container-prose);
+  list-style-type: disc;
+}
+
 .pk-docs__prose ol {
   @apply mt-(--space-4) pl-(--space-6) max-w-(--container-prose);
+  list-style-type: decimal;
 }
 
 .pk-docs__prose li {
@@ -93,8 +98,12 @@
 
 /* ── Tables ── */
 
+.pk-docs__table-wrap {
+  @apply mt-(--space-5) overflow-x-auto;
+}
+
 .pk-docs__prose table {
-  @apply w-full border-collapse mt-(--space-5) border border-pk-border bg-pk-card;
+  @apply w-full border-collapse border border-pk-border bg-pk-card;
 }
 
 .pk-docs__prose th {

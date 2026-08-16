@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+  <!-- 2×2 grid mark — 3 outlined squares + 1 filled accent -->
+  <rect x="1.5" y="1.5" width="12" height="12" rx="1" fill="none" stroke="#6B7280" stroke-width="2"/>
+  <rect x="18.5" y="1.5" width="12" height="12" rx="1" fill="none" stroke="#6B7280" stroke-width="2"/>
+  <rect x="1.5" y="18.5" width="12" height="12" rx="1" fill="none" stroke="#6B7280" stroke-width="2"/>
+  <rect x="18" y="18" width="13" height="13" rx="1" fill="#3B82F6"/>
+</svg>

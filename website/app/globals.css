@@ -671,9 +671,14 @@ html {
   font: var(--type-body-lg);
 }
 
-.pk-prose ul,
+.pk-prose ul {
+  @apply mt-(--space-4) pl-(--space-6) max-w-(--container-prose);
+  list-style-type: disc;
+}
+
 .pk-prose ol {
   @apply mt-(--space-4) pl-(--space-6) max-w-(--container-prose);
+  list-style-type: decimal;
 }
 
 .pk-prose li {

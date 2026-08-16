@@ -8,8 +8,17 @@ import { MermaidDiagram } from '@/components/workbench/MermaidDiagram';
 import { ArchitectureDiagram } from '@/components/docs/ArchitectureDiagram';
 import '@/components/docs/docs-prose.css';
 
+function TableWrapper(props: React.ComponentProps<'table'>) {
+  return (
+    <div className="pk-docs__table-wrap">
+      <table {...props} />
+    </div>
+  );
+}
+
 const mdxComponents = {
   pre: DocsCodeBlock,
+  table: TableWrapper,
   MermaidDiagram,
   ArchitectureDiagram,
 };
