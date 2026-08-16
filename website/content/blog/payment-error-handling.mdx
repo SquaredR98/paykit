@@ -2,7 +2,7 @@
 title: Payment Error Handling Done Right
 description: Handle payment errors from Stripe, Razorpay, and PayPal with 19 unified error codes, automatic suggestions, and retry strategies.
 date: 2025-03-24
-tags: ['errors', 'best-practices']
+tags: ['guides']
 ---
 
 Payment errors are inevitable. Cards get declined, banks go down, fraud detection triggers. The challenge is that every provider reports errors differently. Stripe gives you `card_declined` with a `decline_code`. Razorpay gives you `BAD_REQUEST_ERROR` with a `reason`. PayPal gives you `INSTRUMENT_DECLINED` with an `issue`.

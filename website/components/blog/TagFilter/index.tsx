@@ -8,6 +8,13 @@ interface TagFilterProps {
   postCount?: number;
 }
 
+function formatTag(tag: string): string {
+  return tag
+    .split('-')
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ');
+}
+
 export function TagFilter({ tags, postCount }: TagFilterProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -37,7 +44,7 @@ export function TagFilter({ tags, postCount }: TagFilterProps) {
           aria-pressed={activeTag === tag}
           onClick={() => handleTagClick(tag)}
         >
-          {tag}
+          {formatTag(tag)}
         </button>
       ))}
       <span className="pk-sp" />
