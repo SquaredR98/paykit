@@ -1,0 +1,15 @@
+@reference "../../../../app/globals.css";
+
+.pk-split {
+  @apply grid grid-cols-2 gap-(--space-6)
+         max-lg:grid-cols-1;
+}
+
+.pk-split__panel {
+  @apply min-w-0;
+}
+
+.pk-split__label {
+  @apply block mb-(--space-2) text-pk-subtle uppercase tracking-widest;
+  font: var(--type-label-sm);
+}

@@ -10,6 +10,12 @@ const TYPE_MAP: Record<string, PaymentMethodType> = {
   klarna: 'bnpl',
   afterpay_clearpay: 'bnpl',
   affirm: 'bnpl',
+  ideal: 'wallet',
+  bancontact: 'wallet',
+  link: 'wallet',
+  cashapp: 'wallet',
+  alipay: 'wallet',
+  wechat_pay: 'wallet',
 };
 
 export function mapStripePaymentMethod(pm: Stripe.PaymentMethod): UnifiedPaymentMethod {

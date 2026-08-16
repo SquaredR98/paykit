@@ -1,0 +1,60 @@
+@reference "../../../app/globals.css";
+
+.pk-post {
+  @apply flex flex-col items-start gap-(--space-3);
+  @apply py-(--space-8) px-(--space-6);
+  @apply border-r border-b border-pk-grid;
+  transition: background var(--dur-fast) var(--ease-standard);
+}
+
+.pk-g2 > .pk-post:nth-child(2n) {
+  @apply border-r-0;
+}
+
+.pk-g2 > .pk-post:nth-last-child(-n+2) {
+  @apply border-b-0;
+}
+
+.pk-post:hover {
+  @apply bg-pk-hover;
+}
+
+.pk-post h3 {
+  @apply m-0 font-display font-bold text-[length:var(--text-xl)] leading-(--leading-snug)
+         tracking-(--tracking-tight) text-pk-strong;
+}
+
+.pk-post h3 a {
+  @apply text-pk-strong no-underline;
+  transition: var(--transition-control);
+}
+
+.pk-post:hover h3 a {
+  @apply text-pk-accent-ink;
+}
+
+.pk-post > p {
+  @apply m-0;
+  @apply text-pk-muted;
+  font: var(--type-body-sm);
+}
+
+.pk-byline {
+  @apply flex items-center gap-(--space-3);
+  @apply text-pk-subtle;
+  font: var(--type-code-sm);
+}
+
+.pk-byline--foot {
+  @apply mt-auto pt-(--space-3);
+}
+
+.pk-byline em {
+  @apply not-italic;
+  @apply text-pk-border-strong;
+}
+
+.pk-av {
+  @apply grid place-items-center shrink-0 w-[22px] h-[22px] text-[9px];
+  @apply font-mono bg-pk-accent-soft border border-pk-hairline text-pk-accent-ink;
+}

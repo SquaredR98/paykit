@@ -1,6 +1,6 @@
 import Razorpay from 'razorpay';
 import { validateWebhookSignature } from 'razorpay/dist/utils/razorpay-utils';
-import { NotSupportedError } from '../../errors.js';
+import { NotSupportedError, PaymentError } from '../../errors.js';
 import type {
   PaymentAdapter,
   ChargeOperations,
@@ -40,7 +40,7 @@ export class RazorpayAdapter implements PaymentAdapter {
     savedPaymentMethods: false,
     hostedCheckout: true,
     embeddableUI: true,
-    payouts: true,
+    payouts: false,
     multiCurrency: true,
     directDebit: false,
     webhooks: true,
@@ -138,13 +138,15 @@ export class RazorpayAdapter implements PaymentAdapter {
 
     list: (params?: ListParams) =>
       this.wrap(async () => {
+        const skip = parseInt(params?.startingAfter ?? '0', 10) || 0;
+        const count = params?.limit ?? 10;
         const result = await this.razorpay.orders.all({
-          count: params?.limit ?? 10,
-          skip: 0,
+          count,
+          skip,
         });
         return {
           data: (result.items ?? []).map(mapRazorpayOrderToCharge),
-          hasMore: (result.items?.length ?? 0) === (params?.limit ?? 10),
+          hasMore: (result.items?.length ?? 0) === count,
         };
       }),
   };
@@ -167,13 +169,15 @@ export class RazorpayAdapter implements PaymentAdapter {
 
     list: (params?: ListParams) =>
       this.wrap(async () => {
+        const skip = parseInt(params?.startingAfter ?? '0', 10) || 0;
+        const count = params?.limit ?? 10;
         const result = await this.razorpay.refunds.all({
-          count: params?.limit ?? 10,
-          skip: 0,
+          count,
+          skip,
         });
         return {
           data: (result.items ?? []).map(mapRazorpayRefund),
-          hasMore: (result.items?.length ?? 0) === (params?.limit ?? 10),
+          hasMore: (result.items?.length ?? 0) === count,
         };
       }),
   };
@@ -212,13 +216,15 @@ export class RazorpayAdapter implements PaymentAdapter {
 
     list: (params?: ListParams) =>
       this.wrap(async () => {
+        const skip = parseInt(params?.startingAfter ?? '0', 10) || 0;
+        const count = params?.limit ?? 10;
         const result = await this.razorpay.customers.all({
-          count: params?.limit ?? 10,
-          skip: 0,
+          count,
+          skip,
         });
         return {
           data: (result.items ?? []).map(mapRazorpayCustomer),
-          hasMore: (result.items?.length ?? 0) === (params?.limit ?? 10),
+          hasMore: (result.items?.length ?? 0) === count,
         };
       }),
   };
@@ -257,7 +263,16 @@ export class RazorpayAdapter implements PaymentAdapter {
     parse: (payload: string | Buffer, headers: Record<string, string>, secret: string) => {
       const body = typeof payload === 'string' ? payload : payload.toString();
       const signature = headers['x-razorpay-signature'] ?? '';
-      validateWebhookSignature(body, signature, secret);
+      try {
+        validateWebhookSignature(body, signature, secret);
+      } catch {
+        throw new PaymentError({
+          code: 'invalid_request',
+          message: 'Invalid Razorpay webhook signature',
+          provider: 'razorpay',
+          isRetryable: false,
+        });
+      }
 
       const parsed = JSON.parse(body);
       const mapped = mapRazorpayWebhookEvent(parsed);
@@ -298,20 +313,24 @@ export class RazorpayAdapter implements PaymentAdapter {
             amount: params.amount,
             currency: params.currency.toUpperCase(),
           },
-        }) as Promise<{ id: string }>);
+        }) as Promise<{ id: string; item?: { amount?: number; currency?: string }; period?: string; interval?: number }>);
+        const totalCount = params.metadata?.totalCount
+          ? parseInt(params.metadata.totalCount, 10)
+          : 0; // 0 = no limit on billing cycles
         const sub = await this.razorpay.subscriptions.create({
           plan_id: plan.id,
-          total_count: 12, // Default to 12 billing cycles
+          total_count: totalCount,
           customer_notify: 1,
           notes: params.metadata ?? {},
         });
-        return mapRazorpaySubscription(sub);
+        return mapRazorpaySubscription(sub, plan);
       }),
 
     retrieve: (id: string) =>
       this.wrap(async () => {
         const sub = await this.razorpay.subscriptions.fetch(id);
-        return mapRazorpaySubscription(sub);
+        const plan = sub.plan_id ? await this.razorpay.plans.fetch(sub.plan_id) : undefined;
+        return mapRazorpaySubscription(sub, plan);
       }),
 
     update: (id: string, params: UpdateSubscriptionParams) =>
@@ -319,7 +338,8 @@ export class RazorpayAdapter implements PaymentAdapter {
         const sub = await this.razorpay.subscriptions.update(id, {
           ...(params.metadata ? { notes: params.metadata } : {}),
         });
-        return mapRazorpaySubscription(sub);
+        const plan = sub.plan_id ? await this.razorpay.plans.fetch(sub.plan_id) : undefined;
+        return mapRazorpaySubscription(sub, plan);
       }),
 
     cancel: (id: string, params?: CancelSubscriptionParams) =>
@@ -328,18 +348,35 @@ export class RazorpayAdapter implements PaymentAdapter {
           id,
           params?.cancelAtPeriodEnd ? true : false,
         );
-        return mapRazorpaySubscription(sub);
+        const plan = sub.plan_id ? await this.razorpay.plans.fetch(sub.plan_id) : undefined;
+        return mapRazorpaySubscription(sub, plan);
       }),
 
     list: (params?: ListParams) =>
       this.wrap(async () => {
+        const skip = parseInt(params?.startingAfter ?? '0', 10) || 0;
+        const count = params?.limit ?? 10;
         const result = await this.razorpay.subscriptions.all({
-          count: params?.limit ?? 10,
-          skip: 0,
+          count,
+          skip,
         });
+        const items = result.items ?? [];
+        // Fetch plans for unique plan_ids to get amount/currency/interval
+        const planIds = [...new Set(items.map((s: any) => s.plan_id).filter(Boolean))];
+        const plans = new Map<string, any>();
+        await Promise.all(
+          planIds.map(async (id: string) => {
+            try {
+              const plan = await this.razorpay.plans.fetch(id);
+              plans.set(id, plan);
+            } catch {
+              // Plan fetch failed — subscription will use defaults
+            }
+          }),
+        );
         return {
-          data: (result.items ?? []).map(mapRazorpaySubscription),
-          hasMore: (result.items?.length ?? 0) === (params?.limit ?? 10),
+          data: items.map((s: any) => mapRazorpaySubscription(s, plans.get(s.plan_id))),
+          hasMore: items.length === count,
         };
       }),
   };

@@ -20,6 +20,7 @@ export class StripeProviderBridge implements ProviderBridge {
   private elements: any = null;
   private cardElement: any = null;
   private mounted = false;
+  private mounting = false;
   private listeners = new Map<ClientEventType, Set<ClientEventListener>>();
 
   constructor(
@@ -37,37 +38,55 @@ export class StripeProviderBridge implements ProviderBridge {
   }
 
   async mount(container: HTMLElement, options?: MountOptions): Promise<void> {
-    if (!this.stripe) {
-      await this.loadScript();
+    if (this.mounted) this.unmount();
+    if (this.mounting) throw new Error('Mount already in progress');
+    this.mounting = true;
+    try {
+      if (!this.stripe) {
+        await this.loadScript();
+      }
+
+      const elementsOptions: any = {};
+      const mergedAppearance = options?.appearance ?? this.appearance;
+      if (mergedAppearance) {
+        elementsOptions.appearance = this.mapAppearance(mergedAppearance);
+      }
+
+      this.elements = this.stripe.elements(elementsOptions);
+      this.cardElement = this.elements.create('card');
+      this.cardElement.mount(container);
+      this.mounted = true;
+
+      this.cardElement.on('ready', () => this.emit({ type: 'ready' }));
+      this.cardElement.on('change', (e: any) => {
+        this.emit({ type: 'change', data: { complete: e.complete, error: e.error?.message } });
+      });
+      this.cardElement.on('focus', () => this.emit({ type: 'focus' }));
+      this.cardElement.on('blur', () => this.emit({ type: 'blur' }));
+    } finally {
+      this.mounting = false;
     }
-
-    const elementsOptions: any = {};
-    const mergedAppearance = options?.appearance ?? this.appearance;
-    if (mergedAppearance) {
-      elementsOptions.appearance = this.mapAppearance(mergedAppearance);
-    }
-
-    this.elements = this.stripe.elements(elementsOptions);
-    this.cardElement = this.elements.create('card');
-    this.cardElement.mount(container);
-    this.mounted = true;
-
-    this.cardElement.on('ready', () => this.emit({ type: 'ready' }));
-    this.cardElement.on('change', (e: any) => {
-      this.emit({ type: 'change', data: { complete: e.complete, error: e.error?.message } });
-    });
-    this.cardElement.on('focus', () => this.emit({ type: 'focus' }));
-    this.cardElement.on('blur', () => this.emit({ type: 'blur' }));
   }
 
   unmount(): void {
     if (this.cardElement && this.mounted) {
+      this.cardElement.off('ready');
+      this.cardElement.off('change');
+      this.cardElement.off('focus');
+      this.cardElement.off('blur');
       this.cardElement.unmount();
       this.mounted = false;
     }
   }
 
+  private assertMounted(): void {
+    if (!this.mounted) {
+      throw new Error('Not mounted. Call mount() first.');
+    }
+  }
+
   async tokenize(): Promise<TokenizeResult> {
+    this.assertMounted();
     if (!this.stripe || !this.cardElement) {
       throw new Error('Card input is not mounted. Call mount() first.');
     }
@@ -86,6 +105,7 @@ export class StripeProviderBridge implements ProviderBridge {
   }
 
   async confirmPayment(clientSecret: string, options?: { returnUrl?: string }): Promise<PaymentConfirmResult> {
+    this.assertMounted();
     if (!this.stripe) {
       throw new Error('Stripe not loaded. Call loadScript() first.');
     }

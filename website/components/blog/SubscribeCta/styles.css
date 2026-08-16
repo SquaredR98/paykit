@@ -1,0 +1,40 @@
+@reference "../../../app/globals.css";
+
+.pk-cta-end {
+  @apply flex items-center justify-between gap-(--space-6) px-(--space-10) py-(--space-8);
+  @apply border-t border-pk-grid;
+  @apply max-lg:flex-col max-lg:items-start max-lg:p-(--space-6);
+}
+
+.pk-cta-end__text {
+  @apply flex flex-col gap-(--space-2) flex-1;
+}
+
+.pk-cta-end__desc {
+  @apply m-0 text-pk-strong;
+  font: var(--type-body-lg);
+}
+
+.pk-sub {
+  @apply flex border border-pk-border bg-pk-card;
+  @apply min-w-[380px];
+  @apply max-lg:w-full max-lg:min-w-0;
+}
+
+.pk-sub input {
+  @apply flex-1 min-w-0 px-(--space-3) h-(--control-h-md) bg-transparent border-0 outline-none;
+  @apply text-pk-strong;
+  font: var(--type-body-sm);
+}
+
+.pk-sub input:focus {
+  box-shadow: var(--ring-focus);
+}
+
+.pk-sub input::placeholder {
+  @apply text-pk-muted;
+}
+
+.pk-sub button {
+  @apply shrink-0;
+}

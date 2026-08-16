@@ -1,0 +1,21 @@
+@reference "../../../app/globals.css";
+
+.pk-logo {
+  @apply inline-flex items-center gap-2 no-underline text-pk-strong;
+}
+
+.pk-logo:hover {
+  @apply no-underline text-pk-strong;
+}
+
+.pk-logo__mark {
+  @apply block shrink-0;
+}
+
+.pk-logo__wordmark {
+  @apply font-display font-bold text-[21px] leading-none tracking-[-0.03em] text-pk-strong;
+}
+
+.pk-logo__accent {
+  @apply not-italic text-pk-accent-ink;
+}

@@ -1,0 +1,51 @@
+@reference "../../../app/globals.css";
+
+/* ── Docs Top Bar ── */
+
+.pk-docs-topbar {
+  @apply sticky top-0 z-30 flex items-center h-14 border-b border-pk-grid;
+  background: color-mix(in oklch, var(--surface-page) 88%, transparent);
+  backdrop-filter: blur(12px);
+}
+
+.pk-docs-topbar__inner {
+  @apply mx-auto flex items-center w-full max-w-[1240px] gap-(--space-5) px-(--space-6);
+}
+
+.pk-docs-topbar__lockup {
+  @apply inline-flex items-center no-underline text-pk-strong;
+}
+
+.pk-docs-topbar__crumb {
+  @apply text-pk-subtle pl-(--space-4) border-l border-pk-grid;
+  font: var(--type-code-sm);
+}
+
+.pk-docs-topbar__right {
+  @apply ml-auto flex items-center gap-(--space-5);
+}
+
+.pk-docs-topbar__nav {
+  @apply flex gap-(--space-5) max-md:hidden;
+}
+
+.pk-docs-topbar__nav a,
+.pk-docs-topbar__nav span {
+  @apply no-underline text-pk-muted;
+  font: var(--type-label);
+}
+
+.pk-docs-topbar__nav a:hover,
+.pk-docs-topbar__nav [aria-current] {
+  @apply text-pk-strong;
+}
+
+.pk-docs-topbar__icon-btn {
+  @apply inline-grid place-items-center cursor-pointer no-underline
+         w-(--control-h-md) h-(--control-h-md) bg-transparent border border-transparent text-pk-muted;
+  transition: var(--transition-control);
+}
+
+.pk-docs-topbar__icon-btn:hover {
+  @apply bg-pk-hover text-pk-strong;
+}

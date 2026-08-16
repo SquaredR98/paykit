@@ -75,13 +75,15 @@ export class StripeAdapter implements PaymentAdapter {
     }
   }
 
-  private wrap<T>(fn: () => Promise<T>): Promise<T> {
-    return fn().catch((err) => {
+  private async wrap<T>(fn: () => Promise<T>): Promise<T> {
+    try {
+      return await fn();
+    } catch (err) {
       if (err instanceof Stripe.errors.StripeError) {
         throw mapStripeError(err);
       }
       throw err;
-    });
+    }
   }
 
   charges: ChargeOperations = {

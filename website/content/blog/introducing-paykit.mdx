@@ -1,0 +1,120 @@
+---
+title: Introducing PayKit — A Unified Payment SDK
+description: A unified TypeScript SDK that abstracts payment provider complexity, letting you switch between Stripe, Razorpay, PayPal, and others with a single line of code.
+date: 2025-01-15
+tags: ['announcement', 'architecture']
+---
+
+Payment integration is fragmented. Every provider has its own SDK, its own patterns, its own way of modeling charges, refunds, and webhooks. Building a production payment system means either lock-in to a single provider or maintaining multiple integrations in parallel.
+
+**PayKit** solves this with a unified adapter pattern.
+
+## The Problem
+
+Modern applications need payment flexibility:
+
+- **Geographic reach** — Stripe dominates the US, Razorpay owns India, PayPal is global but has different fee structures
+- **Compliance** — Some regions require local processors
+- **Cost optimization** — Fees vary wildly between providers
+- **Failover** — If your primary gateway goes down, you need a backup
+
+The traditional approach is multi-SDK hell:
+
+```typescript
+// Before: managing 3 different SDKs
+import Stripe from 'stripe';
+import Razorpay from 'razorpay';
+import { PayPalHttpClient } from '@paypal/checkout-server-sdk';
+
+// Three different initialization patterns
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+const razorpay = new Razorpay({ key_id: '...', key_secret: '...' });
+const paypal = new PayPalHttpClient(environment);
+
+// Three different ways to create a charge
+const stripeCharge = await stripe.charges.create({ ... });
+const razorpayOrder = await razorpay.orders.create({ ... });
+const paypalOrder = await paypal.execute(request);
+```
+
+Every method call, every webhook handler, every error code is provider-specific.
+
+## The Solution
+
+PayKit provides **one SDK, multiple backends**:
+
+```typescript
+import { PayKit } from '@squaredr/paykit';
+
+const paykit = new PayKit({
+  provider: 'stripe', // or 'razorpay', 'paypal', etc.
+  apiKey: process.env.PAYMENT_KEY,
+});
+
+const charge = await paykit.charge.create({
+  amount: 5000,
+  currency: 'USD',
+  source: token,
+});
+```
+
+Switch providers by changing one line:
+
+```typescript
+const paykit = new PayKit({
+  provider: 'razorpay', // That's it.
+  apiKey: process.env.RAZORPAY_KEY,
+});
+```
+
+## How It Works
+
+PayKit uses the **adapter pattern** — a thin abstraction layer that translates your calls into provider-specific API requests.
+
+<ArchitectureDiagram />
+
+Each adapter implements the same interface (`IPaymentAdapter`) but talks to its provider's native SDK under the hood.
+
+## What's Supported
+
+Currently shipping adapters for:
+
+- **Stripe** — Full support (charges, refunds, customers, webhooks)
+- **Razorpay** — Full support
+- **PayPal** — Full support
+- **Square** — Planned
+
+All adapters are **free and open source** (MIT license).
+
+## Smart Routing
+
+The adapter pattern unlocks powerful routing:
+
+```typescript
+import { PaymentRouter } from '@squaredr/paykit'
+
+const router = new PaymentRouter({
+  routes: [
+    { currency: 'INR', adapter: razorpay },
+    { currency: 'USD', adapter: stripe },
+  ],
+  default: stripe,
+})
+
+const charge = await router.createCharge({
+  amount: 50000,
+  currency: 'INR', // → routes to Razorpay
+})
+```
+
+PayKit automatically routes charges to the optimal provider based on currency, region, or explicit override — and you can preview routing decisions with `router.resolveAdapter()` before creating a charge. See the [multi-provider routing guide](/docs/guides/multi-provider) for details.
+
+## Get Started
+
+```bash
+npm install @squaredr/paykit
+```
+
+Check the [docs](/docs) for full integration guides and API reference.
+
+**PayKit** is MIT licensed and built in public. Contributions welcome at [github.com/SquaredR98/paykit](https://github.com/SquaredR98/paykit).

@@ -220,3 +220,181 @@ describe('charges.create validation', () => {
     ).resolves.toBeDefined();
   });
 });
+
+describe('subscriptions.create validation', () => {
+  const mockAdapterWithSubs = {
+    name: 'mock',
+    capabilities: {
+      charges: true,
+      refunds: true,
+      customers: true,
+      paymentMethods: true,
+      webhooks: true,
+      subscriptions: true,
+      payouts: false,
+      authAndCapture: false,
+      partialRefunds: false,
+      savedPaymentMethods: false,
+      hostedCheckout: false,
+      embeddableUI: false,
+      multiCurrency: false,
+      directDebit: false,
+      threeDS: false,
+    },
+    charges: {
+      create: async () => ({} as any),
+      retrieve: async () => ({} as any),
+      capture: async () => ({} as any),
+      cancel: async () => ({} as any),
+      list: async () => ({} as any),
+    },
+    refunds: {
+      create: async () => ({} as any),
+      retrieve: async () => ({} as any),
+      list: async () => ({} as any),
+    },
+    customers: {
+      create: async () => ({} as any),
+      retrieve: async () => ({} as any),
+      update: async () => ({} as any),
+      delete: async () => ({} as any),
+      list: async () => ({} as any),
+    },
+    paymentMethods: {
+      create: async () => ({} as any),
+      retrieve: async () => ({} as any),
+      attach: async () => ({} as any),
+      detach: async () => ({} as any),
+      list: async () => ({} as any),
+    },
+    webhooks: {
+      verify: () => true,
+      parse: () => ({} as any),
+    },
+    subscriptions: {
+      create: async () => ({} as any),
+      retrieve: async () => ({} as any),
+      update: async () => ({} as any),
+      cancel: async () => ({} as any),
+      list: async () => ({} as any),
+    },
+    initialize: async () => {},
+    healthCheck: async () => ({ healthy: true }),
+  } as any;
+
+  function createSubClient() {
+    return new UnifiedPayments({ adapter: mockAdapterWithSubs });
+  }
+
+  it('rejects empty customer', async () => {
+    const paykit = createSubClient();
+    await expect(
+      paykit.subscriptions!.create({ customer: '', amount: 999, currency: 'USD', interval: 'month' }),
+    ).rejects.toThrow(ValidationError);
+
+    try {
+      await paykit.subscriptions!.create({ customer: '', amount: 999, currency: 'USD', interval: 'month' });
+    } catch (err) {
+      expect((err as ValidationError).field).toBe('customer');
+    }
+  });
+
+  it('rejects whitespace-only customer', async () => {
+    const paykit = createSubClient();
+    await expect(
+      paykit.subscriptions!.create({ customer: '   ', amount: 999, currency: 'USD', interval: 'month' }),
+    ).rejects.toThrow(ValidationError);
+  });
+
+  it('rejects amount = 0', async () => {
+    const paykit = createSubClient();
+    await expect(
+      paykit.subscriptions!.create({ customer: 'cus_xxx', amount: 0, currency: 'USD', interval: 'month' }),
+    ).rejects.toThrow(ValidationError);
+  });
+
+  it('rejects negative amount', async () => {
+    const paykit = createSubClient();
+    await expect(
+      paykit.subscriptions!.create({ customer: 'cus_xxx', amount: -100, currency: 'USD', interval: 'month' }),
+    ).rejects.toThrow(ValidationError);
+  });
+
+  it('rejects non-integer amount', async () => {
+    const paykit = createSubClient();
+    await expect(
+      paykit.subscriptions!.create({ customer: 'cus_xxx', amount: 9.99, currency: 'USD', interval: 'month' }),
+    ).rejects.toThrow(ValidationError);
+
+    try {
+      await paykit.subscriptions!.create({ customer: 'cus_xxx', amount: 9.99, currency: 'USD', interval: 'month' });
+    } catch (err) {
+      expect((err as ValidationError).message).toContain('integer');
+      expect((err as ValidationError).field).toBe('amount');
+    }
+  });
+
+  it('rejects empty currency', async () => {
+    const paykit = createSubClient();
+    await expect(
+      paykit.subscriptions!.create({ customer: 'cus_xxx', amount: 999, currency: '', interval: 'month' }),
+    ).rejects.toThrow(ValidationError);
+
+    try {
+      await paykit.subscriptions!.create({ customer: 'cus_xxx', amount: 999, currency: '', interval: 'month' });
+    } catch (err) {
+      expect((err as ValidationError).field).toBe('currency');
+    }
+  });
+
+  it('rejects invalid interval', async () => {
+    const paykit = createSubClient();
+    await expect(
+      paykit.subscriptions!.create({ customer: 'cus_xxx', amount: 999, currency: 'USD', interval: 'hourly' as any }),
+    ).rejects.toThrow(ValidationError);
+
+    try {
+      await paykit.subscriptions!.create({ customer: 'cus_xxx', amount: 999, currency: 'USD', interval: 'hourly' as any });
+    } catch (err) {
+      expect((err as ValidationError).field).toBe('interval');
+      expect((err as ValidationError).message).toContain('day, week, month, year');
+    }
+  });
+
+  it('rejects non-integer intervalCount', async () => {
+    const paykit = createSubClient();
+    await expect(
+      paykit.subscriptions!.create({ customer: 'cus_xxx', amount: 999, currency: 'USD', interval: 'month', intervalCount: 1.5 }),
+    ).rejects.toThrow(ValidationError);
+  });
+
+  it('rejects zero intervalCount', async () => {
+    const paykit = createSubClient();
+    await expect(
+      paykit.subscriptions!.create({ customer: 'cus_xxx', amount: 999, currency: 'USD', interval: 'month', intervalCount: 0 }),
+    ).rejects.toThrow(ValidationError);
+  });
+
+  it('accepts valid params', async () => {
+    const paykit = createSubClient();
+    await expect(
+      paykit.subscriptions!.create({ customer: 'cus_xxx', amount: 999, currency: 'USD', interval: 'month' }),
+    ).resolves.toBeDefined();
+  });
+
+  it('accepts valid params with intervalCount', async () => {
+    const paykit = createSubClient();
+    await expect(
+      paykit.subscriptions!.create({ customer: 'cus_xxx', amount: 999, currency: 'USD', interval: 'month', intervalCount: 3 }),
+    ).resolves.toBeDefined();
+  });
+
+  it('accepts all valid intervals', async () => {
+    const paykit = createSubClient();
+    for (const interval of ['day', 'week', 'month', 'year'] as const) {
+      await expect(
+        paykit.subscriptions!.create({ customer: 'cus_xxx', amount: 999, currency: 'USD', interval }),
+      ).resolves.toBeDefined();
+    }
+  });
+});

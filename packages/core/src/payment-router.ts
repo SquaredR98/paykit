@@ -14,15 +14,30 @@ export interface PaymentRoute {
 
 /**
  * Configuration for the PaymentRouter.
+ *
+ * @typeParam TProviders - Union of provider name strings, inferred from the adapters.
  */
-export interface PaymentRouterConfig {
+export interface PaymentRouterConfig<TProviders extends string = string> {
   routes: PaymentRoute[];
-  default: PaymentAdapter;
+  default: PaymentAdapter & { name: TProviders };
 }
+
+/**
+ * Helper type to extract provider names from a PaymentRouterConfig.
+ */
+export type InferProviders<T extends PaymentRouterConfig> =
+  | T['default']['name']
+  | T['routes'][number]['adapter']['name'];
 
 /**
  * PaymentRouter — route payments to different providers based on
  * currency, region, or explicit override.
+ *
+ * The `TProviders` type parameter is inferred from the adapters passed
+ * in the config, giving you type-safe provider name checks on
+ * `webhooksFor()` and `resolveAdapter()`.
+ *
+ * @typeParam TProviders - Union of provider name strings (inferred automatically).
  *
  * @example
  * const router = new PaymentRouter({
@@ -39,12 +54,12 @@ export interface PaymentRouterConfig {
  *   currency: 'INR',
  * });
  */
-export class PaymentRouter {
+export class PaymentRouter<TProviders extends string = string> {
   private routes: PaymentRoute[];
   private defaultAdapter: PaymentAdapter;
   private adapterMap = new Map<string, PaymentAdapter>();
 
-  constructor(config: PaymentRouterConfig) {
+  constructor(config: PaymentRouterConfig<TProviders>) {
     this.routes = config.routes;
     this.defaultAdapter = config.default;
 
@@ -66,8 +81,10 @@ export class PaymentRouter {
 
   /**
    * Get webhook operations for a specific provider.
+   *
+   * @param providerName - One of the provider names registered in this router.
    */
-  webhooksFor(providerName: string): ExtendedWebhookOperations {
+  webhooksFor(providerName: TProviders): ExtendedWebhookOperations {
     const adapter = this.adapterMap.get(providerName);
     if (!adapter) {
       throw new Error(
@@ -100,7 +117,7 @@ export class PaymentRouter {
    * const adapter = router.resolveAdapter({ currency: 'INR' });
    * console.log(adapter.name); // 'razorpay'
    */
-  resolveAdapter(options?: { provider?: string; currency?: string; region?: string }): PaymentAdapter {
+  resolveAdapter(options?: { provider?: TProviders | string; currency?: string; region?: string }): PaymentAdapter {
     const { provider: explicitProvider, currency, region } = options ?? {};
 
     // Explicit override

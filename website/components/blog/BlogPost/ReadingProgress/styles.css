@@ -1,0 +1,12 @@
+@reference "../../../../app/globals.css";
+
+.pk-progress {
+  @apply fixed left-0 right-0 z-30 h-[2px];
+  top: 60px;
+}
+
+.pk-progress__fill {
+  @apply h-[2px];
+  background: var(--accent-solid);
+  transition: width 100ms linear;
+}

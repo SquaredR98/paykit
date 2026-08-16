@@ -1,0 +1,20 @@
+@reference "../../../../app/globals.css";
+
+.pk-demo-header {
+  @apply py-(--space-12) px-(--space-10);
+}
+
+.pk-demo-header__eyebrow {
+  @apply text-pk-accent uppercase tracking-widest;
+  font: var(--type-label-sm);
+}
+
+.pk-demo-header__title {
+  @apply mt-(--space-3) tracking-(--tracking-tighter);
+  font: var(--type-display-2);
+}
+
+.pk-demo-header__desc {
+  @apply max-w-[58ch] mt-(--space-3) text-pk-muted;
+  font: var(--type-body-lg);
+}

@@ -1,0 +1,40 @@
+@reference "../../../../app/globals.css";
+
+.pk-feat {
+  @apply grid;
+  grid-template-columns: 1.15fr 1fr;
+  @apply max-lg:grid-cols-1;
+}
+
+.pk-feat__txt {
+  @apply flex flex-col items-start gap-(--space-4) p-(--space-10);
+  @apply border-r border-pk-grid;
+  @apply max-lg:p-(--space-6) max-lg:border-r-0 max-lg:border-b max-lg:border-pk-grid;
+}
+
+.pk-feat__txt h2 {
+  @apply m-0 tracking-(--tracking-tighter) text-pk-strong;
+  font: var(--type-display-1);
+}
+
+.pk-feat__txt h2 a {
+  @apply text-pk-strong no-underline;
+  transition: var(--transition-control);
+}
+
+.pk-feat__txt h2 a:hover {
+  @apply text-pk-accent-ink;
+}
+
+.pk-feat__txt > p {
+  @apply m-0 text-pk-muted max-w-[52ch];
+  font: var(--type-body-lg);
+}
+
+.pk-feat__art {
+  @apply flex items-center p-(--space-8);
+  @apply max-lg:p-(--space-6);
+}
+
+/* Terminal classes (.pk-term, .pk-term__bar, .pk-term__file, .pk-term__code)
+   are defined globally in globals.css — use those classes in the markup. */

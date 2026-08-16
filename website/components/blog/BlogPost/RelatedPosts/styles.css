@@ -1,0 +1,73 @@
+@reference "../../../../app/globals.css";
+
+.pk-related {
+  @apply border-t border-pk-grid;
+}
+
+/* 1f: subrow — sunken bar with "Keep reading" + "Back to blog" */
+.pk-subrow {
+  @apply flex items-center gap-(--space-4) bg-pk-sunken;
+  @apply border-b border-pk-grid;
+  @apply px-(--space-10) py-(--space-3);
+  @apply max-lg:px-(--space-6);
+}
+
+.pk-sp {
+  @apply flex-1;
+}
+
+.pk-subrow__link {
+  @apply text-pk-muted no-underline;
+  font: var(--type-code-sm);
+  transition: var(--transition-control);
+}
+
+.pk-subrow__link:hover {
+  @apply text-pk-strong;
+}
+
+.pk-g3 {
+  @apply grid gap-0 grid-cols-3;
+  @apply max-lg:grid-cols-1;
+}
+
+.pk-rel {
+  @apply flex flex-col items-start gap-(--space-3) p-(--space-6);
+  @apply border-r border-pk-grid;
+  @apply max-lg:border-r-0 max-lg:border-b max-lg:border-pk-grid;
+  transition: var(--transition-control);
+}
+
+.pk-rel:last-child {
+  @apply border-r-0;
+  @apply max-lg:border-b-0;
+}
+
+.pk-rel:hover {
+  @apply bg-pk-hover;
+}
+
+.pk-rel h3 {
+  @apply m-0 tracking-(--tracking-tight);
+  @apply font-display font-bold text-[length:var(--text-lg)] leading-(--leading-snug) text-pk-strong;
+}
+
+.pk-rel h3 a {
+  @apply text-inherit no-underline;
+}
+
+.pk-rel:hover h3 a {
+  @apply text-pk-accent-ink;
+}
+
+/* 1g: byline with date + reading time on related cards */
+.pk-rel .pk-byline {
+  @apply flex items-center gap-(--space-3);
+  @apply text-pk-subtle;
+  font: var(--type-code-sm);
+}
+
+.pk-rel .pk-byline em {
+  @apply not-italic;
+  @apply text-pk-border-strong;
+}

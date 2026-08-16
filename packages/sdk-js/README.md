@@ -1,12 +1,24 @@
-# @squaredr/paykit-js
+# @squaredr/paykit-sdk-js
 
-Vanilla JavaScript/TypeScript frontend SDK for `@squaredr/paykit`. Works in any framework or no framework at all.
+> Browser SDK for accepting payments with Stripe, Razorpay, and PayPal. Works with any framework or vanilla JavaScript.
 
-## Install
+[![npm version](https://img.shields.io/npm/v/@squaredr/paykit-sdk-js.svg)](https://www.npmjs.com/package/@squaredr/paykit-sdk-js)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+
+**Features:**
+- 🎯 **Framework-agnostic** — React, Vue, Svelte, Angular, or vanilla JS
+- 🔄 **Provider-agnostic** — One API for Stripe, Razorpay, PayPal
+- 🌳 **Tree-shakable** — Import only the providers you use
+- 🔒 **Type-safe** — Full TypeScript support
+- 📦 **Tiny** — ~5KB gzipped (core + one provider)
+
+## Installation
 
 ```bash
-npm install @squaredr/paykit-js
+npm install @squaredr/paykit-sdk-js
 ```
+
+**Note:** This is the browser SDK. For backend operations, use [@squaredr/paykit](../core/).
 
 ## Provider Usage
 
@@ -143,17 +155,49 @@ const result = await client.confirmPayment('order_xxxxxxxxxxxxx');
 
 ---
 
-## Provider Differences at a Glance
+### PayPal — Hosted Buttons
 
-| | Stripe | Razorpay |
-|---|--------|----------|
-| **Card Input** | Inline iframe (Stripe Elements) | Full-screen modal |
-| **mount()** | Renders a card input field | Renders a placeholder |
-| **confirmPayment()** | Submits inline card data | Opens Razorpay modal |
-| **tokenize()** | Returns `tok_...` with card details | Returns `pay_...` payment ID |
-| **3DS** | Redirect or inline popup | Handled inside modal |
-| **clientSecret param** | Stripe PaymentIntent secret (`pi_secret_...`) | Razorpay order ID (`order_...`) |
-| **UPI / Netbanking** | Not applicable | Supported inside modal |
+PayPal provides hosted button UI for payments:
+
+```ts
+import { PayKitClient } from '@squaredr/paykit-sdk-js';
+import '@squaredr/paykit-sdk-js/providers/paypal';
+
+const client = new PayKitClient({
+  provider: 'paypal',
+  publicKey: 'client-id-here', // PayPal client ID
+});
+
+// 1. Load PayPal SDK from CDN
+await client.loadProvider();
+
+// 2. Mount PayPal buttons into a DOM element
+await client.mountCardInput('#paypal-button-container');
+
+// 3. Confirm payment when user clicks the PayPal button
+// PayPal handles the entire flow internally
+const result = await client.confirmPayment('ORDER-ID-FROM-BACKEND');
+
+if (result.status === 'succeeded') {
+  console.log('Payment succeeded:', result.chargeId);
+}
+```
+
+**Note:** PayPal renders its own button UI. The SDK mounts the buttons and handles the payment flow automatically when the user clicks.
+
+---
+
+## Provider Comparison
+
+| Feature | Stripe | Razorpay | PayPal |
+|---------|--------|----------|--------|
+| **Card Input** | Inline iframe (Elements) | Full-screen modal | Hosted buttons |
+| **mount()** | Renders card input | Renders placeholder | Renders PayPal buttons |
+| **confirmPayment()** | Submits card data | Opens modal | Opens PayPal window |
+| **tokenize()** | `tok_...` + card details | `pay_...` payment ID | Setup token |
+| **3DS** | Redirect/popup | Inside modal | Handled by PayPal |
+| **clientSecret** | `pi_secret_...` | `order_...` | PayPal order ID |
+| **Local Methods** | Cards only | Cards, UPI, netbanking, wallets | PayPal balance, cards |
 
 ---
 
@@ -163,8 +207,8 @@ const result = await client.confirmPayment('order_xxxxxxxxxxxxx');
 
 | Option | Type | Description |
 |--------|------|-------------|
-| `provider` | `'stripe' \| 'razorpay'` | Payment provider |
-| `publicKey` | `string` | Provider publishable/public key |
+| `provider` | `'stripe' \| 'razorpay' \| 'paypal'` | Payment provider |
+| `publicKey` | `string` | Provider publishable/public key or client ID |
 | `locale?` | `string` | Locale code (e.g. `'en'`) |
 | `appearance?` | `AppearanceConfig` | Theme configuration |
 
@@ -269,24 +313,200 @@ Provider scripts are lazily loaded from CDN on first use:
 
 - **Stripe**: `https://js.stripe.com/v3/`
 - **Razorpay**: `https://checkout.razorpay.com/v1/checkout.js`
+- **PayPal**: `https://www.paypal.com/sdk/js` (with client ID)
 
 Low-level loader:
 
 ```ts
-import { loadScript } from '@squaredr/paykit-js';
+import { loadScript } from '@squaredr/paykit-sdk-js';
 await loadScript({ src: 'https://js.stripe.com/v3/', globalName: 'Stripe' });
 ```
 
 ## Tree-Shakable Imports
 
-Only import the provider you need:
+Only import the providers you need to keep your bundle size minimal:
 
 ```ts
-import '@squaredr/paykit-js/providers/stripe';
-// or
-import '@squaredr/paykit-js/providers/razorpay';
+// Import only Stripe
+import '@squaredr/paykit-sdk-js/providers/stripe';
+
+// Or only Razorpay
+import '@squaredr/paykit-sdk-js/providers/razorpay';
+
+// Or only PayPal
+import '@squaredr/paykit-sdk-js/providers/paypal';
+
+// Or multiple providers
+import '@squaredr/paykit-sdk-js/providers/stripe';
+import '@squaredr/paykit-sdk-js/providers/paypal';
 ```
+
+Each provider adds ~2-3KB to your bundle. The core SDK is ~3KB gzipped.
+
+## Framework Examples
+
+### React
+
+Use [@squaredr/paykit-react](../react/) for a better experience with pre-built components and hooks.
+
+### Vue 3
+
+```vue
+<template>
+  <div>
+    <div ref="cardElement"></div>
+    <button @click="handlePay" :disabled="!isReady">Pay</button>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref, onMounted } from 'vue';
+import { PayKitClient } from '@squaredr/paykit-sdk-js';
+import '@squaredr/paykit-sdk-js/providers/stripe';
+
+const cardElement = ref<HTMLElement | null>(null);
+const isReady = ref(false);
+
+let client: PayKitClient;
+
+onMounted(async () => {
+  client = new PayKitClient({
+    provider: 'stripe',
+    publicKey: 'pk_test_...',
+  });
+
+  await client.loadProvider();
+  await client.mountCardInput(cardElement.value!);
+  isReady.value = true;
+});
+
+const handlePay = async () => {
+  const result = await client.confirmPayment('pi_secret_xxx', {
+    returnUrl: window.location.origin + '/complete',
+  });
+
+  if (result.status === 'succeeded') {
+    console.log('Payment succeeded');
+  }
+};
+</script>
+```
+
+### Svelte
+
+```svelte
+<script lang="ts">
+  import { onMount } from 'svelte';
+  import { PayKitClient } from '@squaredr/paykit-sdk-js';
+  import '@squaredr/paykit-sdk-js/providers/stripe';
+
+  let cardElement: HTMLElement;
+  let isReady = false;
+  let client: PayKitClient;
+
+  onMount(async () => {
+    client = new PayKitClient({
+      provider: 'stripe',
+      publicKey: 'pk_test_...',
+    });
+
+    await client.loadProvider();
+    await client.mountCardInput(cardElement);
+    isReady = true;
+  });
+
+  async function handlePay() {
+    const result = await client.confirmPayment('pi_secret_xxx', {
+      returnUrl: window.location.origin + '/complete',
+    });
+
+    if (result.status === 'succeeded') {
+      console.log('Payment succeeded');
+    }
+  }
+</script>
+
+<div bind:this={cardElement}></div>
+<button on:click={handlePay} disabled={!isReady}>Pay</button>
+```
+
+### Angular
+
+```typescript
+import { Component, ElementRef, ViewChild, AfterViewInit } from '@angular/core';
+import { PayKitClient } from '@squaredr/paykit-sdk-js';
+import '@squaredr/paykit-sdk-js/providers/stripe';
+
+@Component({
+  selector: 'app-checkout',
+  template: `
+    <div #cardElement></div>
+    <button (click)="handlePay()" [disabled]="!isReady">Pay</button>
+  `,
+})
+export class CheckoutComponent implements AfterViewInit {
+  @ViewChild('cardElement') cardElement!: ElementRef;
+  isReady = false;
+  private client!: PayKitClient;
+
+  async ngAfterViewInit() {
+    this.client = new PayKitClient({
+      provider: 'stripe',
+      publicKey: 'pk_test_...',
+    });
+
+    await this.client.loadProvider();
+    await this.client.mountCardInput(this.cardElement.nativeElement);
+    this.isReady = true;
+  }
+
+  async handlePay() {
+    const result = await this.client.confirmPayment('pi_secret_xxx', {
+      returnUrl: window.location.origin + '/complete',
+    });
+
+    if (result.status === 'succeeded') {
+      console.log('Payment succeeded');
+    }
+  }
+}
+```
+
+## Development
+
+This package is part of the PayKit monorepo:
+
+```
+packages/sdk-js/
+├── src/
+│   ├── client/
+│   │   └── PayKitClient.ts      ← Main client class
+│   ├── providers/
+│   │   ├── stripe.ts            ← Stripe provider bridge
+│   │   ├── razorpay.ts          ← Razorpay provider bridge
+│   │   └── paypal.ts            ← PayPal provider bridge
+│   ├── utils/
+│   │   └── loadScript.ts        ← CDN script loader
+│   └── index.ts
+└── package.json
+```
+
+### Building
+
+```bash
+# From monorepo root
+pnpm install
+pnpm build
+
+# Just SDK-JS package
+pnpm --filter @squaredr/paykit-sdk-js build
+```
+
+## Related Packages
+
+- [@squaredr/paykit](../core/) — Backend SDK for Node.js
+- [@squaredr/paykit-react](../react/) — React components built on this SDK
 
 ## License
 
-MIT
+MIT — See [LICENSE](../../LICENSE) for details.

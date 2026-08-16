@@ -1,4 +1,5 @@
 import type { UnifiedRefund, RefundStatus } from '../../../types/refund.js';
+import { PaymentError } from '../../../errors.js';
 
 const REFUND_STATUS_MAP: Record<string, RefundStatus> = {
   pending: 'pending',
@@ -11,11 +12,20 @@ export function mapRefundStatus(status: string): RefundStatus {
 }
 
 export function mapRazorpayRefund(refund: any): UnifiedRefund {
+  if (!refund.payment_id) {
+    throw new PaymentError({
+      code: 'processing_error',
+      message: 'Refund missing payment_id',
+      provider: 'razorpay',
+      isRetryable: false,
+    });
+  }
+
   return {
     id: refund.id,
     providerId: refund.id,
     provider: 'razorpay',
-    chargeId: refund.payment_id ?? '',
+    chargeId: refund.payment_id,
     amount: Number(refund.amount),
     currency: String(refund.currency).toUpperCase(),
     status: mapRefundStatus(refund.status ?? 'pending'),

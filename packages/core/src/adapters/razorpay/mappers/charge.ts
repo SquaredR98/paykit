@@ -10,7 +10,7 @@ const PAYMENT_STATUS_MAP: Record<string, ChargeStatus> = {
   created: 'pending',
   authorized: 'requires_action',
   captured: 'succeeded',
-  refunded: 'succeeded',
+  refunded: 'refunded',
   failed: 'failed',
 };
 

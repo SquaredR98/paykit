@@ -6,14 +6,24 @@ export type {
 	PaginatedList,
 	ListParams,
 	RequestOptions,
+	ResponseMeta,
 } from './types/common.js';
 export type {
 	ProviderConfig,
 	ProviderCredentials,
+	StripeCredentials,
+	RazorpayCredentials,
+	PayPalCredentials,
 	SingleProviderConfig,
 	MultiProviderConfig,
 	RoutingConfig,
 	RoutingRule,
+	PayKitOptions,
+	Logger,
+	LogLevel,
+	RequestContext,
+	ResponseContext,
+	ErrorContext,
 } from './types/config.js';
 export type {
 	UnifiedCharge,
@@ -95,10 +105,12 @@ export {
 export { UnifiedPayments, UnifiedPayments as PayKit } from './client.js';
 export type {
 	AdapterConfig,
+	PayKitConfig,
 	ConstructWebhookParams,
 	ExtendedWebhookOperations,
 } from './client.js';
 export { PaymentRouter } from './payment-router.js';
+export type { PaymentRouterConfig, PaymentRoute, InferProviders } from './payment-router.js';
 
 // Debug & introspection
 export type { ProviderInfo } from './debug.js';
@@ -115,6 +127,12 @@ export {
 	getDecimalPlaces,
 	getProviderCurrencies,
 } from './currency.js';
+
+// Retry & logging
+export { withRetry, defaultShouldRetry } from './retry.js';
+export type { RetryOptions, RetryResult, RetryHook } from './retry.js';
+export { createDefaultLogger, createOperationLogger, redact } from './logger.js';
+export type { OperationLogger } from './logger.js';
 
 // Adapter registration
 export { registerAdapter, getAdapter } from './registry.js';

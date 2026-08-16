@@ -1,12 +1,24 @@
 # @squaredr/paykit-react
 
-React components and hooks for `@squaredr/paykit`. Unstyled, composable, and works with React 18+.
+> Production-ready React components for accepting payments with Stripe, Razorpay, and PayPal.
 
-## Install
+[![npm version](https://img.shields.io/npm/v/@squaredr/paykit-react.svg)](https://www.npmjs.com/package/@squaredr/paykit-react)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+
+**Features:**
+- 🎨 **Unstyled** — Full control over design with CSS/Tailwind
+- 🔄 **Provider-agnostic** — Switch between Stripe/Razorpay/PayPal without code changes
+- 🪝 **Headless hooks** — Build custom checkout flows with `usePayKit()`
+- 🔒 **Type-safe** — Full TypeScript support
+- ⚡ **React 18+** — Server Components compatible
+
+## Installation
 
 ```bash
 npm install @squaredr/paykit-react @squaredr/paykit-js
 ```
+
+**Note:** `@squaredr/paykit-js` provides the browser SDK that powers the React components.
 
 ## Provider Usage
 
@@ -200,16 +212,46 @@ function RazorpayPayButton({ orderId }: { orderId: string }) {
 
 ---
 
-## Provider Differences in React
+### PayPal — Checkout Buttons
 
-| | Stripe | Razorpay |
-|---|--------|----------|
-| **`<CheckoutForm>`** | Renders inline card input + submit button | Renders placeholder + submit button that opens modal |
-| **`<CardInput>`** | Secure iframe card field | Placeholder text |
-| **`confirmPayment()`** | Submits card data from inline input | Opens Razorpay checkout modal |
-| **`tokenize()`** | Returns card token with last4/brand | Returns payment ID |
-| **clientSecret** | PaymentIntent secret (`pi_secret_...`) | Order ID (`order_...`) |
-| **3DS** | May redirect or show popup | Handled inside modal |
+PayPal provides hosted button UI. Use the `<CheckoutForm>` with PayPal's client secret (order ID):
+
+```tsx
+import { PayKitProvider, CheckoutForm } from '@squaredr/paykit-react';
+import '@squaredr/paykit-js/providers/paypal';
+
+function PayPalCheckout({ orderId }: { orderId: string }) {
+  return (
+    <PayKitProvider config={{ provider: 'paypal', publicKey: 'client-id-here' }}>
+      <CheckoutForm
+        clientSecret={orderId}  // PayPal order ID
+        submitLabel="Pay with PayPal"
+        onSuccess={(result) => {
+          console.log('Payment succeeded:', result.chargeId);
+        }}
+        onError={(error) => {
+          console.error('Payment failed:', error.message);
+        }}
+      />
+    </PayKitProvider>
+  );
+}
+```
+
+**Note:** PayPal renders its own button UI. The `<CheckoutForm>` acts as a container that triggers the PayPal SDK when clicked.
+
+---
+
+## Provider Comparison
+
+| Feature | Stripe | Razorpay | PayPal |
+|---------|--------|----------|--------|
+| **`<CheckoutForm>`** | Inline card input + submit | Placeholder + modal trigger | PayPal button UI |
+| **`<CardInput>`** | Secure iframe | Placeholder | N/A (hosted) |
+| **`confirmPayment()`** | Submits card data | Opens modal | Opens PayPal window |
+| **`tokenize()`** | Card token | Payment ID | Setup token |
+| **clientSecret** | `pi_secret_...` | `order_...` | PayPal order ID |
+| **3DS** | Redirect/popup | Inside modal | Handled by PayPal |
 
 ---
 
@@ -396,9 +438,153 @@ These become `--paykit-color-primary`, `--paykit-color-background`, etc. on the 
 
 | Provider | Experience | Card Input | 3DS | Modal |
 |----------|-----------|-----------|-----|-------|
-| Stripe | Inline iframe (Elements) | Yes | Yes (redirect) | No |
-| Razorpay | Full-screen checkout modal | No (modal only) | Yes (internal) | Yes |
+| Stripe | Inline iframe (Elements) | ✅ | ✅ (redirect) | ❌ |
+| Razorpay | Full-screen checkout modal | ❌ (modal only) | ✅ (internal) | ✅ |
+| PayPal | Hosted button UI | ❌ (hosted) | ✅ (internal) | ✅ |
+
+## Backend Integration
+
+PayKit React components work with the backend SDK (`@squaredr/paykit`). Here's the full flow:
+
+### 1. Create Payment Intent (Backend)
+
+```ts
+// app/api/create-payment/route.ts
+import { PayKit } from '@squaredr/paykit';
+import { StripeAdapter } from '@squaredr/paykit/stripe';
+
+const paykit = new PayKit({
+  adapter: new StripeAdapter({ secretKey: process.env.STRIPE_SECRET_KEY! }),
+});
+
+export async function POST(req: Request) {
+  const { amount, currency } = await req.json();
+
+  const charge = await paykit.charges.create({
+    amount,
+    currency,
+    metadata: { orderId: 'order_123' },
+  });
+
+  return Response.json({ clientSecret: charge.clientSecret });
+}
+```
+
+### 2. Render Checkout Form (Frontend)
+
+```tsx
+'use client';
+
+import { PayKitProvider, CheckoutForm } from '@squaredr/paykit-react';
+import '@squaredr/paykit-js/providers/stripe';
+import { useState, useEffect } from 'react';
+
+export default function CheckoutPage() {
+  const [clientSecret, setClientSecret] = useState<string | null>(null);
+
+  useEffect(() => {
+    fetch('/api/create-payment', {
+      method: 'POST',
+      body: JSON.stringify({ amount: 5000, currency: 'usd' }),
+    })
+      .then((res) => res.json())
+      .then((data) => setClientSecret(data.clientSecret));
+  }, []);
+
+  if (!clientSecret) return <p>Loading...</p>;
+
+  return (
+    <PayKitProvider config={{ provider: 'stripe', publicKey: process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY! }}>
+      <CheckoutForm
+        clientSecret={clientSecret}
+        submitLabel="Pay $50.00"
+        returnUrl={`${window.location.origin}/payment-complete`}
+        onSuccess={(result) => {
+          console.log('Payment succeeded:', result.chargeId);
+          window.location.href = '/success';
+        }}
+        onError={(error) => {
+          console.error('Payment failed:', error.message);
+        }}
+      />
+    </PayKitProvider>
+  );
+}
+```
+
+### 3. Handle Webhooks (Backend)
+
+```ts
+// app/api/webhooks/route.ts
+import { PayKit } from '@squaredr/paykit';
+import { StripeAdapter } from '@squaredr/paykit/stripe';
+
+const paykit = new PayKit({
+  adapter: new StripeAdapter({ secretKey: process.env.STRIPE_SECRET_KEY! }),
+});
+
+export async function POST(req: Request) {
+  const body = await req.text();
+  const signature = req.headers.get('stripe-signature')!;
+
+  const event = paykit.webhooks.construct({
+    payload: body,
+    signature,
+    secret: process.env.STRIPE_WEBHOOK_SECRET!,
+  });
+
+  if (event.type === 'charge.succeeded') {
+    console.log('Charge succeeded:', event.data.id);
+    // Update your database, send confirmation email, etc.
+  }
+
+  return Response.json({ received: true });
+}
+```
+
+## Development
+
+This package is part of the PayKit monorepo:
+
+```
+packages/react/
+├── src/
+│   ├── components/
+│   │   ├── PayKitProvider.tsx   ← Context provider
+│   │   ├── CheckoutForm.tsx     ← Drop-in form
+│   │   └── CardInput.tsx        ← Card input wrapper
+│   ├── hooks/
+│   │   ├── usePayKit.ts         ← Main hook
+│   │   └── usePaymentStatus.ts  ← Polling hook
+│   └── index.ts
+└── package.json
+```
+
+### Building
+
+```bash
+# From monorepo root
+pnpm install
+pnpm build
+
+# Just React package
+pnpm --filter @squaredr/paykit-react build
+```
+
+## Examples
+
+Full example apps are available in the [website/app/examples](../../website/app/examples/) directory:
+
+- **Stripe Checkout** — [website/app/examples/stripe](../../website/app/examples/stripe/)
+- **Razorpay Checkout** — [website/app/examples/razorpay](../../website/app/examples/razorpay/)
+- **PayPal Checkout** — [website/app/examples/paypal](../../website/app/examples/paypal/)
+- **Multi-Provider Router** — [website/app/examples/router](../../website/app/examples/router/)
+
+## Related Packages
+
+- [@squaredr/paykit](../core/) — Backend SDK for Node.js
+- [@squaredr/paykit-sdk-js](../sdk-js/) — Browser SDK (used by React components)
 
 ## License
 
-MIT
+MIT — See [LICENSE](../../LICENSE) for details.

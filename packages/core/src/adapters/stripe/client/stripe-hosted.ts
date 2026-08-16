@@ -20,6 +20,24 @@ const STRIPE_SCRIPT_URL = 'https://js.stripe.com/v3/';
  * and `confirmCardPayment()` which didn't work because it never passed `clientSecret`
  * to `elements()`.
  */
+/**
+ * Billing details to supply when billing fields are hidden (minimal mode).
+ * Required when `minimal` is true — Stripe needs these at confirm time.
+ */
+export interface StripeBillingDetails {
+  name: string;
+  email: string;
+  phone?: string;
+  address?: {
+    line1: string;
+    line2?: string;
+    city: string;
+    state?: string;
+    postal_code: string;
+    country: string;
+  };
+}
+
 export interface StripeElementOptions {
   /** Disable Stripe Link integration and "Save my info" section. Default: false. */
   disableLink?: boolean;
@@ -30,8 +48,17 @@ export interface StripeElementOptions {
   /**
    * Minimal mode — card fields only, no billing details, no terms, no Link banner.
    * Useful for embedded demos or compact checkout UIs. Default: false.
+   *
+   * When enabled, you **must** also provide `billingDetails` so Stripe can
+   * associate billing information with the payment.
    */
   minimal?: boolean;
+  /**
+   * Default billing details to use when `minimal` is true (billing fields hidden).
+   * Required when `minimal` is enabled — Stripe requires billing details at confirm time
+   * and they won't be collected from the UI.
+   */
+  billingDetails?: StripeBillingDetails;
 }
 
 export class StripeClientAdapter implements ClientAdapter {
@@ -182,19 +209,19 @@ export class StripeClientAdapter implements ClientAdapter {
       // When billing details fields are hidden via minimal mode, Stripe
       // requires them to be supplied explicitly at confirm time.
       if (this.elementOptions.minimal) {
+        if (!this.elementOptions.billingDetails) {
+          throw new Error(
+            'Stripe minimal mode requires billingDetails. ' +
+            'Pass billingDetails in StripeElementOptions when using minimal: true.',
+          );
+        }
+        const bd = this.elementOptions.billingDetails;
         confirmParams.payment_method_data = {
           billing_details: {
-            name: 'John Doe',
-            email: 'john@example.com',
-            phone: '+10000000000',
-            address: {
-              line1: '123 Main St',
-              line2: '',
-              city: 'San Francisco',
-              state: 'CA',
-              postal_code: '94111',
-              country: 'US',
-            },
+            name: bd.name,
+            email: bd.email,
+            ...(bd.phone && { phone: bd.phone }),
+            ...(bd.address && { address: bd.address }),
           },
         };
       }

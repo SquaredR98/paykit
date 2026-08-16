@@ -1,0 +1,109 @@
+@reference "../../../app/globals.css";
+
+.pk-error-demo {
+  @apply px-(--space-10) pb-(--space-12);
+}
+
+/* ── Selectors ── */
+
+.pk-error-demo__controls {
+  @apply flex items-center gap-(--space-4) mb-(--space-6)
+         max-sm:flex-col max-sm:items-stretch;
+}
+
+.pk-error-demo__select {
+  @apply h-(--control-h-md) px-(--space-3) bg-pk-card border border-pk-border text-pk-body cursor-pointer;
+  font: var(--type-body);
+  min-width: 180px;
+}
+
+.pk-error-demo__select option {
+  background: var(--surface-primary);
+  color: var(--text-body);
+}
+
+/* ── Error result card ── */
+
+.pk-error-demo__result {
+  @apply border border-pk-border;
+}
+
+.pk-error-demo__result-header {
+  @apply flex items-center justify-between px-(--space-4) py-(--space-3) border-b border-pk-hairline;
+}
+
+.pk-error-demo__result-title {
+  @apply text-pk-strong;
+  font: var(--type-label);
+}
+
+.pk-error-demo__badge {
+  @apply px-[6px] py-px text-[11px] font-mono uppercase tracking-wide border;
+}
+
+.pk-error-demo__badge--retryable {
+  @apply text-pk-ok border-pk-ok;
+  background: color-mix(in oklch, var(--text-ok) 12%, transparent);
+}
+
+.pk-error-demo__badge--fatal {
+  @apply text-pk-bad border-pk-bad;
+  background: color-mix(in oklch, var(--text-bad) 12%, transparent);
+}
+
+.pk-error-demo__result-body {
+  @apply p-(--space-4) flex flex-col gap-(--space-3);
+}
+
+.pk-error-demo__field {
+  @apply flex flex-col gap-px;
+}
+
+.pk-error-demo__field-label {
+  @apply text-pk-subtle uppercase tracking-widest;
+  font: var(--type-label-sm);
+}
+
+.pk-error-demo__field-value {
+  @apply text-pk-body;
+  font: var(--type-body);
+}
+
+.pk-error-demo__field-value--code {
+  @apply font-mono text-pk-strong;
+}
+
+.pk-error-demo__suggestion {
+  @apply mt-(--space-1) p-(--space-3) border border-pk-grid bg-pk-sunken text-pk-muted;
+  font: var(--type-body-sm);
+}
+
+/* ── Error codes reference table ── */
+
+.pk-error-demo__table-wrap {
+  @apply mt-(--space-10);
+}
+
+.pk-error-demo__table-title {
+  @apply mb-(--space-4) text-pk-strong;
+  font: var(--type-heading);
+}
+
+.pk-error-demo__table {
+  @apply w-full border-collapse border border-pk-border;
+}
+
+.pk-error-demo__table th,
+.pk-error-demo__table td {
+  @apply text-left p-(--space-3) border-b border-pk-hairline;
+  font: var(--type-body-sm);
+}
+
+.pk-error-demo__table th {
+  @apply bg-pk-sunken text-pk-subtle uppercase tracking-widest border-b border-pk-border;
+  font: var(--type-label-sm);
+}
+
+.pk-error-demo__table td:first-child {
+  @apply font-mono text-pk-strong whitespace-nowrap;
+}

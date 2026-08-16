@@ -20,7 +20,7 @@ const INTERVAL_MAP: Record<string, BillingInterval> = {
 };
 
 export function mapStripeSubscription(sub: Stripe.Subscription): UnifiedSubscription {
-  const item = sub.items.data[0];
+  const item = sub.items?.data?.[0];
   const price = item?.price;
 
   return {

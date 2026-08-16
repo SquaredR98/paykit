@@ -402,7 +402,7 @@ describe('subscriptions', () => {
     });
     expect(mockRazorpay.subscriptions.create).toHaveBeenCalledWith({
       plan_id: 'plan_1',
-      total_count: 12,
+      total_count: 0,
       customer_notify: 1,
       notes: {},
     });
@@ -533,7 +533,7 @@ describe('webhooks', () => {
       });
       expect(() =>
         adapter.webhooks.parse('{}', { 'x-razorpay-signature': 'bad' }, 'secret'),
-      ).toThrow('Invalid signature');
+      ).toThrow('Invalid Razorpay webhook signature');
     });
   });
 });

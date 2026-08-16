@@ -1,0 +1,39 @@
+@reference "../../../app/globals.css";
+
+/* ── Docs Sidebar ── */
+
+.pk-docs__sidebar {
+  @apply sticky top-14 flex flex-col overflow-y-auto border-r border-pk-grid
+         gap-(--space-6) px-(--space-5) py-(--space-6)
+         max-md:hidden;
+  height: calc(100vh - 56px);
+}
+
+.pk-docs__navgrp h4 {
+  @apply uppercase text-pk-muted tracking-(--tracking-caps);
+  font: var(--type-eyebrow);
+}
+
+.pk-docs__navgrp ul {
+  @apply flex flex-col list-none p-0 mt-(--space-3) border-l border-pk-hairline;
+}
+
+.pk-docs__navgrp a {
+  @apply block no-underline text-pk-muted py-[5px] px-(--space-3);
+  font: var(--type-body-sm);
+  transition: var(--transition-control);
+}
+
+.pk-docs__navgrp a:hover {
+  @apply text-pk-strong bg-pk-hover;
+}
+
+.pk-docs__navgrp a[aria-current] {
+  @apply text-pk-accent-ink bg-pk-accent-soft font-medium;
+  box-shadow: var(--marker-accent);
+}
+
+.pk-docs__nav-badge {
+  @apply inline-flex uppercase ml-(--space-2) px-1 bg-pk-accent-soft text-pk-accent-ink text-[9px];
+  font: var(--type-code-sm);
+}

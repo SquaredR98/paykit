@@ -34,6 +34,11 @@ export function loadScript(options: ScriptLoadOptions): Promise<void> {
 
     script.onload = () => {
       clearTimeout(timer);
+      if (globalName && !(window as any)[globalName]) {
+        scriptCache.delete(src);
+        reject(new Error(`${globalName} script loaded but global not available`));
+        return;
+      }
       resolve();
     };
 

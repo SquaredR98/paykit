@@ -1,0 +1,186 @@
+---
+title: "Multi-Provider Payment Routing: When and How"
+description: Route payments to Stripe, Razorpay, or PayPal based on currency, region, or custom rules using PayKit's PaymentRouter.
+date: 2025-03-10
+tags: ['routing', 'architecture']
+---
+
+Most applications start with a single payment provider. Stripe for USD, or Razorpay for INR. But as you scale internationally, you'll likely need multiple providers — Razorpay for domestic Indian payments (lower fees, UPI support), Stripe for US/EU cards, maybe PayPal for regions where it's the dominant option.
+
+The challenge is wiring all of this up without your codebase turning into a maze of provider-specific branches. PayKit's `PaymentRouter` solves this.
+
+## When do you need multiple providers?
+
+There are four common reasons:
+
+- **Cost optimisation** — Local providers typically charge lower fees for domestic transactions. Razorpay charges 2% for Indian cards vs Stripe's 3.4% + conversion fees.
+- **Higher success rates** — UPI payments in India succeed more reliably through Razorpay. European bank transfers work better through local acquirers.
+- **Regulatory compliance** — Some countries require payment processing through local entities.
+- **Redundancy** — If Stripe has an outage, you can route to Razorpay (or vice versa) without any downtime.
+
+## How PaymentRouter works
+
+`PaymentRouter` evaluates a list of routing rules in order. The first rule that matches the charge's currency or region is used. If no rule matches, the default adapter handles it.
+
+```typescript title="src/lib/paykit.ts"
+import { PaymentRouter } from '@squaredr/paykit'
+import { StripeAdapter } from '@squaredr/paykit/stripe'
+import { RazorpayAdapter } from '@squaredr/paykit/razorpay'
+import { PayPalAdapter } from '@squaredr/paykit/paypal'
+
+const stripe = new StripeAdapter({
+  secretKey: process.env.STRIPE_SECRET_KEY!,
+})
+
+const razorpay = new RazorpayAdapter({
+  keyId: process.env.RAZORPAY_KEY_ID!,
+  keySecret: process.env.RAZORPAY_KEY_SECRET!,
+})
+
+const paypal = new PayPalAdapter({
+  clientId: process.env.PAYPAL_CLIENT_ID!,
+  clientSecret: process.env.PAYPAL_CLIENT_SECRET!,
+})
+
+export const router = new PaymentRouter({
+  routes: [
+    { currency: 'INR', adapter: razorpay },
+    { currency: 'EUR', adapter: paypal },
+    { currency: 'GBP', adapter: stripe },
+  ],
+  default: stripe, // USD and everything else
+})
+```
+
+## Creating charges with the router
+
+The router's API mirrors `PayKit` — you call `createCharge` and the router picks the right adapter automatically:
+
+```typescript title="src/app/api/checkout/route.ts"
+import { router } from '@/lib/paykit'
+
+export async function POST(request: Request) {
+  const { amount, currency, orderId } = await request.json()
+
+  const charge = await router.createCharge({
+    amount,
+    currency,
+    metadata: { orderId },
+  })
+
+  return Response.json({
+    clientSecret: charge.clientSecret,
+    provider: charge.provider, // "stripe", "razorpay", or "paypal"
+  })
+}
+```
+
+Your checkout endpoint doesn't need any provider-specific logic. The router resolves the adapter, creates the charge, and returns a unified `UnifiedCharge`.
+
+## Previewing routing decisions
+
+Use `resolveAdapter()` to check which adapter would handle a charge without actually creating one:
+
+```typescript
+router.resolveAdapter({ currency: 'INR' }).name  // 'razorpay'
+router.resolveAdapter({ currency: 'USD' }).name  // 'stripe' (default)
+router.resolveAdapter({ currency: 'EUR' }).name  // 'paypal'
+router.resolveAdapter({ currency: 'JPY' }).name  // 'stripe' (default)
+```
+
+This is useful for debugging, logging, and displaying the correct payment UI on the frontend.
+
+## Explicit provider override
+
+Sometimes you want to force a specific provider regardless of routing rules. Pass `_provider` in the charge params:
+
+```typescript
+const charge = await router.createCharge({
+  amount: 50000,
+  currency: 'INR',
+  _provider: 'stripe', // Force Stripe even though INR → razorpay
+})
+```
+
+This is useful for A/B testing providers, handling edge cases, or letting power users choose their preferred processor.
+
+## Region-based routing
+
+Routes can match on `region` as well as `currency`:
+
+```typescript
+const router = new PaymentRouter({
+  routes: [
+    { region: 'IN', adapter: razorpay },
+    { region: 'EU', adapter: paypal },
+    { currency: 'USD', adapter: stripe },
+  ],
+  default: stripe,
+})
+```
+
+Rules are evaluated in order — first match wins. You can combine currency and region rules freely.
+
+## Webhook routing
+
+Each provider sends webhooks with its own signature scheme, so you need separate endpoints. The router provides `webhooksFor()` to get the right webhook operations:
+
+```typescript title="src/app/api/webhooks/stripe/route.ts"
+import { router } from '@/lib/paykit'
+
+export async function POST(req: Request) {
+  const event = router.webhooksFor('stripe').construct({
+    payload: await req.text(),
+    signature: req.headers.get('stripe-signature')!,
+    secret: process.env.STRIPE_WEBHOOK_SECRET!,
+  })
+
+  await handleEvent(event)
+  return new Response('ok')
+}
+```
+
+The event handling function is provider-agnostic — `event.type` is always a unified name like `charge.succeeded`, regardless of which provider sent it.
+
+## Frontend: Dynamic provider selection
+
+When the router resolves a charge, include the provider name in the response so the frontend can load the correct client adapter:
+
+```tsx
+const adapters: Record<string, ClientAdapter> = {
+  stripe: new StripeClientAdapter(process.env.NEXT_PUBLIC_STRIPE_PK!),
+  razorpay: new RazorpayClientAdapter(process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID!),
+}
+
+function DynamicCheckout({ clientSecret, provider }: {
+  clientSecret: string
+  provider: string
+}) {
+  return (
+    <PayKitProvider clientAdapter={adapters[provider]} clientSecret={clientSecret}>
+      <CheckoutForm
+        onSuccess={(result) => console.log('Paid:', result.id)}
+        onError={(err) => console.error(err.message)}
+      />
+    </PayKitProvider>
+  )
+}
+```
+
+## Decision framework
+
+Not sure if you need multi-provider routing? Here's a simple framework:
+
+| If you... | Then... |
+|---|---|
+| Accept only one currency | Single adapter is fine |
+| Accept INR + USD | PaymentRouter with Razorpay for INR, Stripe for USD |
+| Need failover for reliability | PaymentRouter with try/catch to fall back |
+| A/B test provider performance | PaymentRouter + `_provider` override |
+| Operate in regulated markets | PaymentRouter with region-based rules |
+
+## Learn more
+
+- **[Multi-provider docs](/docs/guides/multi-provider)** — full API reference and configuration options
+- **[Routing playground](/demo/routing)** — build routing rules interactively and test currency resolution
+- **[Webhook handling guide](/docs/guides/webhooks)** — set up webhook endpoints for each provider

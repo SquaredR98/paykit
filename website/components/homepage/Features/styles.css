@@ -1,0 +1,56 @@
+@reference "../../../app/globals.css";
+
+.pk-features__grid {
+  @apply grid grid-cols-3 max-lg:grid-cols-2 max-sm:grid-cols-1;
+}
+
+/* ── Shared cell + feature cell ── */
+
+.pk-cell {
+  @apply p-(--space-6) border-r border-b border-pk-grid;
+  @apply max-sm:border-r-0;
+}
+
+.pk-cell:nth-child(3n) {
+  @apply border-r-0;
+  @apply max-lg:border-r max-lg:border-pk-grid;
+}
+
+.pk-cell:nth-child(2n) {
+  @apply max-lg:border-r-0;
+}
+
+.pk-cell:nth-last-child(-n+3) {
+  @apply border-b-0;
+  @apply max-lg:border-b max-lg:border-pk-grid;
+}
+
+.pk-cell:nth-last-child(-n+2) {
+  @apply max-lg:border-b-0;
+}
+
+.pk-cell:last-child {
+  @apply max-sm:border-b-0;
+}
+
+.pk-fcell {
+  @apply flex flex-col gap-3;
+  transition: background var(--dur-fast) var(--ease-standard);
+}
+
+.pk-fcell:hover {
+  @apply bg-pk-hover;
+}
+
+.pk-fcell__icon {
+  @apply flex text-pk-accent-ink;
+}
+
+.pk-fcell h3 {
+  font: var(--type-heading);
+}
+
+.pk-fcell p {
+  @apply text-pk-muted;
+  font: var(--type-body-sm);
+}

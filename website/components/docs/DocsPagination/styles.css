@@ -1,0 +1,35 @@
+@reference "../../../app/globals.css";
+
+/* ── Prev / Next Pager ── */
+
+.pk-docs__pager {
+  @apply grid grid-cols-2 mt-(--space-16) border border-pk-border max-w-(--container-docs)
+         max-md:grid-cols-1;
+}
+
+.pk-docs__pager a {
+  @apply flex flex-col no-underline gap-1 px-(--space-5) py-(--space-4);
+  transition: var(--transition-control);
+}
+
+.pk-docs__pager a + a {
+  @apply border-l border-pk-grid max-md:border-l-0 max-md:border-t max-md:border-pk-grid;
+}
+
+.pk-docs__pager a:hover {
+  @apply bg-pk-hover;
+}
+
+.pk-docs__pager-dir {
+  @apply text-pk-subtle;
+  font: var(--type-code-sm);
+}
+
+.pk-docs__pager-title {
+  @apply text-pk-strong;
+  font: var(--type-label);
+}
+
+.pk-docs__pager-next {
+  @apply text-right max-md:text-left;
+}

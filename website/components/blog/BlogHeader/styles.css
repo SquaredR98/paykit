@@ -1,0 +1,39 @@
+@reference "../../../app/globals.css";
+
+.pk-arthead {
+  @apply flex flex-col items-start gap-(--space-5) px-(--space-10) py-(--space-12);
+  @apply max-lg:px-(--space-6) max-lg:py-(--space-6);
+}
+
+.pk-art-badges {
+  @apply flex items-center gap-(--space-2);
+}
+
+.pk-art-title {
+  @apply m-0 text-pk-strong tracking-(--tracking-tighter) max-w-[20ch];
+  @apply font-display font-bold text-[length:var(--text-5xl)] leading-(--leading-tight);
+  @apply max-lg:text-[length:var(--text-4xl)];
+  @apply max-md:text-[length:var(--text-3xl)] max-md:max-w-full;
+}
+
+.pk-standfirst {
+  @apply m-0 text-pk-muted max-w-[62ch];
+  font: var(--type-body-lg);
+}
+
+/* byline + avatar — shared with BlogCard but needed here independently */
+.pk-arthead .pk-byline {
+  @apply flex items-center gap-(--space-3);
+  @apply text-pk-subtle;
+  font: var(--type-code-sm);
+}
+
+.pk-arthead .pk-byline em {
+  @apply not-italic;
+  @apply text-pk-border-strong;
+}
+
+.pk-arthead .pk-av {
+  @apply grid place-items-center shrink-0 w-[22px] h-[22px] text-[9px];
+  @apply font-mono bg-pk-accent-soft border border-pk-hairline text-pk-accent-ink;
+}

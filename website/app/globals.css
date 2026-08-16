@@ -1,0 +1,758 @@
+@import "tailwindcss";
+@import "fumadocs-ui/css/neutral.css";
+@import "fumadocs-ui/css/preset.css";
+
+/* Scan sources */
+@source "../**/*.tsx";
+@source "../**/*.ts";
+@source "../**/*.css";
+
+/* =====================================================
+   Blueprint — Tailwind theme extension
+   Maps Blueprint CSS custom properties into Tailwind utilities
+   so we can write @apply bg-pk-page text-pk-body etc.
+   ===================================================== */
+
+@theme inline {
+  /* Surface colors */
+  --color-pk-page: var(--surface-page);
+  --color-pk-card: var(--surface-card);
+  --color-pk-sunken: var(--surface-sunken);
+  --color-pk-raised: var(--surface-raised);
+  --color-pk-inverse: var(--surface-inverse);
+  --color-pk-hover: var(--surface-hover);
+  --color-pk-active: var(--surface-active);
+  --color-pk-accent-soft: var(--surface-accent-soft);
+
+  /* Text colors */
+  --color-pk-strong: var(--text-strong);
+  --color-pk-body: var(--text-body);
+  --color-pk-muted: var(--text-muted);
+  --color-pk-subtle: var(--text-subtle);
+  --color-pk-inverse-text: var(--text-inverse);
+  --color-pk-on-accent: var(--text-on-accent);
+  --color-pk-link: var(--text-link);
+  --color-pk-link-hover: var(--text-link-hover);
+  --color-pk-ok: var(--text-ok);
+  --color-pk-warn: var(--text-warn);
+  --color-pk-bad: var(--text-bad);
+
+  /* Border colors */
+  --color-pk-hairline: var(--border-hairline);
+  --color-pk-border: var(--border-default);
+  --color-pk-border-strong: var(--border-strong);
+  --color-pk-grid: var(--border-grid);
+  --color-pk-border-accent: var(--border-accent);
+  --color-pk-border-focus: var(--border-focus);
+
+  /* Accent solid fills */
+  --color-pk-accent: var(--accent-solid);
+  --color-pk-accent-hover: var(--accent-solid-hover);
+  --color-pk-accent-press: var(--accent-solid-press);
+  --color-pk-accent-ink: var(--accent-ink);
+
+  /* Code surface */
+  --color-pk-code: var(--surface-code);
+
+  /* Fonts — mapped through next/font CSS variables */
+  --font-display: var(--font-space-grotesk), 'Helvetica Neue', Helvetica, sans-serif;
+  --font-body: var(--font-instrument-sans), 'Helvetica Neue', Helvetica, sans-serif;
+  --font-mono: var(--font-jetbrains-mono), ui-monospace, 'SF Mono', Menlo, monospace;
+
+  /* Blueprint typography scale */
+  --text-pk-2xs: 11px;
+  --text-pk-xs: 12px;
+  --text-pk-sm: 13px;
+  --text-pk-md: 15px;
+  --text-pk-lg: 17px;
+  --text-pk-xl: 20px;
+  --text-pk-2xl: 25px;
+  --text-pk-3xl: 32px;
+  --text-pk-4xl: 40px;
+  --text-pk-5xl: 52px;
+  --text-pk-6xl: 66px;
+  --text-pk-7xl: 84px;
+
+  /* Tracking scale */
+  --tracking-pk-tighter: -0.03em;
+  --tracking-pk-tight: -0.018em;
+  --tracking-pk-wide: 0.02em;
+  --tracking-pk-caps: 0.09em;
+}
+
+/* =====================================================
+   Blueprint — Color system (OKLCH)
+   Dark is the default. PayKit is a dark product.
+   ===================================================== */
+
+:root {
+  /* Slate — cool neutral, hue 255 */
+  --slate-0:   oklch(0.995 0.002 255);
+  --slate-50:  oklch(0.975 0.004 255);
+  --slate-100: oklch(0.945 0.005 255);
+  --slate-200: oklch(0.890 0.006 255);
+  --slate-300: oklch(0.800 0.008 255);
+  --slate-400: oklch(0.630 0.010 255);
+  --slate-500: oklch(0.500 0.012 255);
+  --slate-600: oklch(0.340 0.012 255);
+  --slate-700: oklch(0.245 0.012 255);
+  --slate-800: oklch(0.185 0.012 255);
+  --slate-850: oklch(0.165 0.012 255);
+  --slate-900: oklch(0.145 0.012 255);
+  --slate-950: oklch(0.115 0.012 255);
+
+  /* Blue — the only accent, hue 258 */
+  --blue-100: oklch(0.955 0.030 258);
+  --blue-200: oklch(0.890 0.070 258);
+  --blue-300: oklch(0.800 0.120 258);
+  --blue-400: oklch(0.720 0.160 258);
+  --blue-500: oklch(0.640 0.185 258);
+  --blue-600: oklch(0.540 0.190 258);
+  --blue-700: oklch(0.440 0.170 258);
+
+  /* Status */
+  --ok-500:   oklch(0.720 0.150 155);
+  --warn-500: oklch(0.800 0.140 82);
+  --bad-400:  oklch(0.700 0.180 22);
+  --bad-500:  oklch(0.620 0.195 22);
+
+  /* Semantic aliases: dark (default) */
+  --surface-page:    var(--slate-900);
+  --surface-card:    var(--slate-800);
+  --surface-sunken:  var(--slate-950);
+  --surface-raised:  var(--slate-850);
+  --surface-inverse: var(--slate-50);
+  --surface-hover:   var(--slate-850);
+  --surface-active:  var(--slate-700);
+  --surface-accent-soft: oklch(0.640 0.185 258 / 0.16);
+
+  --text-strong:   oklch(0.970 0.005 255);
+  --text-body:     var(--slate-300);
+  --text-muted:    var(--slate-400);
+  --text-subtle:   var(--slate-500);
+  --text-inverse:  var(--slate-900);
+  --text-on-accent: var(--slate-0);
+  --text-link:      var(--blue-300);
+  --text-link-hover: var(--blue-200);
+  --text-ok:   var(--ok-500);
+  --text-warn: var(--warn-500);
+  --text-bad:  var(--bad-400);
+
+  /* Borders — all structure, no shadows */
+  --border-hairline: oklch(0.980 0.005 255 / 0.13);
+  --border-default:  oklch(0.980 0.005 255 / 0.18);
+  --border-strong:   oklch(0.980 0.005 255 / 0.28);
+  --border-grid:     oklch(0.980 0.005 255 / 0.13);
+  --border-accent:   var(--blue-500);
+  --border-focus:    var(--blue-400);
+
+  --accent-solid:       var(--blue-600);
+  --accent-solid-hover: var(--blue-500);
+  --accent-solid-press: var(--blue-700);
+  --accent-ink:         var(--blue-300);
+  --focus-ring:         oklch(0.720 0.160 258 / 0.45);
+
+  /* Elevation */
+  --shadow-none: none;
+  --shadow-overlay: 0 0 0 1px var(--border-strong), 0 24px 48px oklch(0.115 0.012 255 / 0.55);
+  --ring-1: 0 0 0 1px var(--border-default);
+  --ring-focus: 0 0 0 2px var(--focus-ring);
+  --marker-accent: inset 2px 0 0 var(--border-accent);
+  --scrim: oklch(0.115 0.012 255 / 0.72);
+
+  /* Spacing */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --space-20: 80px;
+  --space-24: 96px;
+  --space-32: 128px;
+
+  /* Radii — all zero. Structure from hairlines, not corners. */
+  --radius-none: 0px;
+  --radius-sm: 0px;
+  --radius-md: 0px;
+  --radius-lg: 0px;
+  --radius-full: 0px;
+
+  --border-width: 1px;
+  --marker-width: 2px;
+
+  /* Container widths */
+  --container-prose: 68ch;
+  --container-docs: 760px;
+  --container-page: 1200px;
+  --container-wide: 1440px;
+
+  /* Control heights */
+  --control-h-sm: 28px;
+  --control-h-md: 36px;
+  --control-h-lg: 44px;
+  --control-h-xl: 52px;
+
+  /* Section spacing */
+  --section-y: 96px;
+  --section-y-tight: 64px;
+
+  /* Layout */
+  --sidebar-w: 264px;
+  --onpage-w: 220px;
+
+  /* Motion */
+  --dur-instant: 90ms;
+  --dur-fast: 140ms;
+  --dur-base: 200ms;
+  --dur-slow: 320ms;
+  --dur-slower: 520ms;
+  --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-snap: cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-control: background-color var(--dur-fast) var(--ease-standard),
+                        border-color var(--dur-fast) var(--ease-standard),
+                        color var(--dur-fast) var(--ease-standard);
+
+  /* Typography — composed roles */
+  --weight-regular: 400;
+  --weight-medium:  500;
+  --weight-semibold: 600;
+  --weight-bold:    700;
+
+  --leading-flat:  1;
+  --leading-tight: 1.12;
+  --leading-snug:  1.3;
+  --leading-body:  1.55;
+  --leading-loose: 1.7;
+
+  --type-display-hero: var(--weight-bold) var(--text-6xl)/var(--leading-tight) var(--font-display);
+  --type-display-1:    var(--weight-bold) var(--text-4xl)/var(--leading-tight) var(--font-display);
+  --type-display-2:    var(--weight-semibold) var(--text-3xl)/var(--leading-tight) var(--font-display);
+  --type-heading:      var(--weight-semibold) var(--text-xl)/var(--leading-snug) var(--font-display);
+  --type-subheading:   var(--weight-semibold) var(--text-lg)/var(--leading-snug) var(--font-text);
+  --type-body-lg:      var(--weight-regular) var(--text-lg)/var(--leading-body) var(--font-text);
+  --type-body:         var(--weight-regular) var(--text-md)/var(--leading-body) var(--font-text);
+  --type-body-sm:      var(--weight-regular) var(--text-sm)/var(--leading-body) var(--font-text);
+  --type-label:        var(--weight-medium) var(--text-sm)/var(--leading-snug) var(--font-text);
+  --type-eyebrow:      var(--weight-semibold) var(--text-2xs)/var(--leading-snug) var(--font-mono);
+  --type-code:         var(--weight-regular) var(--text-sm)/var(--leading-loose) var(--font-mono);
+  --type-code-sm:      var(--weight-regular) var(--text-xs)/var(--leading-loose) var(--font-mono);
+  --type-amount:       var(--weight-medium) var(--text-md)/var(--leading-snug) var(--font-mono);
+
+  /* Font-size raw aliases (used by composed roles via --font-*) */
+  --text-2xs: 11px;
+  --text-xs:  12px;
+  --text-sm:  13px;
+  --text-md:  15px;
+  --text-lg:  17px;
+  --text-xl:  20px;
+  --text-2xl: 25px;
+  --text-3xl: 32px;
+  --text-4xl: 40px;
+  --text-5xl: 52px;
+  --text-6xl: 66px;
+  --text-7xl: 84px;
+
+  --font-text: var(--font-instrument-sans), 'Helvetica Neue', Helvetica, sans-serif;
+
+  /* Status surfaces */
+  --surface-ok-soft:   oklch(0.720 0.150 155 / 0.13);
+  --surface-warn-soft: oklch(0.800 0.140 82 / 0.13);
+
+  /* Code presentation tokens */
+  --surface-code:        var(--slate-950);
+  --code-chrome:         oklch(0.115 0.012 255);
+  --code-chrome-border:  oklch(0.980 0.005 255 / 0.10);
+
+  --code-plain:    var(--slate-300);
+  --code-keyword:  oklch(0.800 0.120 258);
+  --code-string:   oklch(0.800 0.130 155);
+  --code-number:   oklch(0.820 0.110 82);
+  --code-fn:       oklch(0.840 0.100 200);
+  --code-type:     oklch(0.860 0.075 300);
+  --code-prop:     var(--slate-200);
+  --code-tag:      oklch(0.800 0.130 258);
+  --code-comment:  var(--slate-400);
+  --code-punct:    var(--slate-400);
+
+  --code-gutter:        var(--slate-600);
+  --code-gutter-active: var(--slate-300);
+  --code-highlight-bg:  oklch(0.640 0.185 258 / 0.14);
+  --code-highlight-bar: var(--blue-500);
+  --code-added-bg:      oklch(0.720 0.150 155 / 0.13);
+  --code-added-bar:     var(--ok-500);
+  --code-removed-bg:    oklch(0.620 0.195 22 / 0.13);
+  --code-removed-bar:   var(--bad-500);
+  --code-caret:         var(--blue-400);
+  --code-selection:     oklch(0.640 0.185 258 / 0.30);
+
+  --code-size:      13px;
+  --code-size-sm:   12px;
+  --code-leading:   1.75;
+  --code-pad-y:     16px;
+  --code-pad-x:     18px;
+}
+
+[data-theme="light"] {
+  --surface-page:    var(--slate-50);
+  --surface-card:    var(--slate-0);
+  --surface-sunken:  var(--slate-100);
+  --surface-raised:  var(--slate-0);
+  --surface-inverse: var(--slate-900);
+  --surface-hover:   var(--slate-100);
+  --surface-active:  var(--slate-200);
+  --surface-accent-soft: oklch(0.640 0.185 258 / 0.09);
+  --surface-ok-soft:     oklch(0.720 0.150 155 / 0.12);
+  --surface-warn-soft:   oklch(0.800 0.140 82 / 0.16);
+  --surface-bad-soft:    oklch(0.620 0.195 22 / 0.09);
+
+  --text-strong:   var(--slate-900);
+  --text-body:     var(--slate-700);
+  --text-muted:    var(--slate-500);
+  --text-subtle:   var(--slate-400);
+  --text-inverse:  var(--slate-50);
+  --text-on-accent: var(--slate-0);
+  --text-link:      var(--blue-700);
+  --text-link-hover: var(--blue-600);
+  --text-ok:   oklch(0.560 0.135 155);
+  --text-warn: oklch(0.620 0.130 72);
+  --text-bad:  oklch(0.520 0.180 22);
+
+  --border-hairline: oklch(0.145 0.012 255 / 0.14);
+  --border-default:  oklch(0.145 0.012 255 / 0.18);
+  --border-strong:   oklch(0.145 0.012 255 / 0.32);
+  --border-grid:     oklch(0.145 0.012 255 / 0.14);
+  --border-accent:   var(--blue-600);
+  --border-focus:    var(--blue-600);
+
+  --accent-solid:       var(--blue-600);
+  --accent-solid-hover: var(--blue-500);
+  --accent-solid-press: var(--blue-700);
+  --accent-ink:         var(--blue-700);
+  --focus-ring:         oklch(0.540 0.190 258 / 0.35);
+
+  --shadow-overlay: 0 0 0 1px var(--border-strong), 0 24px 48px oklch(0.145 0.012 255 / 0.14);
+  --scrim: oklch(0.145 0.012 255 / 0.55);
+
+  /* Code surfaces — inverted for light mode */
+  --surface-code:        var(--slate-50);
+  --code-chrome:         var(--slate-100);
+  --code-chrome-border:  oklch(0.145 0.012 255 / 0.10);
+
+  /* Syntax highlighting — darker values for light backgrounds */
+  --code-plain:    var(--slate-700);
+  --code-keyword:  oklch(0.440 0.170 258);
+  --code-string:   oklch(0.440 0.130 155);
+  --code-number:   oklch(0.500 0.130 82);
+  --code-fn:       oklch(0.440 0.100 200);
+  --code-type:     oklch(0.500 0.100 300);
+  --code-prop:     var(--slate-800);
+  --code-tag:      oklch(0.440 0.170 258);
+  --code-comment:  var(--slate-400);
+  --code-punct:    var(--slate-500);
+
+  --code-gutter:        var(--slate-400);
+  --code-gutter-active: var(--slate-700);
+  --code-highlight-bg:  oklch(0.640 0.185 258 / 0.10);
+  --code-highlight-bar: var(--blue-600);
+  --code-added-bg:      oklch(0.720 0.150 155 / 0.12);
+  --code-added-bar:     oklch(0.560 0.135 155);
+  --code-removed-bg:    oklch(0.620 0.195 22 / 0.10);
+  --code-removed-bar:   oklch(0.520 0.180 22);
+  --code-caret:         var(--blue-600);
+  --code-selection:     oklch(0.640 0.185 258 / 0.20);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --dur-instant: 1ms;
+    --dur-fast: 1ms;
+    --dur-base: 1ms;
+    --dur-slow: 1ms;
+    --dur-slower: 1ms;
+  }
+}
+
+/* Blueprint keyframes */
+@keyframes pk-fade-up {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes pk-fade-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes pk-spin { to { transform: rotate(360deg); } }
+@keyframes pk-caret { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }
+
+/* ── Base reset ── */
+
+html, body {
+  @apply m-0 bg-pk-page text-pk-body antialiased;
+}
+
+body {
+  @apply font-body text-[15px] leading-[1.55];
+}
+
+:where(a) {
+  @apply text-pk-link no-underline;
+}
+
+:where(a):hover {
+  @apply text-pk-link-hover;
+}
+
+::selection {
+  @apply bg-pk-accent text-pk-on-accent;
+}
+
+/* ── Scrollbar ── */
+
+html {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-default) transparent;
+}
+
+*, *::before, *::after {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-default) transparent;
+}
+
+/* ── Focus ── */
+
+:where(input, select, textarea, button):focus-visible {
+  @apply outline-none;
+  box-shadow: var(--ring-focus);
+}
+
+/* ── Utility classes ── */
+
+.pk-eyebrow {
+  @apply font-mono text-[11px] tracking-[0.09em] uppercase text-pk-muted;
+}
+
+.pk-container {
+  @apply mx-auto px-10 max-w-(--container-page) max-lg:px-6 max-sm:px-5;
+}
+
+.pk-section {
+  @apply py-(--section-y) border-b border-pk-hairline;
+}
+
+/* ── Frame — the 1240px bordered spine ── */
+
+.pk-frame {
+  @apply max-w-[1240px] mx-auto border-x border-pk-grid;
+}
+
+.pk-blk {
+  @apply border-b border-pk-grid;
+}
+
+/* ── Section heads ── */
+
+.pk-sechead {
+  @apply border-b border-pk-grid p-(--space-10);
+}
+
+.pk-sechead--center {
+  @apply text-center;
+}
+
+.pk-sechead--center .pk-lede {
+  @apply mx-auto;
+}
+
+.pk-sec-title {
+  @apply mt-(--space-4) tracking-(--tracking-tighter);
+  font: var(--type-display-1);
+}
+
+.pk-lede {
+  @apply max-w-[58ch] mt-(--space-4) text-pk-muted;
+  font: var(--type-body-lg);
+}
+
+/* ── Buttons ── */
+
+.pk-btn {
+  @apply inline-flex items-center justify-center gap-(--space-2) h-(--control-h-md)
+         px-(--space-4) border border-transparent no-underline cursor-pointer whitespace-nowrap;
+  font: var(--type-label);
+  transition: var(--transition-control);
+}
+
+.pk-btn:active {
+  @apply translate-y-px;
+}
+
+.pk-btn--primary {
+  @apply bg-pk-accent text-pk-on-accent;
+}
+
+.pk-btn--primary:hover {
+  @apply bg-pk-accent-hover text-pk-on-accent;
+}
+
+.pk-btn--primary:active {
+  background: var(--accent-solid-press);
+}
+
+.pk-btn--secondary {
+  @apply bg-transparent text-pk-strong border-pk-border;
+}
+
+.pk-btn--secondary:hover {
+  @apply bg-pk-hover text-pk-strong;
+}
+
+.pk-btn--lg {
+  @apply h-(--control-h-lg) px-(--space-5);
+}
+
+.pk-btn--xl {
+  @apply h-(--control-h-xl) px-(--space-6) font-medium;
+  font: var(--type-body-lg);
+}
+
+.pk-btn--sm {
+  @apply h-(--control-h-sm) px-(--space-3);
+  font: var(--type-body-sm);
+}
+
+/* ── Terminal / code frame ── */
+
+.pk-term {
+  @apply bg-pk-code border border-pk-border;
+
+  /* shiki css-variables theme → PayKit design tokens */
+  --pk-code-foreground: var(--code-plain);
+  --pk-code-background: transparent;
+  --pk-code-token-keyword: var(--code-keyword);
+  --pk-code-token-string: var(--code-string);
+  --pk-code-token-string-expression: var(--code-string);
+  --pk-code-token-function: var(--code-fn);
+  --pk-code-token-constant: var(--code-number);
+  --pk-code-token-parameter: var(--code-prop);
+  --pk-code-token-comment: var(--code-comment);
+  --pk-code-token-punctuation: var(--code-punct);
+  --pk-code-token-link: var(--code-fn);
+}
+
+.pk-term__bar {
+  @apply flex items-stretch justify-between h-[34px] pr-(--space-2);
+  border-bottom: 1px solid var(--code-chrome-border);
+}
+
+.pk-term__file {
+  @apply flex items-center px-(--space-4) text-pk-muted;
+  font: var(--type-code-sm);
+}
+
+.pk-term__meta {
+  @apply flex items-center gap-(--space-3) pr-(--space-2);
+}
+
+.pk-term__note {
+  @apply text-pk-subtle;
+  font: var(--type-code-sm);
+}
+
+.pk-term__code,
+.pk-term pre.shiki {
+  @apply m-0 overflow-x-auto font-mono px-(--code-pad-x) py-(--code-pad-y)
+         text-[length:var(--code-size)] leading-(--code-leading);
+  color: var(--code-plain);
+  font-variant-ligatures: none;
+  background: transparent !important;
+}
+
+.pk-term pre.shiki code {
+  @apply block p-0 border-0 bg-transparent;
+}
+
+/* Copy button used inside .pk-term chrome */
+.pk-copy {
+  @apply inline-flex items-center gap-(--space-2) text-pk-subtle cursor-pointer;
+  @apply bg-transparent border-0;
+  height: 24px;
+  padding: 0 var(--space-2);
+  font: var(--type-code-sm);
+  transition: var(--transition-control);
+}
+
+.pk-copy:hover {
+  @apply text-pk-body;
+}
+
+.pk-caret {
+  color: var(--code-caret);
+  animation: pk-caret 1s step-end infinite;
+}
+
+/* ── Badge ── */
+
+.pk-bdg {
+  @apply inline-flex items-center gap-(--space-2) py-0.5 px-(--space-2);
+  font: var(--type-code-sm);
+}
+
+.pk-bdg::before {
+  @apply shrink-0 w-1 h-1 bg-current;
+  content: '';
+}
+
+.pk-bdg--accent {
+  @apply bg-pk-accent-soft text-pk-accent-ink;
+}
+
+.pk-bdg--neutral {
+  @apply bg-pk-sunken text-pk-muted;
+}
+
+.pk-bdg--ok {
+  background: var(--surface-ok-soft);
+  color: var(--text-ok);
+}
+
+.pk-bdg--plain::before {
+  @apply hidden;
+}
+
+/* ── Tag ── */
+
+.pk-tag {
+  @apply inline-flex py-0.5 px-(--space-2) border border-pk-hairline text-pk-muted;
+  font: var(--type-code-sm);
+}
+
+/* ── Note ── */
+
+.pk-note {
+  @apply text-pk-subtle;
+  font: var(--type-code-sm);
+}
+
+/* Hairline grid: 1px gap trick */
+.pk-hairline-grid {
+  @apply grid gap-px bg-pk-hairline border border-pk-hairline;
+}
+
+.pk-hairline-grid > * {
+  @apply bg-pk-page;
+}
+
+/* ── Prose (Blog & Content) ── */
+
+.pk-prose h1 {
+  @apply mt-(--space-4) tracking-(--tracking-tighter) text-pk-strong;
+  font: var(--type-display-1);
+}
+
+.pk-prose h2 {
+  @apply mt-(--space-12) pt-(--space-5) border-t border-pk-grid text-pk-strong;
+  font: var(--type-display-2);
+}
+
+.pk-prose h3 {
+  @apply font-display font-semibold mt-(--space-8) text-pk-strong text-[length:var(--text-xl)] leading-(--leading-snug);
+}
+
+.pk-prose p {
+  @apply mt-(--space-4) max-w-(--container-prose) text-pk-body;
+  font: var(--type-body);
+}
+
+.pk-prose > p:first-of-type {
+  @apply text-pk-muted;
+  font: var(--type-body-lg);
+}
+
+.pk-prose ul,
+.pk-prose ol {
+  @apply mt-(--space-4) pl-(--space-6) max-w-(--container-prose);
+}
+
+.pk-prose li {
+  @apply mt-(--space-2) text-pk-body;
+  font: var(--type-body);
+}
+
+.pk-prose li::marker {
+  @apply text-pk-subtle;
+}
+
+.pk-prose strong {
+  @apply font-semibold text-pk-strong;
+}
+
+.pk-prose a {
+  @apply underline underline-offset-2 text-pk-link;
+}
+
+.pk-prose a:hover {
+  @apply text-pk-link-hover;
+}
+
+.pk-prose :not(pre) > code {
+  @apply font-mono px-[5px] py-px bg-pk-sunken border border-pk-hairline text-pk-body text-[length:var(--code-size-sm)];
+  font-variant-ligatures: none;
+}
+
+.pk-prose pre {
+  @apply font-mono overflow-x-auto mt-(--space-5) border border-pk-border
+         px-(--code-pad-x) py-(--code-pad-y) text-[length:var(--code-size)] leading-(--code-leading);
+  background: var(--surface-code) !important;
+  font-variant-ligatures: none;
+}
+
+.pk-prose pre code {
+  @apply bg-transparent border-none p-0 text-inherit;
+  font-size: inherit;
+}
+
+.pk-prose table {
+  @apply w-full border-collapse mt-(--space-5) border border-pk-border bg-pk-card;
+}
+
+.pk-prose th {
+  @apply text-left uppercase whitespace-nowrap text-pk-muted tracking-(--tracking-caps)
+         px-(--space-4) h-(--control-h-md) bg-pk-sunken border-b border-pk-grid;
+  font: var(--type-eyebrow);
+}
+
+.pk-prose th + th,
+.pk-prose td + td {
+  @apply border-l border-pk-hairline;
+}
+
+.pk-prose td {
+  @apply align-top px-(--space-4) py-(--space-3) border-t border-pk-hairline text-pk-body;
+  font: var(--type-body-sm);
+}
+
+.pk-prose blockquote {
+  @apply flex gap-(--space-3) mt-(--space-5) ml-0 p-(--space-4) bg-pk-accent-soft border border-pk-hairline;
+  box-shadow: var(--marker-accent);
+}
+
+.pk-prose blockquote p {
+  @apply m-0 text-pk-body;
+  font: var(--type-body-sm);
+}
+
+.pk-prose hr {
+  @apply border-none mt-(--space-10) border-t border-pk-grid;
+}
+
+/* ── Responsive ── */
+
+@media (max-width: 639px) {
+  :root {
+    --section-y: 64px;
+    --section-y-tight: 48px;
+  }
+}

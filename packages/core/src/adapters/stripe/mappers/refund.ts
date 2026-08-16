@@ -20,7 +20,9 @@ export function mapStripeRefund(refund: Stripe.Refund): UnifiedRefund {
     provider: 'stripe',
     chargeId: typeof refund.payment_intent === 'string'
       ? refund.payment_intent
-      : refund.payment_intent?.id ?? '',
+      : refund.payment_intent?.id
+        ?? (typeof refund.charge === 'string' ? refund.charge : refund.charge?.id)
+        ?? '',
     amount: refund.amount,
     currency: refund.currency.toUpperCase(),
     status: mapRefundStatus(refund.status ?? 'pending'),

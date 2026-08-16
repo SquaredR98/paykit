@@ -1,0 +1,18 @@
+@reference "../../../app/globals.css";
+
+/* ── Mobile Sidebar Toggle ── */
+
+.pk-docs__mobile-toggle {
+  @apply hidden items-center cursor-pointer gap-(--space-2)
+         h-(--control-h-md) px-(--space-4) bg-transparent border border-pk-border text-pk-muted
+         max-md:flex;
+  font: var(--type-label);
+}
+
+/* ── Mobile Drawer ── */
+
+.pk-docs__mobile-drawer {
+  @apply hidden fixed inset-x-0 bottom-0 top-14 z-25 flex-col overflow-y-auto
+         bg-pk-page gap-(--space-6) px-(--space-5) py-(--space-6) border-t border-pk-grid
+         max-md:flex;
+}

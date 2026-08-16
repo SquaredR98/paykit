@@ -1,0 +1,21 @@
+@reference "../../../../app/globals.css";
+
+.pk-crumbs {
+  @apply flex items-center gap-(--space-2) px-(--space-10) py-(--space-3);
+  @apply bg-pk-sunken border-b border-pk-grid text-pk-subtle;
+  @apply max-lg:px-(--space-6);
+  font: var(--type-code-sm);
+}
+
+.pk-crumbs a {
+  @apply text-pk-muted no-underline;
+  transition: var(--transition-control);
+}
+
+.pk-crumbs a:hover {
+  @apply text-pk-strong;
+}
+
+.pk-crumbs__sep {
+  @apply text-pk-subtle;
+}

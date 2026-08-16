@@ -1,0 +1,32 @@
+@reference "../../../../app/globals.css";
+
+/* 4b: TOC nav — no longer sticky (parent .pk-railstick handles it) */
+.pk-toc {
+  @apply flex flex-col;
+}
+
+/* 4c: hairline left indicator by default, accent marker when active */
+.pk-toc__list {
+  @apply flex flex-col m-0 p-0 list-none;
+}
+
+.pk-toc__link {
+  @apply block text-pk-muted no-underline;
+  @apply py-(--space-2) pl-(--space-4) pr-0;
+  font: var(--type-body-sm);
+  box-shadow: inset 1px 0 0 var(--border-hairline);
+  transition: var(--transition-control);
+}
+
+.pk-toc__link:hover {
+  @apply text-pk-strong;
+}
+
+.pk-toc__link--active {
+  @apply text-pk-accent-ink;
+  box-shadow: inset var(--marker-width) 0 0 var(--accent-solid);
+}
+
+.pk-toc__item--sub .pk-toc__link {
+  @apply pl-(--space-6);
+}

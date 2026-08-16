@@ -49,8 +49,8 @@
     "react-dom": "^18.0.0 || ^19.0.0"
   },
   "devDependencies": {
-    "@squaredr/paykit": "*",
-    "@squaredr/paykit-js": "*",
+    "@squaredr/paykit": "workspace:*",
+    "@squaredr/paykit-js": "workspace:*",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.0.0",
     "@types/react": "^18.3.0",

@@ -1,0 +1,17 @@
+@reference "../../app/globals.css";
+
+/* ── Docs Shell Grid ──
+   3-column grid: sidebar | article | TOC.
+   Imported by app/docs/layout.tsx. */
+
+.pk-docs {
+  @apply grid items-start mx-auto max-w-[1240px]
+         max-md:grid-cols-1;
+  grid-template-columns: var(--sidebar-w) minmax(0, 1fr) var(--onpage-w);
+}
+
+@media (max-width: 1199px) {
+  .pk-docs {
+    grid-template-columns: var(--sidebar-w) minmax(0, 1fr);
+  }
+}

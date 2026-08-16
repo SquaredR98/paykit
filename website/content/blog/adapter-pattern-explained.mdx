@@ -1,0 +1,173 @@
+---
+title: The Adapter Pattern in Payment SDKs
+description: How PayKit uses the adapter pattern to provide a unified interface across payment providers without sacrificing provider-specific features.
+date: 2025-01-20
+tags: ['architecture', 'patterns']
+---
+
+PayKit's architecture is built on the **adapter pattern** — a design pattern that lets incompatible interfaces work together. This post breaks down how it works and why it's the right abstraction for a unified payment SDK.
+
+## The Pattern
+
+The adapter pattern wraps a class with a different interface to make it compatible with client code that expects a specific interface.
+
+In PayKit's case:
+
+- **Client code** expects the `IPaymentAdapter` interface
+- **Provider SDKs** (Stripe, Razorpay, PayPal) each have their own APIs
+- **Adapters** translate `IPaymentAdapter` calls into provider-specific requests
+
+```typescript
+interface IPaymentAdapter {
+  charge: {
+    create(params: ChargeCreateParams): Promise<Charge>;
+    retrieve(id: string): Promise<Charge>;
+    refund(id: string, amount?: number): Promise<Refund>;
+  };
+  // ... other resources
+}
+```
+
+Every adapter implements this interface, so swapping providers is just dependency injection:
+
+```typescript
+const adapter: IPaymentAdapter = new StripeAdapter(config);
+// or
+const adapter: IPaymentAdapter = new RazorpayAdapter(config);
+```
+
+## Why Not a Facade?
+
+You might think this is a **facade pattern** — another structural pattern that provides a simplified interface to a complex subsystem.
+
+The difference:
+
+- **Facade** simplifies — it hides complexity by providing a higher-level API
+- **Adapter** translates — it makes one interface compatible with another without changing behavior
+
+PayKit does *some* simplification (we normalize charge IDs, error codes, etc.), but the primary goal is **compatibility**, not abstraction. We're not trying to hide Stripe's power — we're making it interchangeable with Razorpay's.
+
+## Implementation Details
+
+Here's a simplified Stripe adapter:
+
+```typescript
+export class StripeAdapter implements IPaymentAdapter {
+  private stripe: Stripe;
+
+  constructor(config: AdapterConfig) {
+    this.stripe = new Stripe(config.apiKey, {
+      apiVersion: '2023-10-16',
+    });
+  }
+
+  charge = {
+    create: async (params: ChargeCreateParams): Promise<Charge> => {
+      const stripeCharge = await this.stripe.charges.create({
+        amount: params.amount,
+        currency: params.currency,
+        source: params.source,
+        description: params.description,
+      });
+
+      return this.normalizeCharge(stripeCharge);
+    },
+
+    retrieve: async (id: string): Promise<Charge> => {
+      const stripeCharge = await this.stripe.charges.retrieve(id);
+      return this.normalizeCharge(stripeCharge);
+    },
+
+    refund: async (id: string, amount?: number): Promise<Refund> => {
+      const stripeRefund = await this.stripe.refunds.create({
+        charge: id,
+        amount,
+      });
+      return this.normalizeRefund(stripeRefund);
+    },
+  };
+
+  private normalizeCharge(charge: Stripe.Charge): Charge {
+    return {
+      id: charge.id,
+      amount: charge.amount,
+      currency: charge.currency,
+      status: this.mapStatus(charge.status),
+      created: new Date(charge.created * 1000),
+      // ... other fields
+    };
+  }
+
+  private mapStatus(status: string): ChargeStatus {
+    // Normalize Stripe's statuses to PayKit's enum
+    switch (status) {
+      case 'succeeded': return ChargeStatus.Succeeded;
+      case 'pending': return ChargeStatus.Pending;
+      case 'failed': return ChargeStatus.Failed;
+      default: return ChargeStatus.Unknown;
+    }
+  }
+}
+```
+
+The Razorpay adapter does the same thing, but talks to Razorpay's SDK and maps their field names to PayKit's normalized schema.
+
+## Trade-offs
+
+### Pros
+
+- **Swappable** — Change providers without rewriting application logic
+- **Testable** — Mock `IPaymentAdapter` instead of mocking 5 different SDKs
+- **Extensible** — Add new providers without touching existing code
+- **Type-safe** — TypeScript ensures adapters implement the full interface
+
+### Cons
+
+- **Lowest common denominator** — PayKit's API can only expose features that *all* providers support (or it has to make them optional)
+- **Latency overhead** — Minimal, but every call goes through an extra layer
+- **Leaky abstraction** — Some provider quirks (like Stripe's idempotency keys) can't be fully hidden
+
+## Handling Provider-Specific Features
+
+Not all features are universal. Stripe has `SetupIntents`, Razorpay has `payment_links`, PayPal has `billing_agreements`.
+
+PayKit handles this two ways:
+
+**1. Optional extensions** — Features that some providers support go into optional methods:
+
+```typescript
+interface IPaymentAdapter {
+  // Core (required)
+  charge: ChargeResource;
+
+  // Extensions (optional)
+  setupIntent?: SetupIntentResource;
+  paymentLink?: PaymentLinkResource;
+}
+```
+
+**2. Provider passthrough** — For anything truly custom, you can access the underlying SDK:
+
+```typescript
+import { StripeAdapter } from '@squaredr/paykit/adapters';
+
+const adapter = new StripeAdapter(config);
+const stripe = adapter.getNativeClient(); // Returns Stripe instance
+
+// Use Stripe-specific features directly
+await stripe.ephemeralKeys.create({ customer: '...' });
+```
+
+This escape hatch ensures you never lose access to provider-specific functionality.
+
+## Conclusion
+
+The adapter pattern is the right abstraction for a unified payment SDK because:
+
+- Providers *are* fundamentally similar (they all have charges, refunds, customers, webhooks)
+- Providers *are* fundamentally different (field names, error codes, SDKs)
+- Applications need **portability** more than they need **simplification**
+
+PayKit doesn't try to be "simpler than Stripe" — it tries to be "Stripe *or* Razorpay *or* PayPal, without rewriting your app."
+
+Next post: **Webhook normalization and signature verification across providers**.

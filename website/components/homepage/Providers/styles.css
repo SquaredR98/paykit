@@ -1,0 +1,112 @@
+@reference "../../../app/globals.css";
+
+/* ── Grids ── */
+
+.pk-g3 {
+  @apply grid grid-cols-3 max-lg:grid-cols-2 max-sm:grid-cols-1;
+}
+
+.pk-providers__band {
+  @apply border-b border-pk-grid;
+}
+
+/* ── Sub-row (band header) ── */
+
+.pk-subrow {
+  @apply flex items-center gap-4 bg-pk-sunken border-b border-pk-grid
+         px-(--space-10) py-(--space-3)
+         max-lg:px-(--space-6)
+         max-sm:px-(--space-5);
+}
+
+.pk-subrow__spacer {
+  @apply flex-1;
+}
+
+/* ── Provider cell ── */
+
+.pk-pcell {
+  @apply flex flex-col gap-3 p-(--space-5) border-r border-pk-grid
+         max-sm:border-r-0 max-sm:border-b max-sm:border-pk-grid;
+}
+
+/* Last column in 3-col grid: no right border */
+.pk-g3 > .pk-pcell:nth-child(3n) {
+  @apply border-r-0;
+}
+
+/* Horizontal divider between rows: top border on 4th child onward (row 2+) */
+.pk-g3 > .pk-pcell:nth-child(n + 4) {
+  @apply border-t border-pk-grid;
+}
+
+/* 2-col: switch right border to every 2nd, row border from 3rd child */
+@media (max-width: 1023px) {
+  .pk-g3 > .pk-pcell:nth-child(3n) {
+    border-right: 1px solid var(--border-grid);
+  }
+  .pk-g3 > .pk-pcell:nth-child(2n) {
+    @apply border-r-0;
+  }
+  .pk-g3 > .pk-pcell:nth-child(n + 4) {
+    border-top: none;
+  }
+  .pk-g3 > .pk-pcell:nth-child(n + 3) {
+    @apply border-t border-pk-grid;
+  }
+}
+
+/* 1-col: last child no bottom border */
+.pk-pcell:last-child {
+  @apply max-sm:border-b-0;
+}
+
+/* ── Standalone CTA (Build your own adapter) ── */
+
+.pk-providers__cta {
+  @apply flex flex-col items-center text-center gap-4
+         px-(--space-10) py-(--space-8)
+         border-b border-pk-grid bg-pk-sunken
+         max-sm:px-(--space-5);
+}
+
+.pk-pcell--soon {
+  @apply opacity-55;
+}
+
+.pk-pcell--request {
+  @apply justify-center items-start gap-4 opacity-100;
+}
+
+.pk-pcell__desc {
+  @apply text-pk-muted;
+  font: var(--type-body-sm);
+}
+
+.pk-pcell__powered {
+  @apply text-pk-subtle;
+  font: var(--type-code-sm);
+}
+
+.pk-pcell__powered a {
+  @apply text-pk-muted underline underline-offset-2;
+  transition: color var(--dur-fast) var(--ease-standard);
+}
+
+.pk-pcell__powered a:hover {
+  @apply text-pk-strong;
+}
+
+.pk-pslug {
+  @apply inline-flex items-center w-fit h-[26px] px-(--space-2) border border-pk-hairline bg-pk-sunken text-pk-muted;
+  font: var(--type-code-sm);
+}
+
+.pk-pname {
+  @apply text-pk-strong;
+  font: var(--type-subheading);
+}
+
+.pk-tags {
+  @apply flex gap-2 flex-wrap;
+}

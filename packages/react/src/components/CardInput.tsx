@@ -1,5 +1,5 @@
 import { useRef, useEffect, useContext, type CSSProperties } from 'react';
-import type { AppearanceConfig } from '@squaredr/paykit-js';
+import type { AppearanceConfig, PaymentMethodType } from '@squaredr/paykit-js';
 import { PayKitContext } from '../context/PayKitContext.js';
 
 interface CardInputProps {
@@ -7,12 +7,13 @@ interface CardInputProps {
   className?: string;
   style?: CSSProperties;
   appearance?: AppearanceConfig;
+  paymentMethodTypes?: PaymentMethodType[];
   onReady?: () => void;
   onChange?: (event: { complete: boolean; error?: string }) => void;
   onError?: (error: Error) => void;
 }
 
-export function CardInput({ clientSecret, className, style, appearance, onReady, onChange, onError }: CardInputProps) {
+export function CardInput({ clientSecret, className, style, appearance, paymentMethodTypes, onReady, onChange, onError }: CardInputProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const { client, isReady } = useContext(PayKitContext);
 
@@ -22,7 +23,7 @@ export function CardInput({ clientSecret, className, style, appearance, onReady,
     let cancelled = false;
     const container = containerRef.current;
 
-    client.mountCardInput(container, { clientSecret, appearance })
+    client.mountCardInput(container, { clientSecret, appearance, paymentMethodTypes })
       .then(() => { if (!cancelled) onReady?.(); })
       .catch((err: unknown) => {
         if (!cancelled) onError?.(err instanceof Error ? err : new Error(String(err)));

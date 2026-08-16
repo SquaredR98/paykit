@@ -1,6 +1,6 @@
 import type { PaymentMethodType, ChargeStatus, ClientAdapter } from '@squaredr/paykit';
 
-export type SupportedProvider = 'stripe' | 'razorpay';
+export type SupportedProvider = 'stripe' | 'razorpay' | 'paypal';
 
 /**
  * Configuration for PayKitClient.

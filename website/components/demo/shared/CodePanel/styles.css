@@ -1,0 +1,15 @@
+@reference "../../../../app/globals.css";
+
+.pk-codepanel__tab {
+  @apply flex items-center px-(--space-4) text-pk-muted cursor-pointer
+         bg-transparent border-0;
+  font: var(--type-code-sm);
+  border-bottom: 2px solid transparent;
+  transition: color var(--dur-fast) var(--ease-snap),
+              border-color var(--dur-fast) var(--ease-snap);
+}
+
+.pk-codepanel__tab--active {
+  @apply text-pk-strong;
+  border-bottom-color: var(--border-accent);
+}

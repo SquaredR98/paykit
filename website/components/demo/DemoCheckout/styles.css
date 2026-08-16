@@ -1,0 +1,208 @@
+@reference "../../../app/globals.css";
+
+.pk-checkout-demo {
+  @apply px-(--space-10) pb-(--space-12);
+}
+
+/* ── Step indicators ── */
+
+.pk-checkout-demo__steps {
+  @apply flex items-center gap-(--space-2) mb-(--space-8);
+}
+
+.pk-checkout-demo__step {
+  @apply flex items-center gap-(--space-2) px-(--space-3) h-[30px]
+         bg-transparent border border-pk-border text-pk-subtle cursor-default;
+  font: var(--type-code-sm);
+  transition: var(--transition-control);
+}
+
+.pk-checkout-demo__step--active {
+  @apply bg-pk-accent-soft text-pk-strong border-pk-accent;
+}
+
+.pk-checkout-demo__step--done {
+  @apply text-pk-ok border-pk-grid;
+}
+
+.pk-checkout-demo__step-num {
+  @apply w-[18px] h-[18px] flex items-center justify-center border border-current text-[11px];
+}
+
+.pk-checkout-demo__step--done .pk-checkout-demo__step-num {
+  @apply border-pk-ok text-pk-ok;
+}
+
+.pk-checkout-demo__step--active .pk-checkout-demo__step-num {
+  @apply border-pk-accent text-pk-accent;
+}
+
+/* ── Product card ── */
+
+.pk-checkout-demo__product {
+  @apply border border-pk-border p-(--space-6) flex flex-col gap-(--space-4);
+}
+
+.pk-checkout-demo__product-info {
+  @apply flex items-start justify-between gap-(--space-4);
+}
+
+.pk-checkout-demo__product-title {
+  @apply text-pk-strong;
+  font: var(--type-heading);
+}
+
+.pk-checkout-demo__product-desc {
+  @apply text-pk-muted mt-(--space-1);
+  font: var(--type-body-sm);
+}
+
+.pk-checkout-demo__product-price {
+  @apply font-mono text-pk-strong text-[length:var(--text-xl)] shrink-0;
+}
+
+/* ── Provider picker ── */
+
+.pk-checkout-demo__providers {
+  @apply flex flex-col border border-pk-border;
+}
+
+.pk-checkout-demo__provider {
+  @apply flex items-center gap-(--space-3) p-(--space-3) bg-transparent border-0 border-b border-pk-hairline cursor-pointer text-left;
+  transition: var(--transition-control);
+}
+
+.pk-checkout-demo__provider:last-child {
+  @apply border-b-0;
+}
+
+.pk-checkout-demo__provider:hover {
+  @apply bg-pk-hover;
+}
+
+.pk-checkout-demo__provider[aria-checked="true"] {
+  @apply bg-pk-accent-soft;
+}
+
+.pk-checkout-demo__provider-slug {
+  @apply font-mono text-[11px] uppercase tracking-wide px-[6px] py-px border border-pk-border text-pk-muted;
+}
+
+.pk-checkout-demo__provider-slug--stripe {
+  @apply text-[#635BFF] border-[#635BFF];
+  background: color-mix(in oklch, #635BFF 12%, transparent);
+}
+
+.pk-checkout-demo__provider-slug--razorpay {
+  @apply text-[#3395FF] border-[#3395FF];
+  background: color-mix(in oklch, #3395FF 12%, transparent);
+}
+
+.pk-checkout-demo__provider-slug--paypal {
+  @apply text-[#0070BA] border-[#0070BA];
+  background: color-mix(in oklch, #0070BA 12%, transparent);
+}
+
+.pk-checkout-demo__provider-main {
+  @apply flex flex-col gap-px flex-1;
+}
+
+.pk-checkout-demo__provider-name {
+  @apply text-pk-strong;
+  font: var(--type-label);
+}
+
+.pk-checkout-demo__provider-methods {
+  @apply text-pk-muted text-[length:var(--text-xs)];
+  font: var(--type-body-sm);
+}
+
+.pk-checkout-demo__radio {
+  @apply w-5 h-5 flex items-center justify-center border border-pk-border text-pk-accent text-[11px];
+}
+
+/* ── Checkout form area ── */
+
+.pk-checkout-demo__form-area {
+  @apply min-h-[200px];
+}
+
+.pk-checkout-demo__checkout-form {
+  @apply flex flex-col gap-(--space-4);
+}
+
+.pk-checkout-demo__checkout-form [data-paykit-submit] {
+  @apply w-full h-(--control-h-lg) bg-pk-accent text-pk-on-accent border-0 cursor-pointer;
+  font: var(--type-label);
+  transition: var(--transition-control);
+}
+
+.pk-checkout-demo__checkout-form [data-paykit-submit]:hover:not(:disabled) {
+  @apply bg-pk-accent-hover;
+}
+
+.pk-checkout-demo__checkout-form [data-paykit-submit]:disabled {
+  @apply opacity-50 cursor-not-allowed;
+}
+
+/* ── Success state ── */
+
+.pk-checkout-demo__success {
+  @apply flex flex-col items-center justify-center gap-(--space-3) py-(--space-10) text-center;
+}
+
+.pk-checkout-demo__success svg {
+  @apply shrink-0 text-pk-ok;
+}
+
+.pk-checkout-demo__success-title {
+  @apply text-pk-strong;
+  font: var(--type-heading);
+}
+
+.pk-checkout-demo__success-sub {
+  @apply text-pk-muted;
+  font: var(--type-body-sm);
+}
+
+/* ── Loading ── */
+
+.pk-checkout-demo__loading {
+  @apply flex items-center justify-center py-(--space-10) text-pk-muted;
+  font: var(--type-body-sm);
+}
+
+/* ── Buttons ── */
+
+.pk-checkout-demo__btn {
+  @apply h-(--control-h-lg) px-(--space-6) bg-pk-accent text-pk-on-accent border-0 cursor-pointer;
+  font: var(--type-label);
+  transition: var(--transition-control);
+}
+
+.pk-checkout-demo__btn:hover {
+  @apply bg-pk-accent-hover;
+}
+
+.pk-checkout-demo__btn--secondary {
+  @apply bg-transparent border border-pk-border text-pk-body;
+}
+
+.pk-checkout-demo__btn--secondary:hover {
+  @apply bg-pk-hover;
+}
+
+.pk-checkout-demo__actions {
+  @apply flex gap-(--space-3) mt-(--space-4);
+}
+
+/* ── Trust note ── */
+
+.pk-checkout-demo__trust {
+  @apply flex items-center gap-[6px] mt-(--space-4) text-pk-subtle;
+  font: var(--type-code-sm);
+}
+
+.pk-checkout-demo__trust svg {
+  @apply shrink-0;
+}

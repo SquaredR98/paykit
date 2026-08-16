@@ -1,5 +1,5 @@
 import { useState, useContext, type FormEvent, type ReactNode, type CSSProperties } from 'react';
-import type { AppearanceConfig, PaymentConfirmResult } from '@squaredr/paykit-js';
+import type { AppearanceConfig, PaymentConfirmResult, PaymentMethodType } from '@squaredr/paykit-js';
 import { PayKitContext } from '../context/PayKitContext.js';
 import { CardInput } from './CardInput.js';
 import { injectThemeVariables } from '../theme.js';
@@ -7,6 +7,7 @@ import { injectThemeVariables } from '../theme.js';
 interface CheckoutFormProps {
   clientSecret: string;
   appearance?: AppearanceConfig;
+  paymentMethodTypes?: PaymentMethodType[];
   returnUrl?: string;
   submitLabel?: string;
   className?: string;
@@ -19,6 +20,7 @@ interface CheckoutFormProps {
 export function CheckoutForm({
   clientSecret,
   appearance,
+  paymentMethodTypes,
   returnUrl,
   submitLabel = 'Pay',
   className,
@@ -58,6 +60,7 @@ export function CheckoutForm({
       <CardInput
         clientSecret={clientSecret}
         appearance={appearance}
+        paymentMethodTypes={paymentMethodTypes}
         onReady={() => setCardReady(true)}
         onError={onError}
       />

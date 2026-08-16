@@ -1,0 +1,24 @@
+@reference "../../../../app/globals.css";
+
+.pk-callout {
+  @apply grid gap-(--space-3) my-(--space-6);
+  @apply bg-pk-card border border-pk-border;
+  grid-template-columns: 20px 1fr;
+  padding: var(--space-5);
+}
+
+.pk-callout__icon {
+  @apply flex text-pk-accent-ink;
+  margin-top: 2px;
+}
+
+.pk-callout__title {
+  @apply text-pk-strong;
+  font: var(--type-label);
+}
+
+.pk-callout__body {
+  @apply text-pk-muted;
+  @apply mt-(--space-2);
+  font: var(--type-body-sm);
+}

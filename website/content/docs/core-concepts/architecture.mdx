@@ -1,0 +1,150 @@
+---
+title: Core Concepts
+description: >-
+  Understand PayKit architecture: the adapter pattern, unified types, server/client separation, provider routing, and webhook normalisation.
+---
+
+A look at the ideas that shape PayKit's design — the adapter pattern, unified types, server/client separation, provider routing, and webhook normalisation.
+
+## The Adapter Pattern
+
+At its core, PayKit is a thin orchestration layer that delegates every provider-specific call to an **adapter**. Your application talks to PayKit; PayKit talks to the adapter; the adapter talks to the provider SDK.
+
+<ArchitectureDiagram />
+
+This gives you three concrete benefits:
+
+- **Write once** — your charge-creation, webhook, and checkout code is identical regardless of provider.
+- **Swap providers** — change a single adapter import and the rest of your codebase stays untouched.
+- **Test with mocks** — inject a mock adapter in your test suite to verify business logic without hitting any external API.
+
+## Unified Types
+
+Every adapter maps provider responses into a shared set of TypeScript interfaces. The most important one is `UnifiedCharge`:
+
+```typescript title="UnifiedCharge (simplified)"
+interface UnifiedCharge {
+  /** PayKit-normalized charge ID */
+  id: string
+  /** Original ID from the provider (e.g. Stripe's pi_xxx) */
+  providerId: string
+  /** Provider name that processed this charge */
+  provider: string
+  /** Amount in smallest currency unit (e.g. cents) */
+  amount: number
+  /** ISO 4217 currency code */
+  currency: string
+  /** Current status of the charge */
+  status: 'pending' | 'requires_action' | 'processing'
+       | 'succeeded' | 'failed' | 'canceled'
+       | 'refunded' | 'partially_refunded'
+  /** Provider-specific client secret for frontend confirmation */
+  clientSecret?: string
+  /** Arbitrary key-value pairs you attached at creation */
+  metadata?: Record<string, string>
+  /** When the charge was created */
+  createdAt: Date
+  /** Raw provider response — escape hatch for advanced use */
+  _raw: unknown
+}
+```
+
+The `_raw` field is an escape hatch. If you need something provider-specific that PayKit does not normalise, you can cast `_raw` to the provider's native type and access it directly. This keeps the unified interface clean while still giving you full access when you need it.
+
+## Server vs Client Code
+
+PayKit separates server-side and client-side adapters into different entry points. This is important for two reasons: **security** and **bundle size**.
+
+### Server-side adapters
+
+Server adapters hold your secret key and must never be imported in browser code. They handle charge creation, refunds, and webhook verification.
+
+```typescript title="Server import"
+// Server only — contains your secret key
+import { StripeAdapter } from '@squaredr/paykit/stripe'
+```
+
+### Client-side adapters
+
+Client adapters contain only the browser-safe code needed to confirm payments and render checkout UIs. They use your publishable key.
+
+```typescript title="Client import"
+// Client only — contains your publishable key
+import { StripeClientAdapter } from '@squaredr/paykit/stripe/client'
+```
+
+Because these are separate entry points, your bundler can **tree-shake** them independently. The server adapter and its dependencies will never end up in your client bundle, and vice-versa. This keeps your frontend lean and your secrets safe.
+
+## Provider Routing
+
+If you accept payments in multiple currencies or regions, you can use `PaymentRouter` to automatically select the best adapter for each transaction.
+
+```typescript title="routing.ts"
+import { PaymentRouter } from '@squaredr/paykit'
+import { StripeAdapter } from '@squaredr/paykit/stripe'
+import { RazorpayAdapter } from '@squaredr/paykit/razorpay'
+
+const router = new PaymentRouter({
+  routes: [
+    {
+      currency: 'INR',
+      adapter: new RazorpayAdapter({
+        keyId: process.env.RAZORPAY_KEY_ID!,
+        keySecret: process.env.RAZORPAY_KEY_SECRET!,
+      }),
+    },
+    {
+      currency: 'USD',
+      adapter: new StripeAdapter({
+        secretKey: process.env.STRIPE_SECRET_KEY!,
+      }),
+    },
+  ],
+  default: new StripeAdapter({
+    secretKey: process.env.STRIPE_SECRET_KEY!,
+  }),
+})
+
+// Automatically selects the right adapter
+const charge = await router.createCharge({
+  amount: 50000,
+  currency: 'INR',   // → RazorpayAdapter
+})
+```
+
+Each route can include `currency` and `region` properties for matching. Routes are evaluated in order; the first match wins. If nothing matches, the `default` adapter handles the charge. You can also pass `_provider` in `CreateChargeParams` for an explicit override.
+
+## Webhook Normalisation
+
+Different providers send different event names and payload shapes. PayKit maps them into a unified set of 22 event types so your handler code does not need provider-specific branches.
+
+| PayKit Event | Stripe Event | Razorpay Event |
+|---|---|---|
+| `charge.succeeded` | `payment_intent.succeeded` | `payment.captured` |
+| `charge.failed` | `payment_intent.payment_failed` | `payment.failed` |
+| `charge.refunded` | `charge.refunded` | — |
+| `refund.created` | `refund.created` | `refund.created` |
+| `refund.completed` | `refund.updated` | `refund.processed` |
+| `subscription.created` | `customer.subscription.created` | `subscription.activated` |
+| `subscription.canceled` | `customer.subscription.deleted` | `subscription.cancelled` |
+
+Your webhook handler always receives the same `UnifiedWebhookEvent` shape regardless of which provider fired the event:
+
+```typescript title="webhooks.ts"
+const event = paykit.webhooks.construct({
+  payload: body,
+  signature,
+  secret: process.env.STRIPE_WEBHOOK_SECRET!,
+})
+
+// event.type is always a PayKit unified event name
+if (event.type === 'charge.succeeded') {
+  await fulfillOrder(event.data.id)
+}
+```
+
+See the [Webhooks Guide](/docs/guides/webhooks) for the full event type reference and advanced patterns.
+
+## Licensing
+
+PayKit is fully open source under the **MIT license**. The core SDK, all provider adapters (Stripe, Razorpay, PayPal), React components, the vanilla JS SDK, multi-provider routing, and webhook verification are free — no paid tiers, no license keys. If your provider isn't supported yet, you can [build a custom adapter](/docs/guides/custom-adapter).

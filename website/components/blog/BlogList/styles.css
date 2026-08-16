@@ -1,0 +1,84 @@
+@reference "../../../app/globals.css";
+
+.pk-pagehead {
+  @apply grid;
+  grid-template-columns: 1fr 340px;
+}
+
+.pk-pagehead > div:first-child {
+  @apply py-(--space-12) px-(--space-10);
+}
+
+.pk-pagehead > div:last-child {
+  @apply flex flex-col justify-center gap-(--space-3) p-(--space-10);
+  @apply border-l border-pk-grid bg-pk-sunken;
+}
+
+h1.pk-page {
+  @apply font-display font-bold text-[length:var(--text-5xl)] leading-(--leading-tight);
+  @apply tracking-(--tracking-tighter) text-pk-strong;
+  @apply mt-(--space-4) mb-0;
+}
+
+.pk-lede {
+  @apply text-pk-muted max-w-[56ch] mt-(--space-4) mb-0;
+  font: var(--type-body-lg);
+}
+
+.pk-pagehead {
+  @apply max-lg:grid-cols-1;
+}
+
+.pk-pagehead > div:first-child {
+  @apply max-lg:py-(--space-8) max-lg:px-(--space-6);
+}
+
+.pk-pagehead > div:last-child {
+  @apply max-lg:p-(--space-6) max-lg:border-l-0 max-lg:border-t max-lg:border-pk-grid;
+}
+
+.pk-pagehead .pk-sub {
+  @apply min-w-0;
+}
+
+.pk-split-blog {
+  @apply grid;
+  grid-template-columns: 1fr 340px;
+}
+
+.pk-split-blog > .pk-rail {
+  @apply border-l border-pk-grid bg-pk-sunken;
+}
+
+.pk-split-blog {
+  @apply max-lg:grid-cols-1;
+}
+
+.pk-split-blog > .pk-rail {
+  @apply max-lg:border-l-0 max-lg:border-t max-lg:border-pk-grid;
+}
+
+.pk-pager {
+  @apply flex items-center justify-between;
+  @apply px-(--space-6) py-(--space-5);
+  @apply border-t border-pk-grid;
+}
+
+.pk-pnums {
+  @apply flex;
+}
+
+.pk-pnums a {
+  @apply inline-flex items-center justify-center min-w-[30px] h-[30px];
+  @apply border border-pk-hairline ml-[-1px] text-pk-muted no-underline;
+  font: var(--type-code-sm);
+  transition: var(--transition-control);
+}
+
+.pk-pnums a:hover {
+  @apply border-pk-border-strong text-pk-body bg-pk-hover;
+}
+
+.pk-pnums a[aria-current="page"] {
+  @apply text-pk-strong border-pk-border-accent bg-pk-accent-soft;
+}

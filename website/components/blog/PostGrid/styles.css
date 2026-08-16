@@ -1,0 +1,14 @@
+@reference "../../../app/globals.css";
+
+.pk-g2 {
+  @apply grid grid-cols-2;
+  @apply max-lg:grid-cols-1;
+}
+
+.pk-g2 > *:nth-child(odd) {
+  @apply max-lg:border-r-0;
+}
+
+.pk-post-grid--empty {
+  @apply py-(--space-16) text-center;
+}

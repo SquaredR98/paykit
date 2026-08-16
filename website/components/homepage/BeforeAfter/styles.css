@@ -1,0 +1,66 @@
+@reference "../../../app/globals.css";
+
+/* ── Diff view ── */
+
+.pk-diff__body {
+  @apply p-[var(--space-10)] max-sm:p-[var(--space-6)];
+}
+
+.pk-diff__wrap {
+  @apply py-[var(--code-pad-y)] px-0;
+}
+
+.pk-dl {
+  @apply grid grid-cols-[28px_1fr] font-mono text-[length:var(--code-size-sm)] leading-[var(--code-leading)];
+}
+
+.pk-dl > span:first-child {
+  @apply text-center select-none;
+}
+
+.pk-dl > span:last-child {
+  @apply whitespace-pre;
+}
+
+.pk-dl--rm {
+  background: var(--code-removed-bg);
+  box-shadow: inset var(--marker-width) 0 0 var(--code-removed-bar);
+}
+
+.pk-dl--rm > span:first-child {
+  color: var(--code-removed-bar);
+}
+
+.pk-dl--ad {
+  background: var(--code-added-bg);
+  box-shadow: inset var(--marker-width) 0 0 var(--code-added-bar);
+}
+
+.pk-dl--ad > span:first-child {
+  color: var(--code-added-bar);
+}
+
+/* Syntax inside diff lines */
+.pk-dl .k  { color: var(--code-keyword); }
+.pk-dl .s  { color: var(--code-string); }
+.pk-dl .n  { color: var(--code-number); }
+.pk-dl .f  { color: var(--code-fn); }
+.pk-dl .t  { color: var(--code-type); }
+.pk-dl .p  { color: var(--code-prop); }
+.pk-dl .cm { color: var(--code-comment); }
+
+/* ── Counter ── */
+
+.pk-diff__counter {
+  @apply flex items-baseline justify-center gap-[var(--space-5)] px-[var(--space-10)] py-[var(--space-12)] border-t border-pk-grid
+         max-sm:flex-col max-sm:items-center max-sm:gap-[var(--space-3)] max-sm:px-[var(--space-6)] max-sm:py-[var(--space-8)];
+}
+
+.pk-diff__counter-num {
+  @apply font-display font-bold tabular-nums leading-none text-[length:var(--text-7xl)] tracking-[var(--tracking-tighter)] text-pk-accent-ink;
+}
+
+.pk-diff__counter-cap {
+  @apply text-pk-muted;
+  font: var(--type-body-lg);
+}

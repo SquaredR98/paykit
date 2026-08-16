@@ -24,4 +24,6 @@ export type {
   SupportedProvider,
 } from './types.js';
 
+export type { PaymentMethodType } from '@squaredr/paykit';
+
 export type { RedirectResult } from './redirect/redirect-handler.js';

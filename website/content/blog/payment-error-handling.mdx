@@ -1,0 +1,248 @@
+---
+title: Payment Error Handling Done Right
+description: Handle payment errors from Stripe, Razorpay, and PayPal with 19 unified error codes, automatic suggestions, and retry strategies.
+date: 2025-03-24
+tags: ['errors', 'best-practices']
+---
+
+Payment errors are inevitable. Cards get declined, banks go down, fraud detection triggers. The challenge is that every provider reports errors differently. Stripe gives you `card_declined` with a `decline_code`. Razorpay gives you `BAD_REQUEST_ERROR` with a `reason`. PayPal gives you `INSTRUMENT_DECLINED` with an `issue`.
+
+If you're integrating multiple providers, you end up writing provider-specific error handling code — different error classes, different field names, different retry logic. PayKit normalises all of this into 19 unified error codes with automatic fix suggestions.
+
+## The problem
+
+Here's how the same error — a declined card — looks from three providers:
+
+**Stripe:**
+```json
+{
+  "type": "card_error",
+  "code": "card_declined",
+  "decline_code": "insufficient_funds",
+  "message": "Your card has insufficient funds."
+}
+```
+
+**Razorpay:**
+```json
+{
+  "error": {
+    "code": "BAD_REQUEST_ERROR",
+    "description": "Payment failed",
+    "reason": "insufficient_balance"
+  }
+}
+```
+
+**PayPal:**
+```json
+{
+  "name": "UNPROCESSABLE_ENTITY",
+  "details": [{
+    "issue": "INSTRUMENT_DECLINED",
+    "description": "The instrument presented was declined."
+  }]
+}
+```
+
+Three different structures, three different field names, three different codes for the same problem.
+
+## How PayKit unifies errors
+
+Every adapter maps provider errors into a `PaymentError` with a consistent shape:
+
+```typescript
+class PaymentError extends Error {
+  readonly code: PaymentErrorCode       // e.g. 'insufficient_funds'
+  readonly provider: string             // e.g. 'stripe'
+  readonly providerCode?: string        // e.g. 'card_declined'
+  readonly providerMessage?: string     // Original message
+  readonly isRetryable: boolean         // Can the user try again?
+  readonly suggestion: string           // Human-readable fix
+  readonly httpStatus?: number          // HTTP status code
+  readonly _raw?: unknown               // Original error
+}
+```
+
+The `code` is always one of 19 unified values. The `suggestion` is auto-populated from PayKit's built-in suggestions map. The `isRetryable` flag tells you whether retrying makes sense.
+
+## The 19 unified error codes
+
+| Code | Retryable? | Suggestion |
+|---|---|---|
+| `card_declined` | No | Try a different card or contact your bank |
+| `insufficient_funds` | No | Try a different payment method |
+| `invalid_card` | No | Check the card details and try again |
+| `expired_card` | No | Use a different card |
+| `processing_error` | Yes | Try again in a moment |
+| `authentication_required` | No | Complete 3D Secure or OTP verification |
+| `rate_limit` | Yes | Wait a moment and try again |
+| `network_error` | Yes | Check your connection and try again |
+| `invalid_request` | No | Check the parameters and try again |
+| `provider_unavailable` | Yes | Try again later |
+| `not_supported` | No | Operation not supported by this provider |
+| `not_found` | No | Verify the ID and try again |
+| `duplicate_transaction` | No | Check your records |
+| `fraud_detected` | No | Contact support |
+| `currency_not_supported` | No | Try a different currency or provider |
+| `amount_too_small` | No | Increase the amount |
+| `amount_too_large` | No | Reduce the amount |
+| `already_captured` | No | This charge has already been captured |
+| `already_refunded` | No | This charge has already been refunded |
+
+## Error handling in practice
+
+```typescript
+import { PaymentError } from '@squaredr/paykit'
+
+try {
+  const charge = await paykit.charges.create({
+    amount: 5000,
+    currency: 'USD',
+  })
+} catch (err) {
+  if (err instanceof PaymentError) {
+    console.log(err.code)          // 'insufficient_funds'
+    console.log(err.suggestion)    // 'The card has insufficient funds...'
+    console.log(err.isRetryable)   // false
+    console.log(err.provider)      // 'stripe'
+    console.log(err.providerCode)  // 'card_declined'
+
+    // Show the suggestion to the user
+    return Response.json({
+      error: err.code,
+      message: err.suggestion,
+      retryable: err.isRetryable,
+    }, { status: 400 })
+  }
+
+  // Non-payment error (network, config, etc.)
+  throw err
+}
+```
+
+## Retryable vs fatal errors
+
+The `isRetryable` flag is your decision point. Retryable errors are transient — the same request might succeed on a second attempt. Fatal errors require user action (different card, different amount, etc.).
+
+```typescript
+if (err instanceof PaymentError) {
+  if (err.isRetryable) {
+    // Retry with exponential backoff
+    await retryWithBackoff(() =>
+      paykit.charges.create(params)
+    )
+  } else {
+    // Show the suggestion to the user
+    showError(err.suggestion)
+  }
+}
+```
+
+Retryable codes: `processing_error`, `rate_limit`, `network_error`, `provider_unavailable`
+
+Fatal codes: Everything else — these need user intervention.
+
+## Error-specific subclasses
+
+PayKit provides specialised error classes for common scenarios:
+
+```typescript
+import {
+  PaymentError,
+  NotSupportedError,
+  ValidationError,
+  PaymentTimeoutError,
+  ProviderUnavailableError,
+} from '@squaredr/paykit'
+
+// NotSupportedError — adapter doesn't support this operation
+// e.g. Razorpay doesn't support payouts
+try {
+  await paykit.payouts.create(params)
+} catch (err) {
+  if (err instanceof NotSupportedError) {
+    // err.code === 'not_supported'
+    // Switch to a provider that supports payouts
+  }
+}
+
+// ValidationError — invalid parameters (caught before hitting the provider)
+// e.g. negative amount, missing currency
+try {
+  await paykit.charges.create({ amount: -100, currency: '' })
+} catch (err) {
+  if (err instanceof ValidationError) {
+    // err.code === 'invalid_request'
+    // err.field === 'amount' (optional)
+  }
+}
+```
+
+## Retry strategies
+
+For retryable errors, use exponential backoff:
+
+```typescript
+async function retryWithBackoff<T>(
+  fn: () => Promise<T>,
+  maxRetries = 3,
+  baseDelay = 1000,
+): Promise<T> {
+  for (let attempt = 0; attempt <= maxRetries; attempt++) {
+    try {
+      return await fn()
+    } catch (err) {
+      if (
+        err instanceof PaymentError &&
+        err.isRetryable &&
+        attempt < maxRetries
+      ) {
+        const delay = baseDelay * Math.pow(2, attempt)
+        await new Promise((r) => setTimeout(r, delay))
+        continue
+      }
+      throw err
+    }
+  }
+  throw new Error('Unreachable')
+}
+```
+
+## Testing error paths
+
+Use a mock adapter to test error handling without hitting external APIs:
+
+```typescript
+import { PayKit, PaymentError } from '@squaredr/paykit'
+import { MockAdapter } from './mock-adapter'
+
+it('shows suggestion for declined cards', async () => {
+  const mock = new MockAdapter()
+  mock.charges.create = async () => {
+    throw new PaymentError({
+      code: 'card_declined',
+      message: 'Your card was declined.',
+      provider: 'mock',
+      isRetryable: false,
+    })
+  }
+
+  const paykit = new PayKit({ adapter: mock })
+
+  try {
+    await paykit.charges.create({ amount: 5000, currency: 'usd' })
+  } catch (err) {
+    expect(err).toBeInstanceOf(PaymentError)
+    expect(err.code).toBe('card_declined')
+    expect(err.suggestion).toContain('Try a different card')
+    expect(err.isRetryable).toBe(false)
+  }
+})
+```
+
+## Learn more
+
+- **[API Reference — Error Handling](/docs/reference/api-reference#error-handling)** — all 19 error codes with their suggestions
+- **[Interactive error demo](/demo/errors)** — compare raw provider errors with normalised PaymentErrors
+- **[Testing guide](/docs/guides/testing)** — mock adapters, error simulation, and webhook testing patterns

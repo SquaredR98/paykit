@@ -1,0 +1,53 @@
+@reference "../../../../app/globals.css";
+
+/* 3c: diff view lines */
+.pk-diffwrap {
+  padding: var(--code-pad-y) 0;
+}
+
+.pk-dl {
+  @apply grid font-mono;
+  grid-template-columns: 28px 1fr;
+  font-size: var(--code-size-sm);
+  line-height: var(--code-leading);
+}
+
+.pk-dl > span:first-child {
+  @apply text-center select-none;
+}
+
+.pk-dl > span:last-child {
+  white-space: pre;
+}
+
+.pk-dl--rm {
+  background: var(--code-removed-bg);
+  box-shadow: inset var(--marker-width) 0 0 var(--code-removed-bar);
+}
+
+.pk-dl--rm > span:first-child {
+  color: var(--code-removed-bar);
+}
+
+.pk-dl--ad {
+  background: var(--code-added-bg);
+  box-shadow: inset var(--marker-width) 0 0 var(--code-added-bar);
+}
+
+.pk-dl--ad > span:first-child {
+  color: var(--code-added-bar);
+}
+
+/* 3d: copy button */
+.pk-copy {
+  @apply inline-flex items-center gap-(--space-2) text-pk-subtle cursor-pointer;
+  @apply bg-transparent border-0;
+  height: 24px;
+  padding: 0 var(--space-2);
+  font: var(--type-code-sm);
+  transition: var(--transition-control);
+}
+
+.pk-copy:hover {
+  @apply text-pk-body;
+}

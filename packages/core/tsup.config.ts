@@ -8,6 +8,8 @@ export default defineConfig({
     'adapters/stripe/client/index': 'src/adapters/stripe/client/index.ts',
     'adapters/razorpay/index': 'src/adapters/razorpay/index.ts',
     'adapters/razorpay/client/index': 'src/adapters/razorpay/client/index.ts',
+    'adapters/paypal/index': 'src/adapters/paypal/index.ts',
+    'adapters/paypal/client/index': 'src/adapters/paypal/client/index.ts',
   },
   format: ['esm', 'cjs'],
   dts: true,

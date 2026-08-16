@@ -23,6 +23,7 @@ export class RazorpayClientAdapter implements ClientAdapter {
   readonly inputMode: InputMode = 'provider-hosted';
 
   private ready = false;
+  private loadPromise: Promise<void> | null = null;
   private rzpInstance: any = null;
   private container: HTMLElement | null = null;
   private appearance?: AppearanceConfig;
@@ -32,7 +33,13 @@ export class RazorpayClientAdapter implements ClientAdapter {
 
   async loadScript(): Promise<void> {
     if (this.ready) return;
+    if (this.loadPromise) return this.loadPromise;
 
+    this.loadPromise = this._doLoadScript();
+    return this.loadPromise;
+  }
+
+  private async _doLoadScript(): Promise<void> {
     // Check if already loaded globally
     if ((window as any).Razorpay) {
       this.ready = true;

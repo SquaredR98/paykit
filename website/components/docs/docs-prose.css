@@ -1,0 +1,147 @@
+@reference "../../app/globals.css";
+
+/* ── Docs Article ──
+   Prose typography for MDX content in docs pages.
+   Imported by app/docs/[[...slug]]/page.tsx. */
+
+.pk-docs__article {
+  @apply min-w-0 px-(--space-10) pt-(--space-10) pb-(--space-24)
+         max-md:px-(--space-5) max-md:pt-(--space-6) max-md:pb-(--space-16);
+}
+
+.pk-docs__article .pk-docs__prose {
+  @apply max-w-(--container-docs);
+}
+
+/* ── Prose Typography ── */
+
+.pk-docs__prose h1 {
+  @apply mt-(--space-4) tracking-(--tracking-tighter) text-pk-strong;
+  font: var(--type-display-1);
+}
+
+.pk-docs__prose h2 {
+  @apply mt-(--space-12) pt-(--space-5) border-t border-pk-grid text-pk-strong;
+  font: var(--type-display-2);
+}
+
+.pk-docs__prose h3 {
+  @apply font-display font-semibold mt-(--space-8) text-pk-strong text-[length:var(--text-xl)] leading-(--leading-snug);
+}
+
+.pk-docs__prose p {
+  @apply mt-(--space-4) max-w-(--container-prose) text-pk-body;
+  font: var(--type-body);
+}
+
+.pk-docs__prose > p:first-of-type {
+  @apply text-pk-muted;
+  font: var(--type-body-lg);
+}
+
+.pk-docs__prose ul,
+.pk-docs__prose ol {
+  @apply mt-(--space-4) pl-(--space-6) max-w-(--container-prose);
+}
+
+.pk-docs__prose li {
+  @apply mt-(--space-2) text-pk-body;
+  font: var(--type-body);
+}
+
+.pk-docs__prose li::marker {
+  @apply text-pk-subtle;
+}
+
+.pk-docs__prose strong {
+  @apply font-semibold text-pk-strong;
+}
+
+.pk-docs__prose a {
+  @apply underline underline-offset-2 text-pk-link;
+}
+
+.pk-docs__prose a:hover {
+  @apply text-pk-link-hover;
+}
+
+/* ── Inline Code ── */
+
+.pk-docs__prose :not(pre) > code {
+  @apply font-mono px-[5px] py-px bg-pk-sunken border border-pk-hairline text-pk-body text-[length:var(--code-size-sm)];
+  font-variant-ligatures: none;
+}
+
+/* ── Code Blocks (wrapped in .pk-term by DocsCodeBlock) ── */
+
+.pk-docs__prose .pk-term {
+  @apply mt-(--space-5);
+}
+
+.pk-docs__prose .pk-term pre {
+  @apply m-0 font-mono overflow-x-auto
+         px-(--code-pad-x) py-(--code-pad-y) text-[length:var(--code-size)] leading-(--code-leading);
+  background: transparent !important;
+  font-variant-ligatures: none;
+  color: var(--code-plain);
+}
+
+.pk-docs__prose .pk-term pre code {
+  @apply bg-transparent border-none p-0 text-inherit block;
+  font-size: inherit;
+}
+
+/* ── Tables ── */
+
+.pk-docs__prose table {
+  @apply w-full border-collapse mt-(--space-5) border border-pk-border bg-pk-card;
+}
+
+.pk-docs__prose th {
+  @apply text-left uppercase whitespace-nowrap text-pk-muted tracking-(--tracking-caps)
+         px-(--space-4) h-(--control-h-md) bg-pk-sunken border-b border-pk-grid;
+  font: var(--type-eyebrow);
+}
+
+.pk-docs__prose th + th,
+.pk-docs__prose td + td {
+  @apply border-l border-pk-hairline;
+}
+
+.pk-docs__prose td {
+  @apply align-top px-(--space-4) py-(--space-3) border-t border-pk-hairline text-pk-body;
+  font: var(--type-body-sm);
+}
+
+/* ── Blockquote (Callout) ── */
+
+.pk-docs__prose blockquote {
+  @apply flex gap-(--space-3) mt-(--space-5) ml-0 p-(--space-4) bg-pk-accent-soft border border-pk-hairline;
+  box-shadow: var(--marker-accent);
+}
+
+.pk-docs__prose blockquote p {
+  @apply m-0 text-pk-body;
+  font: var(--type-body-sm);
+}
+
+/* ── Mermaid Diagrams ── */
+
+.pk-docs__prose .wb-mermaid {
+  @apply mt-(--space-5) overflow-x-auto;
+  padding: var(--space-6) var(--space-4);
+  background: var(--surface-sunken);
+  border: 1px solid var(--border-hairline);
+}
+
+.pk-docs__prose .wb-mermaid svg {
+  display: block;
+  margin: 0 auto;
+  height: auto;
+}
+
+/* ── Horizontal Rule ── */
+
+.pk-docs__prose hr {
+  @apply border-none mt-(--space-10) border-t border-pk-grid;
+}

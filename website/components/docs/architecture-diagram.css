@@ -1,0 +1,52 @@
+@reference "../../app/globals.css";
+
+.pk-arch {
+  @apply flex flex-col items-center mt-(--space-5);
+  padding: var(--space-6) var(--space-4);
+  background: var(--surface-sunken);
+  border: 1px solid var(--border-hairline);
+}
+
+.pk-arch__node {
+  @apply flex items-center justify-center text-center text-pk-body;
+  font: var(--type-body-sm);
+  padding: var(--space-3) var(--space-6);
+  border: 1px solid var(--border-default);
+  background: var(--surface-card);
+  min-width: 140px;
+}
+
+.pk-arch__node--app {
+  min-width: 200px;
+}
+
+.pk-arch__node--core {
+  @apply text-pk-strong font-semibold;
+  min-width: 180px;
+  background: var(--surface-page);
+  border-color: var(--blue-500);
+}
+
+.pk-arch__arrow {
+  @apply flex flex-col items-center gap-(--space-1);
+}
+
+.pk-arch__label {
+  @apply text-pk-muted;
+  font: var(--type-code-sm);
+}
+
+.pk-arch__fan {
+  width: 100%;
+  max-width: 300px;
+}
+
+.pk-arch__fan-svg {
+  display: block;
+  width: 100%;
+  height: 32px;
+}
+
+.pk-arch__adapters {
+  @apply flex gap-(--space-4) flex-wrap justify-center;
+}

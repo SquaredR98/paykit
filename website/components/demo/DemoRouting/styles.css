@@ -1,0 +1,123 @@
+@reference "../../../app/globals.css";
+
+.pk-routing-demo {
+  @apply px-(--space-10) pb-(--space-12);
+}
+
+/* ── Rule editor ── */
+
+.pk-routing-demo__editor {
+  @apply mb-(--space-8);
+}
+
+.pk-routing-demo__rules {
+  @apply border border-pk-border;
+}
+
+.pk-routing-demo__rule-header {
+  @apply flex items-center justify-between p-(--space-3) px-(--space-4) bg-pk-sunken border-b border-pk-hairline;
+}
+
+.pk-routing-demo__rule-title {
+  @apply text-pk-subtle uppercase tracking-widest;
+  font: var(--type-label-sm);
+}
+
+.pk-routing-demo__rule {
+  @apply flex items-center gap-(--space-3) p-(--space-3) px-(--space-4) border-b border-pk-hairline;
+  font: var(--type-code-sm);
+}
+
+.pk-routing-demo__rule:last-child {
+  @apply border-b-0;
+}
+
+.pk-routing-demo__rule-select {
+  @apply h-[30px] px-(--space-2) bg-pk-card border border-pk-border text-pk-body cursor-pointer;
+  font: var(--type-code-sm);
+  min-width: 80px;
+}
+
+.pk-routing-demo__rule-select option {
+  background: var(--surface-primary);
+  color: var(--text-body);
+}
+
+.pk-routing-demo__rule-arrow {
+  @apply text-pk-subtle;
+}
+
+.pk-routing-demo__rule-remove {
+  @apply ml-auto w-[24px] h-[24px] flex items-center justify-center bg-transparent border border-pk-border text-pk-subtle cursor-pointer;
+  font-size: 14px;
+  transition: var(--transition-control);
+}
+
+.pk-routing-demo__rule-remove:hover {
+  @apply bg-pk-hover text-pk-bad;
+}
+
+.pk-routing-demo__add-btn {
+  @apply mt-(--space-3) h-(--control-h-md) px-(--space-4) bg-transparent border border-pk-border text-pk-body cursor-pointer;
+  font: var(--type-label);
+  transition: var(--transition-control);
+}
+
+.pk-routing-demo__add-btn:hover {
+  @apply bg-pk-hover;
+}
+
+/* ── Default provider ── */
+
+.pk-routing-demo__default {
+  @apply flex items-center gap-(--space-3) mt-(--space-3) p-(--space-3) px-(--space-4) border border-pk-grid bg-pk-sunken;
+  font: var(--type-code-sm);
+}
+
+.pk-routing-demo__default-label {
+  @apply text-pk-subtle;
+}
+
+/* ── Test panel ── */
+
+.pk-routing-demo__test {
+  @apply mt-(--space-8);
+}
+
+.pk-routing-demo__test-title {
+  @apply mb-(--space-4) text-pk-strong;
+  font: var(--type-heading);
+}
+
+.pk-routing-demo__test-row {
+  @apply flex items-center gap-(--space-4) flex-wrap;
+}
+
+.pk-routing-demo__test-select {
+  @apply h-(--control-h-md) px-(--space-3) bg-pk-card border border-pk-border text-pk-body cursor-pointer;
+  font: var(--type-body);
+  min-width: 120px;
+}
+
+.pk-routing-demo__test-select option {
+  background: var(--surface-primary);
+  color: var(--text-body);
+}
+
+.pk-routing-demo__resolved {
+  @apply flex items-center gap-(--space-3) p-(--space-3) px-(--space-4) border border-pk-accent bg-pk-accent-soft;
+  font: var(--type-code-sm);
+}
+
+.pk-routing-demo__resolved-label {
+  @apply text-pk-subtle;
+}
+
+.pk-routing-demo__resolved-provider {
+  @apply font-mono text-pk-accent font-medium;
+}
+
+.pk-routing-demo__resolved-reason {
+  @apply text-pk-muted ml-auto;
+  font: var(--type-body-sm);
+}

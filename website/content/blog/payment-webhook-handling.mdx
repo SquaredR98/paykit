@@ -1,0 +1,216 @@
+---
+title: "Payment Webhook Handling: The Complete Guide"
+description: Handle webhooks from Stripe, Razorpay, and PayPal with a single codebase using PayKit's unified webhook event system.
+date: 2025-02-24
+tags: ['webhooks', 'infrastructure']
+---
+
+Every payment provider delivers webhooks differently. Stripe sends `payment_intent.succeeded`. Razorpay sends `payment.captured`. PayPal sends `PAYMENT.CAPTURE.COMPLETED`. Three providers, three event names, three payload shapes — for the same thing happening: a payment went through.
+
+If you integrate multiple providers, you end up with provider-specific branches in your webhook handler. PayKit eliminates this by normalising all webhook events into a single format.
+
+## Why webhooks matter
+
+Client-side payment confirmation is unreliable. The customer can close their browser, lose their internet connection, or navigate away before your `onSuccess` callback fires. Webhooks are server-to-server notifications that guarantee your application learns about every payment event, regardless of what happens on the client.
+
+## The format problem
+
+Here's what the same event looks like from three different providers:
+
+**Stripe** — `payment_intent.succeeded`
+```json
+{
+  "id": "evt_1abc",
+  "type": "payment_intent.succeeded",
+  "data": {
+    "object": {
+      "id": "pi_xyz",
+      "amount": 5000,
+      "currency": "usd",
+      "status": "succeeded"
+    }
+  }
+}
+```
+
+**Razorpay** — `payment.captured`
+```json
+{
+  "event": "payment.captured",
+  "payload": {
+    "payment": {
+      "entity": {
+        "id": "pay_abc",
+        "amount": 50000,
+        "currency": "INR",
+        "status": "captured"
+      }
+    }
+  }
+}
+```
+
+**PayPal** — `PAYMENT.CAPTURE.COMPLETED`
+```json
+{
+  "id": "WH-abc",
+  "event_type": "PAYMENT.CAPTURE.COMPLETED",
+  "resource": {
+    "id": "CAP-xyz",
+    "amount": {
+      "currency_code": "USD",
+      "value": "50.00"
+    },
+    "status": "COMPLETED"
+  }
+}
+```
+
+Same semantic event. Three completely different structures.
+
+## How PayKit unifies webhooks
+
+PayKit's `webhooks.construct()` method verifies the signature and parses the payload into a `UnifiedWebhookEvent`:
+
+```typescript title="src/app/api/webhooks/stripe/route.ts"
+import { paykit } from '@/lib/paykit'
+
+export async function POST(request: Request) {
+  const payload = await request.text()
+  const signature = request.headers.get('stripe-signature')!
+
+  const event = paykit.webhooks.construct({
+    payload,
+    signature,
+    secret: process.env.STRIPE_WEBHOOK_SECRET!,
+  })
+
+  // event.type is always a unified name
+  // event.provider tells you which provider sent it
+  // event.providerType is the original event name
+
+  await handleEvent(event)
+  return new Response('ok', { status: 200 })
+}
+```
+
+The `UnifiedWebhookEvent` shape:
+
+```typescript
+interface UnifiedWebhookEvent {
+  id: string              // Provider's event ID
+  provider: string        // 'stripe' | 'razorpay' | 'paypal'
+  type: WebhookEventType  // e.g. 'charge.succeeded'
+  providerType: string    // e.g. 'payment_intent.succeeded'
+  data: unknown           // Normalised payload
+  createdAt: Date
+  _raw: unknown           // Original provider payload
+}
+```
+
+## The complete event mapping
+
+PayKit normalises 22 event types. Here are the most important ones:
+
+| PayKit Event | Stripe | Razorpay | PayPal |
+|---|---|---|---|
+| `charge.succeeded` | `payment_intent.succeeded` | `payment.captured` | `PAYMENT.CAPTURE.COMPLETED` |
+| `charge.failed` | `payment_intent.payment_failed` | `payment.failed` | `PAYMENT.CAPTURE.DENIED` |
+| `charge.refunded` | `charge.refunded` | — | `PAYMENT.CAPTURE.REFUNDED` |
+| `refund.created` | `refund.created` | `refund.created` | — |
+| `refund.completed` | `refund.updated` | `refund.processed` | `PAYMENT.CAPTURE.REVERSED` |
+| `subscription.created` | `customer.subscription.created` | `subscription.activated` | `BILLING.SUBSCRIPTION.CREATED` |
+| `subscription.canceled` | `customer.subscription.deleted` | `subscription.cancelled` | — |
+
+## Multi-provider webhook routing
+
+When you use `PaymentRouter` to route charges to different providers, you need separate webhook endpoints since each provider signs requests differently:
+
+```typescript title="src/app/api/webhooks/stripe/route.ts"
+import { router } from '@/lib/paykit-router'
+
+export async function POST(req: Request) {
+  const event = router.webhooksFor('stripe').construct({
+    payload: await req.text(),
+    signature: req.headers.get('stripe-signature')!,
+    secret: process.env.STRIPE_WEBHOOK_SECRET!,
+  })
+
+  await handleEvent(event) // Same handler for all providers
+  return new Response('ok')
+}
+```
+
+```typescript title="src/app/api/webhooks/razorpay/route.ts"
+import { router } from '@/lib/paykit-router'
+
+export async function POST(req: Request) {
+  const event = router.webhooksFor('razorpay').construct({
+    payload: await req.text(),
+    signature: req.headers.get('x-razorpay-signature')!,
+    secret: process.env.RAZORPAY_WEBHOOK_SECRET!,
+  })
+
+  await handleEvent(event) // Same handler
+  return new Response('ok')
+}
+```
+
+Both endpoints feed into the same `handleEvent` function because the event shape is identical.
+
+## Idempotency
+
+Providers may deliver the same webhook more than once. Always deduplicate:
+
+```typescript
+async function handleEvent(event: UnifiedWebhookEvent) {
+  const existing = await db.webhookEvents.findUnique({
+    where: { eventId: event.id },
+  })
+  if (existing) return // Already processed
+
+  switch (event.type) {
+    case 'charge.succeeded':
+      await fulfillOrder(event)
+      break
+    case 'charge.failed':
+      await notifyCustomer(event)
+      break
+    case 'refund.completed':
+      await updateRefundStatus(event)
+      break
+  }
+
+  await db.webhookEvents.create({
+    data: { eventId: event.id, type: event.type, processedAt: new Date() },
+  })
+}
+```
+
+## Error handling
+
+Return `200` to acknowledge receipt. If your handler throws, the provider will retry — which is what you want for transient errors, but not for permanent ones:
+
+```typescript
+export async function POST(request: Request) {
+  try {
+    const event = paykit.webhooks.construct({
+      payload: await request.text(),
+      signature: request.headers.get('stripe-signature')!,
+      secret: process.env.STRIPE_WEBHOOK_SECRET!,
+    })
+
+    await handleEvent(event)
+    return new Response('ok', { status: 200 })
+  } catch (err) {
+    console.error('Webhook failed:', err)
+    return new Response('error', { status: 500 })
+  }
+}
+```
+
+## Learn more
+
+- **[Webhooks docs](/docs/guides/webhooks)** — full reference, local testing setup, and signature verification details
+- **[Interactive webhook demo](/demo/webhooks)** — compare raw provider payloads with normalised events side by side
+- **[Multi-provider routing](/docs/guides/multi-provider)** — set up `PaymentRouter` with webhook handling for each provider

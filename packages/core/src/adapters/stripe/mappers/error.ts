@@ -19,6 +19,10 @@ const ERROR_CODE_MAP: Record<string, PaymentErrorCode> = {
   resource_missing: 'not_found',
   charge_already_captured: 'already_captured',
   charge_already_refunded: 'already_refunded',
+  lost_card: 'card_declined',
+  stolen_card: 'card_declined',
+  balance_insufficient: 'insufficient_funds',
+  email_invalid: 'invalid_request',
 };
 
 // Stripe error.type → unified code (for types not covered by err.code)

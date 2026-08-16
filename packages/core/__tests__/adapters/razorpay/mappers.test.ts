@@ -114,8 +114,8 @@ describe('charge mappers', () => {
       expect(mapPaymentStatus('captured')).toBe('succeeded');
     });
 
-    it('maps refunded → succeeded', () => {
-      expect(mapPaymentStatus('refunded')).toBe('succeeded');
+    it('maps refunded → refunded', () => {
+      expect(mapPaymentStatus('refunded')).toBe('refunded');
     });
 
     it('maps failed → failed', () => {
@@ -224,9 +224,8 @@ describe('refund mapper', () => {
       expect(result._raw).toEqual(fakeRefund());
     });
 
-    it('handles missing payment_id', () => {
-      const result = mapRazorpayRefund(fakeRefund({ payment_id: null }));
-      expect(result.chargeId).toBe('');
+    it('throws on missing payment_id', () => {
+      expect(() => mapRazorpayRefund(fakeRefund({ payment_id: null }))).toThrow('Refund missing payment_id');
     });
 
     it('handles missing status', () => {
@@ -301,8 +300,8 @@ describe('subscription mapper', () => {
       expect(mapSubscriptionStatus('completed')).toBe('canceled');
     });
 
-    it('maps expired → canceled', () => {
-      expect(mapSubscriptionStatus('expired')).toBe('canceled');
+    it('maps expired → expired', () => {
+      expect(mapSubscriptionStatus('expired')).toBe('expired');
     });
 
     it('falls back to active for unknown', () => {
@@ -338,9 +337,8 @@ describe('subscription mapper', () => {
       expect(result.metadata).toBeUndefined();
     });
 
-    it('handles missing customer_id', () => {
-      const result = mapRazorpaySubscription(fakeSubscription({ customer_id: null }));
-      expect(result.customerId).toBe('');
+    it('throws on missing customer_id', () => {
+      expect(() => mapRazorpaySubscription(fakeSubscription({ customer_id: null }))).toThrow('Subscription missing customer_id');
     });
   });
 });

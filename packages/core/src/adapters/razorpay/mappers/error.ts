@@ -42,6 +42,15 @@ export interface RazorpayError {
 }
 
 export function mapRazorpayError(err: RazorpayError): PaymentError {
+  if (!err || typeof err !== 'object') {
+    return new PaymentError({
+      code: 'processing_error',
+      message: String(err) || 'Unknown Razorpay error',
+      provider: 'razorpay',
+      isRetryable: false,
+    });
+  }
+
   const errBody = err.error ?? {};
   const reason = errBody.reason ?? '';
   const code = errBody.code ?? '';

@@ -1,0 +1,27 @@
+@reference "../../../app/globals.css";
+
+/* ── On-page Nav (TOC) ── */
+
+.pk-docs__toc {
+  @apply sticky top-14 flex flex-col gap-(--space-2) border-l border-pk-grid
+         px-(--space-5) py-(--space-10)
+         max-xl:hidden;
+}
+
+.pk-docs__toc h4 {
+  @apply uppercase text-pk-muted tracking-(--tracking-caps) mb-(--space-2);
+  font: var(--type-eyebrow);
+}
+
+.pk-docs__toc a {
+  @apply no-underline text-pk-muted py-0.5 px-(--space-2) border-l border-pk-hairline;
+  font: var(--type-body-sm);
+}
+
+.pk-docs__toc a:hover {
+  @apply text-pk-strong;
+}
+
+.pk-docs__toc a[aria-current] {
+  @apply text-pk-accent-ink border-l-pk-accent;
+}

@@ -1,0 +1,140 @@
+@reference "../../../app/globals.css";
+
+.pk-changelog {
+  @apply max-w-[860px] mx-auto;
+  padding: var(--space-16) var(--space-6) var(--space-20);
+}
+
+/* ── Timeline ── */
+
+.pk-timeline {
+  margin-top: var(--space-12);
+}
+
+.pk-tl-entry {
+  @apply flex gap-(--space-6) max-sm:gap-(--space-4);
+}
+
+/* ── Spine ── */
+
+.pk-tl-spine {
+  @apply flex flex-col items-center shrink-0;
+  width: 20px;
+}
+
+.pk-tl-dot {
+  @apply shrink-0 block;
+  width: 10px;
+  height: 10px;
+  border: 1px solid var(--border-strong);
+  background: var(--surface-page);
+  margin-top: 6px;
+}
+
+.pk-tl-dot--latest {
+  border-color: var(--blue-500);
+  background: var(--blue-500);
+  box-shadow: 0 0 0 3px oklch(0.640 0.185 258 / 0.2);
+}
+
+.pk-tl-line {
+  @apply flex-1 block;
+  width: 1px;
+  background: var(--border-grid);
+}
+
+/* ── Content ── */
+
+.pk-tl-content {
+  @apply flex flex-col gap-(--space-4) flex-1 min-w-0;
+  padding-bottom: var(--space-10);
+}
+
+.pk-tl-head {
+  @apply flex items-center gap-(--space-3) flex-wrap;
+}
+
+.pk-tl-version {
+  @apply text-pk-strong no-underline;
+  font: var(--type-heading);
+  transition: color var(--dur-fast) var(--ease-standard);
+}
+
+.pk-tl-version:hover {
+  color: var(--blue-500);
+}
+
+.pk-tl-spacer {
+  @apply flex-1;
+}
+
+.pk-tl-date {
+  @apply text-pk-muted;
+  font: var(--type-body-sm);
+}
+
+/* ── Package badges ── */
+
+.pk-tl-pkgs {
+  @apply flex gap-(--space-2) flex-wrap;
+}
+
+.pk-tl-pkg {
+  @apply inline-flex items-center px-(--space-2) h-[26px] border border-pk-hairline bg-pk-sunken text-pk-muted no-underline;
+  font: var(--type-code-sm);
+  transition: color var(--dur-fast) var(--ease-standard), border-color var(--dur-fast) var(--ease-standard);
+}
+
+.pk-tl-pkg:hover {
+  @apply text-pk-body border-pk-border;
+}
+
+/* ── Change list ── */
+
+.pk-tl-changes {
+  @apply list-none p-0 m-0 flex flex-col gap-(--space-2);
+}
+
+.pk-tl-change {
+  @apply flex items-baseline gap-(--space-3) text-pk-body;
+  font: var(--type-body);
+}
+
+.pk-tl-tag {
+  @apply inline-flex items-center shrink-0 px-(--space-2) h-[22px] text-[11px] font-medium uppercase tracking-wider;
+  border: 1px solid var(--border-hairline);
+}
+
+.pk-tl-tag--feat {
+  color: var(--blue-500);
+  border-color: oklch(0.640 0.185 258 / 0.3);
+  background: oklch(0.640 0.185 258 / 0.08);
+}
+
+.pk-tl-tag--fix {
+  color: oklch(0.75 0.15 155);
+  border-color: oklch(0.75 0.15 155 / 0.3);
+  background: oklch(0.75 0.15 155 / 0.08);
+}
+
+.pk-tl-tag--infra {
+  @apply text-pk-muted;
+  background: var(--surface-sunken);
+}
+
+/* ── Bottom CTA ── */
+
+.pk-changelog__cta {
+  @apply flex flex-col gap-(--space-6);
+  margin-top: var(--space-12);
+  padding-top: var(--space-10);
+  border-top: 1px solid var(--border-grid);
+}
+
+.pk-changelog__cta .pk-term {
+  @apply max-w-[480px];
+}
+
+.pk-changelog__actions {
+  @apply flex gap-(--space-3);
+}

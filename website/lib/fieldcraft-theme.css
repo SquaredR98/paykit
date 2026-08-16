@@ -1,0 +1,192 @@
+@reference "../app/globals.css";
+
+/*
+ * FieldCraft → Blueprint theme overrides
+ * Maps FieldCraft's CSS variables and data-slot selectors
+ * to PayKit's Blueprint design tokens.
+ */
+
+/* ── CSS variable mapping ── */
+.pk-fc-form {
+  /* Colors */
+  --primary: var(--accent-solid);
+  --primary-foreground: var(--text-on-accent);
+  --secondary: var(--surface-raised);
+  --secondary-foreground: var(--text-body);
+  --destructive: var(--bad-500);
+  --destructive-foreground: var(--slate-0);
+  --background: var(--surface-page);
+  --foreground: var(--text-body);
+  --muted-foreground: var(--text-muted);
+  --card: var(--surface-card);
+  --popover: var(--surface-card);
+  --popover-foreground: var(--text-body);
+  --border: var(--border-default);
+  --input: var(--border-default);
+  --ring: var(--border-focus);
+  --accent: var(--surface-hover);
+  --accent-foreground: var(--text-strong);
+
+  /* Shape — zero border-radius, Blueprint style */
+  --radius: 0px;
+  --fc-radius: 0px;
+  --fc-radius-input: 0px;
+  --fc-radius-button: 0px;
+  --fc-radius-card: 0px;
+
+  /* Typography */
+  --fc-font-family: var(--font-instrument-sans), 'Helvetica Neue', Helvetica, sans-serif;
+  --fc-font-scale: 1;
+}
+
+/* ── Inputs ── */
+.pk-fc-form input[data-slot="input"],
+.pk-fc-form textarea[data-slot="textarea"] {
+  @apply bg-pk-sunken border-pk-border text-pk-body;
+  border-radius: 0;
+  font-family: var(--font-instrument-sans), 'Helvetica Neue', Helvetica, sans-serif;
+}
+
+.pk-fc-form input[data-slot="input"]::placeholder,
+.pk-fc-form textarea[data-slot="textarea"]::placeholder {
+  color: var(--text-subtle);
+}
+
+.pk-fc-form input[data-slot="input"]:focus-visible,
+.pk-fc-form textarea[data-slot="textarea"]:focus-visible {
+  border-color: var(--border-focus);
+  box-shadow: var(--ring-focus);
+  outline: none;
+}
+
+/* ── Labels ── */
+.pk-fc-form label[data-slot="label"] {
+  color: var(--text-muted);
+  font: var(--type-label);
+}
+
+/* ── Dropdown / Select ── */
+.pk-fc-form button[data-slot="select-trigger"] {
+  @apply bg-pk-sunken border-pk-border text-pk-body;
+  border-radius: 0;
+}
+
+.pk-fc-form button[data-slot="select-trigger"]:focus-visible {
+  border-color: var(--border-focus);
+  box-shadow: var(--ring-focus);
+  outline: none;
+}
+
+/*
+ * Select popover is portaled to document.body by Radix,
+ * so it renders outside .pk-fc-form. Target it globally.
+ */
+div[data-slot="select-content"] {
+  background: var(--surface-card) !important;
+  border-color: var(--border-default) !important;
+  border-radius: 0 !important;
+  color: var(--text-body);
+}
+
+div[data-slot="select-item"] {
+  border-radius: 0 !important;
+}
+
+div[data-slot="select-item"][data-highlighted],
+div[data-slot="select-item"]:focus {
+  background: var(--surface-hover);
+  color: var(--text-strong);
+}
+
+/* ── Buttons ── */
+.pk-fc-form button[data-slot="button"][data-variant="default"] {
+  @apply bg-pk-accent text-pk-on-accent;
+  border-radius: 0;
+  font-weight: 500;
+  transition: var(--transition-control);
+}
+
+.pk-fc-form button[data-slot="button"][data-variant="default"]:hover {
+  background: var(--accent-solid-hover);
+}
+
+.pk-fc-form button[data-slot="button"][data-variant="default"]:active {
+  background: var(--accent-solid-press);
+}
+
+.pk-fc-form button[data-slot="button"][data-variant="outline"],
+.pk-fc-form button[data-slot="button"][data-variant="secondary"] {
+  @apply bg-pk-card border-pk-border text-pk-body;
+  border-radius: 0;
+  transition: var(--transition-control);
+}
+
+.pk-fc-form button[data-slot="button"][data-variant="outline"]:hover,
+.pk-fc-form button[data-slot="button"][data-variant="secondary"]:hover {
+  background: var(--surface-hover);
+}
+
+/* ── Checkbox / Radio ── */
+.pk-fc-form div[data-slot="checkbox"],
+.pk-fc-form div[data-slot="radio-group-item"] {
+  border-color: var(--border-default);
+}
+
+.pk-fc-form div[data-slot="checkbox"][data-state="checked"] {
+  background: var(--accent-solid);
+  border-color: var(--accent-solid);
+}
+
+.pk-fc-form .fc-option-active {
+  border-color: var(--border-accent);
+  background: var(--surface-accent-soft);
+}
+
+/* ── Boolean (Yes/No buttons) ── */
+.pk-fc-form button[role="radio"] {
+  border-radius: 0;
+  border-color: var(--border-default);
+  background: var(--surface-sunken);
+  color: var(--text-body);
+}
+
+.pk-fc-form button[role="radio"].fc-option-active {
+  border-color: var(--border-accent);
+  background: var(--surface-accent-soft);
+  color: var(--text-strong);
+}
+
+/* ── Error states ── */
+.pk-fc-form div[role="alert"] {
+  color: var(--bad-400);
+}
+
+.pk-fc-form .fc-error-bg {
+  background: oklch(0.620 0.195 22 / 0.08);
+  border-color: var(--bad-400);
+}
+
+/* ── Help text ── */
+.pk-fc-form p[id$="-help"] {
+  color: var(--text-subtle);
+}
+
+/* ── Section headers ── */
+.pk-fc-form .fc-section-header__title {
+  color: var(--text-strong);
+  font-family: var(--font-space-grotesk), 'Helvetica Neue', Helvetica, sans-serif;
+}
+
+.pk-fc-form .fc-section-header__description {
+  color: var(--text-muted);
+}
+
+/* ── Completion screen ── */
+.pk-fc-form .fc-screen__heading {
+  color: var(--text-strong);
+  font-family: var(--font-space-grotesk), 'Helvetica Neue', Helvetica, sans-serif;
+}
+
+.pk-fc-form .fc-screen__description {
+  color: var(--text-muted);
+}

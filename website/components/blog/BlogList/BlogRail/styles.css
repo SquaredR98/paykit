@@ -1,0 +1,78 @@
+@reference "../../../../app/globals.css";
+
+.pk-rail {
+  @apply flex flex-col;
+  @apply max-lg:w-full;
+}
+
+.pk-railblk {
+  @apply flex flex-col gap-(--space-4) p-(--space-6);
+  @apply border-b border-pk-grid;
+}
+
+.pk-railblk:last-child {
+  @apply border-b-0;
+}
+
+.pk-clog {
+  @apply flex flex-col;
+}
+
+.pk-cl {
+  @apply grid items-baseline gap-(--space-3);
+  @apply py-(--space-3);
+  grid-template-columns: 76px 1fr;
+}
+
+.pk-cl + .pk-cl {
+  @apply border-t border-pk-hairline;
+}
+
+.pk-v {
+  @apply text-pk-accent-ink;
+  font: var(--type-code-sm);
+}
+
+.pk-d {
+  @apply text-pk-muted;
+  font: var(--type-body-sm);
+}
+
+.pk-toplist {
+  @apply flex flex-col;
+}
+
+.pk-topitem {
+  @apply flex gap-(--space-3) no-underline;
+  @apply py-(--space-3);
+}
+
+.pk-topitem + .pk-topitem {
+  @apply border-t border-pk-hairline;
+}
+
+.pk-topnum {
+  @apply text-pk-subtle;
+  font: var(--type-code-sm);
+}
+
+.pk-topitem a {
+  @apply text-pk-body no-underline;
+  font: var(--type-body-sm);
+  @apply leading-[1.4];
+  transition: var(--transition-control);
+}
+
+.pk-topitem a:hover {
+  @apply text-pk-accent-ink;
+}
+
+.pk-cta {
+  @apply bg-pk-card;
+}
+
+.pk-cta__text {
+  @apply m-0 text-pk-muted;
+  font: var(--type-body-sm);
+  @apply leading-[1.5];
+}

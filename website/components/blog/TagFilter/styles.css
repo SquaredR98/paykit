@@ -1,0 +1,34 @@
+@reference "../../../app/globals.css";
+
+.pk-filters {
+  @apply flex gap-(--space-2) items-center py-(--space-3) px-(--space-10);
+  background: var(--surface-sunken);
+  border-bottom: 1px solid var(--border-grid);
+}
+
+.pk-chip {
+  @apply inline-flex items-center px-(--space-3) h-(--control-h-sm) border border-pk-hairline
+         cursor-pointer bg-transparent text-pk-muted;
+  font: var(--type-code-sm);
+  transition: var(--transition-control);
+}
+
+.pk-chip:hover {
+  @apply bg-pk-hover text-pk-strong;
+}
+
+.pk-chip[aria-pressed="true"] {
+  background: var(--surface-accent-soft);
+  color: var(--accent-ink);
+  border-color: var(--border-accent);
+  box-shadow: inset 0 calc(-1 * var(--marker-width)) 0 var(--accent-solid);
+}
+
+.pk-sp {
+  @apply flex-1;
+}
+
+.pk-note {
+  font: var(--type-code-sm);
+  color: var(--text-subtle);
+}

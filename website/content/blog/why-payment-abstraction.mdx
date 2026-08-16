@@ -1,0 +1,204 @@
+---
+title: Why Payment Abstraction Matters
+description: The hidden costs of payment provider lock-in and how unified infrastructure saves engineering time, reduces risk, and unlocks business flexibility.
+date: 2025-01-25
+tags: ['business', 'infrastructure']
+---
+
+Most startups pick Stripe and never look back. It works, it's well-documented, and there's no compelling reason to change — until there is.
+
+This post explores the hidden costs of payment provider lock-in and why abstraction layers like PayKit are becoming critical infrastructure.
+
+## The Lock-In Tax
+
+When you integrate directly with a payment provider's SDK, you're making an architectural bet: **this provider will meet our needs forever**.
+
+That's rarely true.
+
+### Geographic Expansion
+
+You launch in the US with Stripe. Two years later, you expand to India and discover:
+
+- Stripe's India fees are 2.9% + ₹2 (competitive in the US, expensive in India)
+- Razorpay offers 2% flat with better local payment methods (UPI, Paytm)
+- Switching requires rewriting every `stripe.charges.create()` call
+
+**Cost**: 4-6 weeks of eng time, plus QA, plus risk of breaking production payments.
+
+### Compliance Requirements
+
+You're serving EU customers and need SCA (Strong Customer Authentication). Your current provider supports it, but:
+
+- Their implementation doesn't work with your checkout flow
+- A competitor has a better hosted solution
+- Migrating means touching 15 files and rewriting webhook handlers
+
+**Cost**: Lost revenue while you're non-compliant, or rushed integration full of bugs.
+
+### Fee Optimization
+
+You're processing $1M/month. Stripe charges 2.9% + $0.30 = **$29,300/month** in fees.
+
+You negotiate with Braintree and get 2.5% flat = **$25,000/month**. That's **$51,600/year** in savings.
+
+But switching requires:
+
+- Rewriting charge creation logic
+- Rewriting refund logic
+- Rewriting customer management
+- Rewriting webhook handlers
+- Migrating historical transaction data
+- Updating financial reconciliation scripts
+
+**Cost**: 8 weeks of eng time (let's say $80k loaded cost). Even with the savings, ROI is marginal — and you're still locked in to Braintree.
+
+## The Abstraction Layer
+
+An abstraction layer like PayKit inverts this. Instead of:
+
+```
+Your App → Stripe SDK → Stripe API
+```
+
+You get:
+
+```
+Your App → PayKit → Adapter → Provider SDK → Provider API
+```
+
+Now switching providers is dependency injection:
+
+```typescript
+// Before
+const paykit = new PayKit({ provider: 'stripe', apiKey: '...' });
+
+// After
+const paykit = new PayKit({ provider: 'razorpay', apiKey: '...' });
+```
+
+**Cost**: One line of code, some config changes, and testing.
+
+## Real-World Wins
+
+### 1. Multi-Region Routing
+
+Run Stripe in the US, Razorpay in India, Adyen in Europe — automatically route based on user location:
+
+```typescript
+const paykit = new PayKit({
+  router: {
+    rules: [
+      { region: 'US', provider: 'stripe' },
+      { region: 'IN', provider: 'razorpay' },
+      { region: 'EU', provider: 'adyen' },
+    ],
+  },
+});
+```
+
+No if/else spaghetti in your application code.
+
+### 2. Failover
+
+If Stripe has an outage (it happens), fail over to Braintree:
+
+```typescript
+const paykit = new PayKit({
+  provider: 'stripe',
+  fallback: 'braintree',
+});
+```
+
+PayKit detects failure and retries with the fallback provider.
+
+### 3. A/B Testing Providers
+
+Want to test if Razorpay converts better than Stripe for your audience? Roll out gradually:
+
+```typescript
+const provider = Math.random() < 0.1 ? 'razorpay' : 'stripe';
+const paykit = new PayKit({ provider });
+```
+
+Track conversion rates by provider in your analytics.
+
+### 4. Cost Arbitrage
+
+Use the cheapest provider per transaction type:
+
+```typescript
+const paykit = new PayKit({
+  router: {
+    rules: [
+      { amount: { lt: 1000 }, provider: 'stripe' }, // Small txns
+      { amount: { gte: 1000 }, provider: 'braintree' }, // Large txns (better rates)
+    ],
+  },
+});
+```
+
+Maximize margin without code changes.
+
+## Counterarguments
+
+**"Abstraction layers always leak."**
+
+True. Stripe has `SetupIntents`, Razorpay has `payment_links` — not everything maps 1:1.
+
+PayKit's answer:
+
+- **Core operations** (charge, refund, customer) are fully abstracted
+- **Provider-specific features** are exposed via optional extensions or passthrough access to the native SDK
+
+You get portability for 90% of operations and an escape hatch for the other 10%.
+
+**"It's premature optimization."**
+
+Maybe. If you're a pre-product startup with 10 transactions/month, adding an abstraction layer is overkill.
+
+But if you're processing real volume (or planning to), the switching cost compounds over time. Integrating PayKit upfront is cheaper than migrating later.
+
+**"We'll never switch providers."**
+
+Famous last words. The payment landscape changes:
+
+- Providers get acquired (Braintree → PayPal, WePay → Chase)
+- Pricing changes (Stripe raised fees in 2019)
+- New players emerge (Razorpay, Adyen, Paddle)
+
+Even if you don't switch, having the *option* gives you negotiating leverage.
+
+## When NOT to Use PayKit
+
+PayKit isn't for everyone:
+
+- **Early-stage startups** — If you're pre-product/market fit, direct Stripe integration is faster
+- **Provider-specific products** — If your product is built around Stripe's unique features (like Connect or Billing), abstraction doesn't help
+- **Trivial payment needs** — If you only process a few transactions per month, the overhead isn't worth it
+
+But if you're:
+
+- Building multi-region infrastructure
+- Processing serious volume ($100k+/month)
+- Needing regulatory flexibility (GDPR, PCI-DSS across regions)
+- Optimizing for cost at scale
+
+...then PayKit is infrastructure that pays for itself.
+
+## Conclusion
+
+Payment provider lock-in is a hidden tax on engineering velocity and business flexibility. You don't feel it on day 1, but three years in, when you need to switch providers or add a new region, that tax comes due.
+
+Abstraction layers like PayKit give you **optionality** — the ability to change your mind without rewriting your app.
+
+And in infrastructure, optionality is leverage.
+
+---
+
+**Try PayKit:**
+
+```bash
+npm install @squaredr/paykit
+```
+
+Start with Stripe, switch to Razorpay later — without touching application code.

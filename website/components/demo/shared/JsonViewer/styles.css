@@ -1,0 +1,13 @@
+@reference "../../../../app/globals.css";
+
+.pk-json--scroll {
+  max-height: var(--pk-json-max-h, 400px);
+  overflow-y: auto;
+}
+
+/* JSON syntax highlighting classes */
+.pk-json-key { color: var(--code-prop); }
+.pk-json-string { color: var(--code-string); }
+.pk-json-number { color: var(--code-number); }
+.pk-json-bool { color: var(--code-keyword); }
+.pk-json-null { color: var(--code-comment); }

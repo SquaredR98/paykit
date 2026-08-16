@@ -1,0 +1,242 @@
+@reference "../../../app/globals.css";
+
+/* 1c: padding on body column, not on grid */
+.pk-split-article {
+  @apply grid;
+  grid-template-columns: 1fr 300px;
+  @apply max-lg:grid-cols-1;
+}
+
+.pk-body {
+  @apply p-(--space-10) min-w-0;
+  @apply max-lg:p-(--space-6);
+}
+
+/* 4a: rail — aside column with sunken bg, border-left, hidden on mobile */
+.pk-rail {
+  @apply border-l border-l-pk-grid bg-pk-sunken;
+  @apply max-lg:hidden;
+}
+
+.pk-railstick {
+  @apply sticky flex flex-col;
+  top: calc(var(--nav-height, 64px) + 1px);
+}
+
+.pk-railblk {
+  @apply flex flex-col gap-(--space-4) p-(--space-6);
+  @apply border-b border-b-pk-grid;
+}
+
+/* 3e: share block */
+.pk-share {
+  @apply flex items-center gap-(--space-2);
+}
+
+.pk-iconbtn {
+  @apply inline-grid place-items-center w-(--control-h-md) h-(--control-h-md);
+  @apply bg-transparent border border-pk-border text-pk-muted cursor-pointer;
+  transition: var(--transition-control);
+}
+
+.pk-iconbtn:hover {
+  @apply bg-pk-hover text-pk-strong;
+}
+
+.pk-rail__note {
+  @apply text-pk-subtle;
+  font: var(--type-code-sm);
+}
+
+.pk-rail__note a {
+  @apply text-pk-accent-ink no-underline;
+}
+
+.pk-rail__note a:hover {
+  @apply underline;
+}
+
+.pk-prose {
+  @apply max-w-[68ch];
+}
+
+.pk-prose > * + * {
+  margin-top: var(--space-5);
+}
+
+/* 2a + 2b: paragraph — override type-body size/leading, add text-wrap */
+.pk-prose p {
+  @apply my-(--space-4) text-pk-body;
+  font: var(--type-body);
+  @apply text-[length:var(--text-md)] leading-(--leading-loose);
+  text-wrap: pretty;
+}
+
+/* 2c + 2d: h2 — text-3xl, bold 700, leading-snug, margin-top space-12 */
+.pk-prose h2 {
+  @apply mt-(--space-12) mb-(--space-4) text-pk-strong;
+  @apply font-display font-bold text-[length:var(--text-3xl)] leading-(--leading-snug);
+  @apply tracking-(--tracking-tighter);
+  @apply scroll-mt-[80px];
+}
+
+/* 2e: h3 — use --type-heading token directly */
+.pk-prose h3 {
+  @apply mt-(--space-8) mb-(--space-3) text-pk-strong;
+  font: var(--type-heading);
+  @apply tracking-(--tracking-tight);
+  @apply scroll-mt-[80px];
+}
+
+/* 2f: link — box-shadow underline instead of text-decoration */
+.pk-prose a {
+  @apply text-pk-link no-underline;
+  box-shadow: inset 0 -1px 0 var(--border-accent);
+  transition: var(--transition-control);
+}
+
+.pk-prose a:hover {
+  @apply text-pk-link-hover no-underline;
+  box-shadow: inset 0 -1px 0 currentColor;
+}
+
+/* 2g: strong — medium weight (500) instead of semibold (600) */
+.pk-prose strong {
+  @apply font-medium text-pk-strong;
+}
+
+.pk-prose em {
+  @apply italic;
+}
+
+/* 2h: lists — custom dash markers */
+.pk-prose ul,
+.pk-prose ol {
+  @apply my-(--space-4) text-pk-body;
+  @apply ml-0 list-none;
+  @apply flex flex-col;
+  padding-left: 22px;
+  gap: var(--space-3);
+  font: var(--type-body);
+}
+
+.pk-prose li {
+  @apply relative;
+  font: var(--type-body);
+  @apply text-[length:var(--text-md)] leading-(--leading-loose) text-pk-body;
+}
+
+.pk-prose li::before {
+  @apply absolute;
+  content: '—';
+  left: -22px;
+  font-family: var(--font-mono);
+  @apply text-[length:var(--code-size-sm)] text-pk-subtle;
+  @apply leading-(--leading-loose);
+}
+
+.pk-prose ol {
+  counter-reset: n;
+}
+
+.pk-prose ol li::before {
+  counter-increment: n;
+  content: counter(n, decimal-leading-zero);
+  @apply text-pk-accent-ink;
+}
+
+/* 2i: blockquote — sunken bg, box-shadow left marker, strong body-lg text */
+.pk-prose blockquote {
+  @apply my-(--space-6) bg-pk-sunken;
+  padding: var(--space-4) var(--space-5);
+  box-shadow: inset var(--marker-width) 0 0 var(--accent-solid);
+}
+
+.pk-prose blockquote p {
+  @apply m-0 text-pk-strong;
+  font: var(--type-body-lg);
+}
+
+/* 2k: hr */
+.pk-prose hr {
+  @apply border-0 border-t border-pk-grid;
+  margin: var(--space-10) 0;
+}
+
+/* 2l: figcaption — left-aligned, code-sm font, subtle color */
+.pk-prose figure {
+  @apply my-(--space-8) max-w-none w-full;
+}
+
+.pk-prose figcaption {
+  @apply mt-(--space-3) text-pk-subtle;
+  font: var(--type-code-sm);
+}
+
+/* code — inline (exclude fenced blocks inside <pre>) */
+.pk-prose code:not(pre code) {
+  @apply px-1.5 py-0.5 font-mono text-[length:var(--code-size-sm)];
+  @apply bg-pk-accent-soft border border-pk-hairline text-pk-accent-ink;
+}
+
+/* code — fenced blocks inside terminal chrome */
+.pk-prose .pk-term pre {
+  @apply m-0 overflow-x-auto font-mono;
+  padding: var(--code-pad-y) var(--code-pad-x);
+  font-size: var(--code-size);
+  line-height: var(--code-leading);
+  color: var(--code-plain);
+  font-variant-ligatures: none;
+}
+
+.pk-prose .pk-term pre code {
+  @apply block p-0 border-0 bg-transparent;
+}
+
+/* shiki css-variables theme → PayKit token mapping */
+.pk-prose .pk-term {
+  --pk-code-foreground: var(--code-plain);
+  --pk-code-background: transparent;
+  --pk-code-token-keyword: var(--code-keyword);
+  --pk-code-token-string: var(--code-string);
+  --pk-code-token-string-expression: var(--code-string);
+  --pk-code-token-function: var(--code-fn);
+  --pk-code-token-constant: var(--code-number);
+  --pk-code-token-parameter: var(--code-prop);
+  --pk-code-token-comment: var(--code-comment);
+  --pk-code-token-punctuation: var(--code-punct);
+  --pk-code-token-link: var(--code-fn);
+}
+
+.pk-prose .pk-prose-figure {
+  @apply my-(--space-6) max-w-none w-full;
+}
+
+/* 3b: prose table (mapping tables) */
+.pk-prose table {
+  @apply w-full my-(--space-6) border border-pk-border;
+  border-collapse: collapse;
+}
+
+.pk-prose th {
+  @apply text-left bg-pk-sunken text-pk-muted uppercase;
+  padding: var(--space-3) var(--space-4);
+  font: var(--type-eyebrow);
+  letter-spacing: var(--tracking-caps);
+  border-bottom: 1px solid var(--border-default);
+}
+
+.pk-prose td {
+  @apply text-pk-body;
+  padding: var(--space-3) var(--space-4);
+  font: var(--type-code-sm);
+  border-bottom: 1px solid var(--border-hairline);
+}
+
+.pk-prose tr:last-child td {
+  @apply border-b-0;
+}
+
+.pk-prose td:last-child {
+  @apply text-pk-accent-ink;
+}

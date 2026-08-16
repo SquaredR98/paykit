@@ -1,0 +1,141 @@
+---
+title: Getting Started with PayKit in 5 Minutes
+description: Install PayKit, create your first charge with Stripe, switch to Razorpay with one line, and add webhook handling — all in under 5 minutes.
+date: 2025-02-10
+tags: ['tutorial', 'getting-started']
+---
+
+You want to accept payments in your Node.js app. You install Stripe's SDK, write charge creation logic, build a checkout form, set up webhooks. Then your product manager says "we also need Razorpay for India." Now you're maintaining two parallel integrations with different APIs, different webhook formats, and different error shapes.
+
+PayKit eliminates that problem. One SDK, one API, every provider.
+
+## What is PayKit?
+
+PayKit is a unified TypeScript payment SDK. You write your payment logic once — charges, refunds, webhooks, checkout — and swap providers by changing a single import. The core SDK, Stripe, Razorpay, and PayPal adapters are MIT-licensed and free.
+
+## Step 1: Install
+
+```bash
+npm install @squaredr/paykit stripe
+```
+
+That's it. The `stripe` package is a peer dependency — PayKit's adapter wraps it to provide the unified interface.
+
+## Step 2: Create your first charge
+
+```typescript title="src/lib/paykit.ts"
+import { PayKit } from '@squaredr/paykit'
+import { StripeAdapter } from '@squaredr/paykit/stripe'
+
+export const paykit = new PayKit({
+  adapter: new StripeAdapter({
+    secretKey: process.env.STRIPE_SECRET_KEY!,
+  }),
+})
+```
+
+```typescript title="src/app/api/checkout/route.ts"
+import { paykit } from '@/lib/paykit'
+
+export async function POST(request: Request) {
+  const { amount, currency } = await request.json()
+
+  const charge = await paykit.charges.create({
+    amount,      // in smallest unit (e.g. 5000 = $50.00)
+    currency,
+    metadata: { source: 'website' },
+  })
+
+  return Response.json({
+    clientSecret: charge.clientSecret,
+  })
+}
+```
+
+The `clientSecret` is passed to your frontend to confirm the payment using Stripe's Payment Element.
+
+## Step 3: Frontend checkout
+
+```tsx title="src/components/Checkout.tsx"
+'use client'
+
+import { PayKitProvider, CheckoutForm } from '@squaredr/paykit-react'
+import { StripeClientAdapter } from '@squaredr/paykit/stripe/client'
+
+const stripeClient = new StripeClientAdapter(
+  process.env.NEXT_PUBLIC_STRIPE_PK!
+)
+
+export function Checkout({ clientSecret }: { clientSecret: string }) {
+  return (
+    <PayKitProvider clientAdapter={stripeClient} clientSecret={clientSecret}>
+      <CheckoutForm
+        onSuccess={(result) => console.log('Paid:', result.id)}
+        onError={(err) => console.error(err.message)}
+      />
+    </PayKitProvider>
+  )
+}
+```
+
+`PayKitProvider` loads the provider's script, mounts the payment form, and handles confirmation. You get `onSuccess` and `onError` callbacks — no provider-specific code needed.
+
+## Step 4: Switch to Razorpay
+
+Here's where PayKit shines. To switch from Stripe to Razorpay, change one file:
+
+```typescript title="src/lib/paykit.ts"
+import { PayKit } from '@squaredr/paykit'
+import { RazorpayAdapter } from '@squaredr/paykit/razorpay'
+
+export const paykit = new PayKit({
+  adapter: new RazorpayAdapter({
+    keyId: process.env.RAZORPAY_KEY_ID!,
+    keySecret: process.env.RAZORPAY_KEY_SECRET!,
+  }),
+})
+```
+
+Your checkout route, webhook handler, and frontend component stay exactly the same. `paykit.charges.create()` now creates a Razorpay order instead of a Stripe PaymentIntent — but the return shape is identical.
+
+## Step 5: Handle webhooks
+
+Payment events (successful charge, failed charge, refund) arrive via webhooks. PayKit normalises every provider's webhook payload into a unified event:
+
+```typescript title="src/app/api/webhooks/route.ts"
+import { paykit } from '@/lib/paykit'
+
+export async function POST(request: Request) {
+  const payload = await request.text()
+  const signature = request.headers.get('stripe-signature')!
+
+  const event = paykit.webhooks.construct({
+    payload,
+    signature,
+    secret: process.env.STRIPE_WEBHOOK_SECRET!,
+  })
+
+  switch (event.type) {
+    case 'charge.succeeded':
+      // fulfil the order
+      break
+    case 'charge.failed':
+      // notify the customer
+      break
+  }
+
+  return new Response('ok', { status: 200 })
+}
+```
+
+Whether the webhook comes from Stripe (`payment_intent.succeeded`) or Razorpay (`payment.captured`), your handler sees `charge.succeeded`. PayKit maps 22 event types across all providers.
+
+## What's next?
+
+You now have a working payment integration that can switch providers with a single line change. From here:
+
+- **[Multi-provider routing](/docs/guides/multi-provider)** — run Stripe for USD and Razorpay for INR simultaneously using `PaymentRouter`
+- **[Webhook deep dive](/docs/guides/webhooks)** — idempotency patterns, multi-provider webhook routing, and local testing
+- **[Try the interactive demos](/demo/checkout)** — see PayKit in action with live Stripe and Razorpay checkout flows
+
+PayKit is [open source on GitHub](https://github.com/SquaredR98/paykit). The core SDK and three provider adapters (Stripe, Razorpay, PayPal) are free and MIT-licensed.

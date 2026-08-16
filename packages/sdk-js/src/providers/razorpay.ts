@@ -17,6 +17,8 @@ export class RazorpayProviderBridge implements ProviderBridge {
   readonly name = 'razorpay';
 
   private ready = false;
+  private mounted = false;
+  private mounting = false;
   private rzpInstance: any = null;
   private container: HTMLElement | null = null;
   private listeners = new Map<ClientEventType, Set<ClientEventListener>>();
@@ -36,28 +38,47 @@ export class RazorpayProviderBridge implements ProviderBridge {
   }
 
   async mount(container: HTMLElement, _options?: MountOptions): Promise<void> {
-    if (!this.ready) {
-      await this.loadScript();
+    if (this.mounted) this.unmount();
+    if (this.mounting) throw new Error('Mount already in progress');
+    this.mounting = true;
+    try {
+      if (!this.ready) {
+        await this.loadScript();
+      }
+
+      this.container = container;
+      // Razorpay uses a modal, not an inline iframe.
+      // We render a placeholder indicating the modal will open on submit.
+      container.setAttribute('data-paykit-provider', 'razorpay');
+      const placeholder = document.createElement('div');
+      placeholder.dataset.paykitRazorpayPlaceholder = '';
+      placeholder.textContent = 'Razorpay Checkout will open on submit';
+      container.appendChild(placeholder);
+
+      this.mounted = true;
+      this.emit({ type: 'ready' });
+    } finally {
+      this.mounting = false;
     }
-
-    this.container = container;
-    // Razorpay uses a modal, not an inline iframe.
-    // We render a placeholder indicating the modal will open on submit.
-    container.setAttribute('data-paykit-provider', 'razorpay');
-    container.innerHTML = '<div data-paykit-razorpay-placeholder>Razorpay Checkout will open on submit</div>';
-
-    this.emit({ type: 'ready' });
   }
 
   unmount(): void {
     if (this.container) {
-      this.container.innerHTML = '';
+      this.container.replaceChildren();
       this.container.removeAttribute('data-paykit-provider');
       this.container = null;
+    }
+    this.mounted = false;
+  }
+
+  private assertMounted(): void {
+    if (!this.mounted) {
+      throw new Error('Not mounted. Call mount() first.');
     }
   }
 
   async tokenize(): Promise<TokenizeResult> {
+    this.assertMounted();
     if (!this.ready) {
       throw new Error('Razorpay not loaded. Call loadScript() first.');
     }
@@ -66,6 +87,7 @@ export class RazorpayProviderBridge implements ProviderBridge {
       const options = {
         key: this.publicKey,
         handler: (response: any) => {
+          this.rzpInstance = null;
           resolve({
             token: response.razorpay_payment_id,
             paymentMethodType: 'card' as const,
@@ -73,12 +95,17 @@ export class RazorpayProviderBridge implements ProviderBridge {
         },
         modal: {
           ondismiss: () => {
+            this.rzpInstance = null;
             reject({ code: 'user_cancelled', message: 'Payment cancelled by user', isRetryable: false });
           },
         },
         theme: this.mapTheme(),
       };
 
+      if (!(window as any).Razorpay) {
+        reject(new Error('Razorpay SDK not available. Ensure loadScript() completed successfully.'));
+        return;
+      }
       this.rzpInstance = new (window as any).Razorpay(options);
       this.emit({ type: 'loading_start' });
       this.rzpInstance.open();
@@ -86,8 +113,12 @@ export class RazorpayProviderBridge implements ProviderBridge {
   }
 
   async confirmPayment(clientSecret: string, _options?: { returnUrl?: string }): Promise<PaymentConfirmResult> {
+    this.assertMounted();
     if (!this.ready) {
       throw new Error('Razorpay not loaded. Call loadScript() first.');
+    }
+    if (!(window as any).Razorpay) {
+      throw new Error('Razorpay SDK not available. Ensure loadScript() completed successfully.');
     }
 
     // For Razorpay, clientSecret is the order_id
@@ -96,6 +127,7 @@ export class RazorpayProviderBridge implements ProviderBridge {
         key: this.publicKey,
         order_id: clientSecret,
         handler: (response: any) => {
+          this.rzpInstance = null;
           this.emit({ type: 'loading_end' });
           resolve({
             status: 'succeeded' as const,
@@ -104,6 +136,7 @@ export class RazorpayProviderBridge implements ProviderBridge {
         },
         modal: {
           ondismiss: () => {
+            this.rzpInstance = null;
             this.emit({ type: 'loading_end' });
             resolve({ status: 'canceled' as const });
           },
