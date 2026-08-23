@@ -4,7 +4,7 @@
 
 .pk-demo-index {
   @apply grid grid-cols-2 gap-(--space-6) px-(--space-10) pb-(--space-12)
-         max-md:grid-cols-1;
+         max-md:grid-cols-1 max-sm:px-(--space-5);
 }
 
 .pk-demo-index__card {
@@ -40,7 +40,8 @@
 }
 
 .pk-demo-nav__link {
-  @apply flex items-center px-(--space-4) h-[40px] text-pk-subtle;
+  @apply flex items-center px-(--space-4) h-[40px] text-pk-subtle
+         max-sm:px-(--space-3);
   font: var(--type-label);
   text-decoration: none;
   border-bottom: 2px solid transparent;

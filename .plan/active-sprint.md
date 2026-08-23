@@ -1,9 +1,13 @@
 # ACTIVE SPRINT — Month 3 Weeks 1-3 Implementation Plan
 
-> **Status**: IN PROGRESS
+> **Status**: WEEKS 1-3 COMPLETE. See `current-priorities.md` for what's next.
 > **Started**: August 13, 2026
+> **Completed**: August 23, 2026
 > **Scope**: 60 items across 40+ files
 > **Reference**: Items from `backlog.md` Category G + A1.20 + A7.01-A7.05
+>
+> **NEXT**: Website completion (Phase 10a, 10b, 11) → Deep audit → Daily shipping.
+> Read `current-priorities.md` for the master priority order.
 
 ---
 
@@ -461,10 +465,11 @@ Fix: Try `JSON.parse()` on `customId`. If valid object, use as metadata.
 
 ## Post-Sprint: Dev Workbench Page
 
-- [ ] Interactive dev-only page in the website (renders only in development mode)
+- [x] Interactive dev-only page in the website (renders only in development mode)
 - All implemented features visible and testable: adapters, operations, retry logic, logging, hooks
 - Live interaction — smoke testing and deep testing against test credentials
 - Helps understand design decisions and verify implementations
+- See `dev-workbench-plan.md` for details — all sections built, manual verification pending
 
 ---
 

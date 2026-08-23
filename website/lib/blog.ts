@@ -97,8 +97,10 @@ export function extractTocItems(content: string): TocItem[] {
     const text = match[2].trim();
     const id = text
       .toLowerCase()
-      .replace(/[^\w\s-]/g, '')
-      .replace(/\s+/g, '-');
+      .replace(/[^a-z0-9 -]/g, '')
+      .replace(/\s+/g, '-')
+      .replace(/-+/g, '-')
+      .replace(/^-|-$/g, '');
     items.push({ id, text, level });
   }
 

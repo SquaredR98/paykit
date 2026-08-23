@@ -1,0 +1,91 @@
+@reference "../../../app/globals.css";
+
+/* ── Capability Matrix ── */
+
+.pk-capmatrix {
+  @apply min-w-0 px-(--space-10) pt-(--space-10) pb-(--space-24)
+         max-md:px-(--space-5) max-md:pt-(--space-6) max-md:pb-(--space-16);
+  max-width: 920px;
+}
+
+.pk-capmatrix__header {
+  @apply mb-(--space-8);
+}
+
+.pk-capmatrix__header h1 {
+  @apply mt-(--space-2) tracking-(--tracking-tighter) text-pk-strong;
+  font: var(--type-display-1);
+}
+
+.pk-capmatrix__header p {
+  @apply mt-(--space-3) text-pk-muted;
+  font: var(--type-body-lg);
+}
+
+/* ── Table wrapper ── */
+
+.pk-capmatrix__wrap {
+  @apply overflow-x-auto mt-(--space-6);
+}
+
+.pk-capmatrix__table {
+  @apply w-full border-collapse border border-pk-border bg-pk-card;
+}
+
+.pk-capmatrix__table th {
+  @apply text-left uppercase whitespace-nowrap text-pk-muted tracking-(--tracking-caps)
+         px-(--space-4) h-(--control-h-md) bg-pk-sunken border-b border-pk-grid;
+  font: var(--type-eyebrow);
+}
+
+.pk-capmatrix__table th + th {
+  @apply border-l border-pk-hairline text-center;
+}
+
+.pk-capmatrix__table td {
+  @apply align-middle px-(--space-4) py-(--space-3) border-t border-pk-hairline text-pk-body;
+  font: var(--type-body-sm);
+}
+
+.pk-capmatrix__table td + td {
+  @apply border-l border-pk-hairline text-center;
+}
+
+/* ── Status cells ── */
+
+.pk-capmatrix__yes {
+  color: var(--text-ok);
+}
+
+.pk-capmatrix__no {
+  color: var(--text-subtle);
+}
+
+/* ── Capability description ── */
+
+.pk-capmatrix__desc {
+  @apply text-pk-muted mt-0.5;
+  font: var(--type-code-sm);
+}
+
+/* ── Legend ── */
+
+.pk-capmatrix__legend {
+  @apply flex gap-(--space-6) mt-(--space-5) text-pk-muted;
+  font: var(--type-body-sm);
+}
+
+.pk-capmatrix__legend-item {
+  @apply flex items-center gap-(--space-2);
+}
+
+/* ── Code snippet panel ── */
+
+.pk-capmatrix__snippet {
+  @apply mt-(--space-6) pt-(--space-5) border-t border-pk-grid;
+}
+
+.pk-capmatrix__snippet-label {
+  @apply text-pk-muted uppercase tracking-(--tracking-caps) mb-(--space-2);
+  font: var(--type-eyebrow);
+}

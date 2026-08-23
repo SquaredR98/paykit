@@ -35,6 +35,13 @@ export const docsNav: DocNavSection[] = [
       { title: 'FAQ', href: '/docs/reference/faq' },
     ],
   },
+  {
+    label: 'Tools',
+    items: [
+      { title: 'API Explorer', href: '/docs/api-explorer', badge: 'Live' },
+      { title: 'Capabilities', href: '/docs/capabilities' },
+    ],
+  },
 ];
 
 export const allDocPages = docsNav.flatMap((s) => s.items);

@@ -6,48 +6,56 @@
   @apply p-[var(--space-10)] max-sm:p-[var(--space-6)];
 }
 
-.pk-diff__wrap {
-  @apply py-[var(--code-pad-y)] px-0;
+/* Override default shiki font size for this block */
+.pk-diff__body .pk-term pre.shiki {
+  @apply text-[length:var(--code-size-sm)] leading-[var(--code-leading)];
+  padding: 0;
 }
 
-.pk-dl {
-  @apply grid grid-cols-[28px_1fr] font-mono text-[length:var(--code-size-sm)] leading-[var(--code-leading)];
+/* Collapse whitespace nodes between block lines */
+.pk-diff__body .shiki code {
+  font-size: 0;
 }
 
-.pk-dl > span:first-child {
-  @apply text-center select-none;
+/* Every line becomes a block so backgrounds span full width */
+.pk-diff__body .shiki code .line {
+  display: block;
+  position: relative;
+  font-size: var(--code-size-sm);
+  padding-left: calc(28px + var(--code-pad-x));
+  padding-right: var(--code-pad-x);
 }
 
-.pk-dl > span:last-child {
-  @apply whitespace-pre;
+/* Shared marker styles for +/- gutter signs */
+.pk-diff__body .shiki .line.diff::before {
+  position: absolute;
+  left: var(--code-pad-x);
+  width: 28px;
+  text-align: center;
+  user-select: none;
 }
 
-.pk-dl--rm {
+/* Removed lines */
+.pk-diff__body .shiki .line.diff.remove {
   background: var(--code-removed-bg);
   box-shadow: inset var(--marker-width) 0 0 var(--code-removed-bar);
 }
 
-.pk-dl--rm > span:first-child {
+.pk-diff__body .shiki .line.diff.remove::before {
+  content: '-';
   color: var(--code-removed-bar);
 }
 
-.pk-dl--ad {
+/* Added lines */
+.pk-diff__body .shiki .line.diff.add {
   background: var(--code-added-bg);
   box-shadow: inset var(--marker-width) 0 0 var(--code-added-bar);
 }
 
-.pk-dl--ad > span:first-child {
+.pk-diff__body .shiki .line.diff.add::before {
+  content: '+';
   color: var(--code-added-bar);
 }
-
-/* Syntax inside diff lines */
-.pk-dl .k  { color: var(--code-keyword); }
-.pk-dl .s  { color: var(--code-string); }
-.pk-dl .n  { color: var(--code-number); }
-.pk-dl .f  { color: var(--code-fn); }
-.pk-dl .t  { color: var(--code-type); }
-.pk-dl .p  { color: var(--code-prop); }
-.pk-dl .cm { color: var(--code-comment); }
 
 /* ── Counter ── */
 

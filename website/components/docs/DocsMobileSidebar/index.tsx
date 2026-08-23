@@ -58,6 +58,9 @@ export function DocsMobileSidebar({ nav }: { nav: DocNavSection[] }) {
                       onClick={close}
                     >
                       {item.title}
+                      {item.badge && (
+                        <span className="pk-docs__nav-badge">{item.badge}</span>
+                      )}
                     </Link>
                   </li>
                 ))}

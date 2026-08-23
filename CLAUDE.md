@@ -25,10 +25,14 @@ paykit/
 ## External References
 
 - **Design system**: `A:\products\payments\design-system\` — Blueprint design system (tokens, components, UI kits)
+- **Current priorities**: `.plan/current-priorities.md` — **READ FIRST** — Master priority doc governing all work order and decisions
+- **Daily cadence**: `.plan/daily-cadence.md` — Daily shipping rules and schedule structure
 - **Website plan**: `.plan/website.md` — phased website build plan referencing the design system
 - **Shipping plans**: `.plan/months/` — monthly development schedules
-- **Active sprint**: `.plan/active-sprint.md` — **CURRENT WORK** — Month 3 Weeks 1-3 implementation plan (retry logic, structured logging, 53 bug fixes across all adapters). Read this file at every session start to resume work without losing context.
-- **Backlog**: `.plan/backlog.md` — full development backlog (285 items, categories A–G). Category G contains the cross-adapter bug fix items with severity, file paths, and line numbers.
+- **Active sprint**: `.plan/active-sprint.md` — Month 3 Weeks 1-3 implementation plan (retry logic, structured logging, 53 bug fixes). Weeks 1-3 COMPLETE.
+- **Backlog**: `.plan/backlog.md` — full development backlog (285+ items, categories A–G). Category G contains the cross-adapter bug fix items with severity, file paths, and line numbers.
+- **Adapter research**: `.plan/adapter-research.md` — Research on hard-to-integrate, high-demand payment providers beyond the 24 listed
+- **Fieldcraft reference**: `A:\products\questionnaire\formengine` — Sister monorepo with same structure (reference for build configs, OG images, etc.)
 
 ## Rule M1: Package Boundaries
 
@@ -115,7 +119,10 @@ Publish blog posts only on squaredr.tech. No cross-posting to third-party platfo
 
 ## Rule M11: Publish Cadence
 
-npm publishes happen weekly on Sundays. Consolidate work into a single version bump per week.
+**Daily cadence** (effective August 23, 2026):
+- **Bug fixes + backlog items**: daily meaningful commits + npm publishes (patch/minor bumps). Every day has a concrete deliverable that ships.
+- **New adapters**: 1 new adapter every 1-2 weeks, interleaved with daily bug fix work.
+- No empty days. If a day's work is too small for an npm publish, batch with the next day's.
 
 ## Rule M12: Package Manager
 
@@ -125,10 +132,11 @@ This repo uses **npm** workspaces (not pnpm, not yarn). Use `npm install`, `npm 
 
 At the start of every session (including after context exhaustion), do the following before any work:
 1. Read this `CLAUDE.md` file
-2. Read `.plan/active-sprint.md` — this is the current implementation plan with progress checkboxes
-3. Check which items are marked `[x]` (done) vs `[ ]` (pending) to understand where you left off
-4. Resume from the first unchecked item — do NOT restart from scratch
-5. Never assume rules or progress from memory — always verify from the plan files
+2. Read `.plan/current-priorities.md` — this is the master priority doc that governs all work
+3. Read `.plan/active-sprint.md` — current implementation plan with progress checkboxes
+4. Check which items are marked `[x]` (done) vs `[ ]` (pending) to understand where you left off
+5. Resume from the first unchecked item — do NOT restart from scratch
+6. Never assume rules or progress from memory — always verify from the plan files
 
 ## Rule M14: Document First, Then Implement
 

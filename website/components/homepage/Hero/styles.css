@@ -13,9 +13,9 @@
 .pk-hero__title {
   @apply mt-[var(--space-5)] tracking-[var(--tracking-tighter)];
   @apply text-pk-strong;
-  @apply max-lg:text-[var(--text-4xl)];
-  @apply max-sm:text-[var(--text-3xl)];
   font: var(--type-display-hero);
+  @apply max-lg:text-[length:var(--text-4xl)];
+  @apply max-sm:text-[length:var(--text-3xl)];
 }
 
 .pk-hero__lede {

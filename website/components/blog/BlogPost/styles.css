@@ -20,7 +20,7 @@
 
 .pk-railstick {
   @apply sticky flex flex-col;
-  top: calc(var(--nav-height, 64px) + 1px);
+  top: calc(var(--nav-height, 60px) + 1px);
 }
 
 .pk-railblk {

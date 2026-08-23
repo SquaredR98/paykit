@@ -9,7 +9,8 @@
 }
 
 .pk-docs-topbar__inner {
-  @apply mx-auto flex items-center w-full max-w-[1240px] gap-(--space-5) px-(--space-6);
+  @apply mx-auto flex items-center w-full max-w-[1240px] gap-(--space-5) px-(--space-6)
+         max-sm:px-(--space-4) max-sm:gap-(--space-3);
 }
 
 .pk-docs-topbar__lockup {

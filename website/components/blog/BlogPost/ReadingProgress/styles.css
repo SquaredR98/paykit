@@ -2,7 +2,7 @@
 
 .pk-progress {
   @apply fixed left-0 right-0 z-30 h-[2px];
-  top: 60px;
+  top: 61px;
 }
 
 .pk-progress__fill {
