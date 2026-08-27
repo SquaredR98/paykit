@@ -346,7 +346,7 @@ Set the corresponding capability to `false` so the PayKit client knows not to ro
 
 ## Registering your adapter
 
-Use `registerAdapter()` to make your adapter discoverable by name:
+Built-in adapters (Stripe, Razorpay, PayPal) auto-register when you import their subpath — no manual step needed. For custom adapters, use `registerAdapter()` to make your adapter discoverable by name:
 
 ```ts
 import { registerAdapter } from '@squaredr/paykit';
@@ -354,6 +354,8 @@ import { AcmePayAdapter } from './acme-pay-adapter';
 
 registerAdapter('acme-pay', AcmePayAdapter);
 ```
+
+Calling `registerAdapter()` with the same constructor more than once is safe (it's a no-op). Registering a different constructor for the same name throws an error.
 
 Once registered, you can reference it by name in multi-provider configs:
 

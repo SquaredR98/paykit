@@ -49,6 +49,8 @@ npm install @squaredr/paykit stripe razorpay
 
 Adapters are built into the core package as subpath exports. Install the provider SDK (`stripe`, `razorpay`) as a peer dependency, then import the adapter from `@squaredr/paykit/stripe`, `@squaredr/paykit/razorpay`, or `@squaredr/paykit/paypal`.
 
+> **Auto-registration:** Importing an adapter subpath (e.g. `import '@squaredr/paykit/stripe'`) automatically registers it with the adapter registry. You do not need to call `registerAdapter()` manually for built-in adapters.
+
 ## Frontend installation
 
 ### React / Next.js
@@ -60,6 +62,8 @@ npm install @squaredr/paykit-react
 ## TypeScript configuration
 
 All PayKit packages ship with full type declarations. Make sure your `tsconfig.json` uses the `bundler` module resolution so that subpath exports (like `@squaredr/paykit/stripe` and `@squaredr/paykit/stripe/client`) resolve correctly.
+
+> **Bundler note:** Use static `import` statements for PayKit subpath exports. Dynamic `import()` of subpath exports (e.g. `await import('@squaredr/paykit/stripe/client')`) may fail in some bundlers such as Next.js Turbopack.
 
 ```json
 {

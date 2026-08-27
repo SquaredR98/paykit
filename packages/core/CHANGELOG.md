@@ -1,5 +1,14 @@
 # @squaredr/paykit
 
+## 0.10.1
+
+### Patch Changes
+
+- Adapter subpath imports now auto-register with the adapter registry (Stripe, Razorpay, PayPal). `import '@squaredr/paykit/stripe'` registers the adapter as a side-effect — no manual `registerAdapter()` call needed for built-in adapters.
+- `registerAdapter()` is now idempotent — re-registering the same constructor is a no-op instead of throwing. Registering a different constructor for the same name still throws.
+- Documented Turbopack limitation: dynamic `import()` of subpath exports may fail — use static imports.
+- Documented server vs client adapter environment requirements.
+
 ## 0.10.0
 
 ### Minor Changes

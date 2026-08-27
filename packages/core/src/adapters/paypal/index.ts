@@ -6,3 +6,8 @@ export { mapPayPalPaymentMethod } from './mappers/payment-method.js';
 export { mapPayPalSubscription } from './mappers/subscription.js';
 export { mapPayPalWebhookEvent, mapPayPalEventType } from './mappers/webhook.js';
 export { mapPayPalError } from './mappers/error.js';
+
+// Auto-register on import so `import "@squaredr/paykit/paypal"` works as a side-effect
+import { PayPalAdapter } from './adapter.js';
+import { registerAdapter } from '../../registry.js';
+registerAdapter('paypal', PayPalAdapter);
