@@ -1,13 +1,19 @@
 # @squaredr/paykit
 
+## 0.10.2
+
+### Patch Changes
+
+- Removed broken auto-registration side-effects from adapter subpath imports. Side-effect registration (`import '@squaredr/paykit/stripe'`) did not work because the bundler duplicated the registry Map across entry points. Use the direct adapter pattern (`new PayKit({ adapter })`) or call `registerAdapter()` explicitly.
+- Documented server vs client adapter environment requirements (server adapters require Node.js, client adapters require browser).
+- Documented Turbopack limitation: dynamic `import()` of subpath exports may fail — use static imports.
+
 ## 0.10.1
 
 ### Patch Changes
 
-- Adapter subpath imports now auto-register with the adapter registry (Stripe, Razorpay, PayPal). `import '@squaredr/paykit/stripe'` registers the adapter as a side-effect — no manual `registerAdapter()` call needed for built-in adapters.
 - `registerAdapter()` is now idempotent — re-registering the same constructor is a no-op instead of throwing. Registering a different constructor for the same name still throws.
-- Documented Turbopack limitation: dynamic `import()` of subpath exports may fail — use static imports.
-- Documented server vs client adapter environment requirements.
+- ~~Adapter subpath imports auto-register~~ — reverted in 0.10.2 due to bundler module duplication.
 
 ## 0.10.0
 

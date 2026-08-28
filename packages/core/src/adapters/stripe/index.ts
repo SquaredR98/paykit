@@ -6,8 +6,3 @@ export { mapStripePaymentMethod } from './mappers/payment-method.js';
 export { mapStripeSubscription } from './mappers/subscription.js';
 export { mapStripeWebhookEvent, mapStripeEventType } from './mappers/webhook.js';
 export { mapStripeError } from './mappers/error.js';
-
-// Auto-register on import so `import "@squaredr/paykit/stripe"` works as a side-effect
-import { StripeAdapter } from './adapter.js';
-import { registerAdapter } from '../../registry.js';
-registerAdapter('stripe', StripeAdapter);

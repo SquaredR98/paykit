@@ -49,7 +49,14 @@ npm install @squaredr/paykit stripe razorpay
 
 Adapters are built into the core package as subpath exports. Install the provider SDK (`stripe`, `razorpay`) as a peer dependency, then import the adapter from `@squaredr/paykit/stripe`, `@squaredr/paykit/razorpay`, or `@squaredr/paykit/paypal`.
 
-> **Auto-registration:** Importing an adapter subpath (e.g. `import '@squaredr/paykit/stripe'`) automatically registers it with the adapter registry. You do not need to call `registerAdapter()` manually for built-in adapters.
+Each subpath has a **server** and **client** variant:
+
+| Subpath | Environment | Purpose |
+|---|---|---|
+| `@squaredr/paykit/stripe` | Node.js (server) | Charges, refunds, webhooks — uses your secret key |
+| `@squaredr/paykit/stripe/client` | Browser | Payment Element, confirmPayment — uses your publishable key |
+
+Importing the wrong variant for your environment will cause a runtime error. The same pattern applies to `razorpay` and `paypal`.
 
 ## Frontend installation
 

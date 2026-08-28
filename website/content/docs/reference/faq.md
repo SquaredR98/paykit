@@ -42,7 +42,7 @@ Yes. Implement the `PaymentAdapter` interface and pass it to the `PayKit` constr
 
 ### How are adapters packaged?
 
-All adapters are subpath exports of `@squaredr/paykit`. For example, import the Stripe adapter from `@squaredr/paykit/stripe`. The provider SDKs (`stripe`, `razorpay`) are optional peer dependencies — install only the ones you use. Importing an adapter subpath automatically registers it with the adapter registry, so you can also reference providers by name in multi-provider configs without calling `registerAdapter()` manually.
+All adapters are subpath exports of `@squaredr/paykit`. For example, import the Stripe adapter from `@squaredr/paykit/stripe`. The provider SDKs (`stripe`, `razorpay`) are optional peer dependencies — install only the ones you use. To use the registry-based provider-by-name mode, call `registerAdapter()` explicitly after importing your adapter.
 
 ### What's the difference between server and client adapters?
 

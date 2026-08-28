@@ -346,7 +346,7 @@ Set the corresponding capability to `false` so the PayKit client knows not to ro
 
 ## Registering your adapter
 
-Built-in adapters (Stripe, Razorpay, PayPal) auto-register when you import their subpath — no manual step needed. For custom adapters, use `registerAdapter()` to make your adapter discoverable by name:
+Use `registerAdapter()` to make your adapter discoverable by name:
 
 ```ts
 import { registerAdapter } from '@squaredr/paykit';
