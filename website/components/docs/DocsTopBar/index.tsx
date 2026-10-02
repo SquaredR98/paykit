@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { Logo } from '@/components/shared/Logo';
-import { ThemeToggle } from '@/components/layout/ThemeToggle';
+import { ThemeToggle } from '@/components/layout/old/ThemeToggle';
 import './styles.css';
 
 export function DocsTopBar() {

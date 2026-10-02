@@ -1,0 +1,239 @@
+@reference "../../../../app/globals.css";
+
+.pk-hero__grid {
+  @apply grid grid-cols-2 max-lg:grid-cols-1;
+}
+
+.pk-hero__content {
+  @apply px-[var(--space-10)] py-[var(--space-16)] border-r border-pk-grid
+         max-lg:px-[var(--space-6)] max-lg:py-[var(--space-10)] max-lg:border-r-0 max-lg:border-b max-lg:border-pk-grid
+         max-sm:px-[var(--space-5)] max-sm:py-[var(--space-8)];
+}
+
+.pk-hero__title {
+  @apply mt-[var(--space-5)] tracking-[var(--tracking-tighter)];
+  @apply text-pk-strong;
+  font: var(--type-display-hero);
+  @apply max-lg:text-[length:var(--text-4xl)];
+  @apply max-sm:text-[length:var(--text-3xl)];
+}
+
+.pk-hero__lede {
+  @apply max-w-[58ch] mt-[var(--space-4)];
+  @apply text-pk-muted;
+  font: var(--type-body-lg);
+}
+
+.pk-hero__meta {
+  @apply flex items-center gap-[var(--space-3)] mt-[var(--space-6)];
+  @apply text-pk-muted;
+  font: var(--type-code-sm);
+}
+
+.pk-hero__meta em {
+  @apply not-italic text-pk-subtle;
+}
+
+.pk-hero__cta-row {
+  @apply flex gap-[var(--space-3)] mt-[var(--space-8)] max-sm:flex-col;
+}
+
+/* ─── Deck wrapper — column layout so trust signals sit below the card ─── */
+.pk-hero__deck-wrap {
+  @apply flex flex-col items-stretch gap-(--space-6) p-(--space-10)
+         max-lg:p-(--space-6)
+         max-sm:p-(--space-5);
+}
+
+/* ─── Tabbed Card Deck ─── */
+.pk-deck {
+  @apply w-full flex flex-col;
+}
+
+/* Tab strip */
+.pk-deck__tabs {
+  @apply flex gap-(--space-1) border border-pk-grid border-b-0 p-(--space-1);
+  background: var(--surface-secondary);
+}
+
+.pk-deck__tab {
+  @apply relative px-(--space-3) py-(--space-2) bg-transparent border-0 cursor-pointer;
+  @apply text-pk-muted;
+  font: var(--type-code-sm);
+  transition: color var(--dur-slow) var(--ease-snap);
+}
+
+.pk-deck__tab::after {
+  content: '';
+  @apply absolute bottom-0 left-(--space-3) right-(--space-3) h-[2px] bg-transparent;
+  transition: background-color var(--dur-slow) var(--ease-snap);
+}
+
+.pk-deck__tab[aria-selected="true"] {
+  @apply text-pk-strong;
+}
+
+.pk-deck__tab--stripe[aria-selected="true"]::after {
+  background-color: #635BFF;
+}
+
+.pk-deck__tab--razorpay[aria-selected="true"]::after {
+  background-color: #3395FF;
+}
+
+.pk-deck__tab--paypal[aria-selected="true"]::after {
+  background-color: #0070BA;
+}
+
+.pk-deck__tab--code[aria-selected="true"]::after {
+  background-color: var(--green-500);
+}
+
+/* Content panel — no min-height, content dictates size */
+.pk-deck__panel {
+  @apply border border-pk-grid;
+  background: var(--surface-primary);
+}
+
+/* Code terminal inside panel — remove its own border to avoid doubling */
+.pk-deck__panel .pk-term {
+  @apply w-full border-0;
+}
+
+/* Checkout form inside panel */
+.pk-deck__checkout-form {
+  @apply flex flex-col gap-(--space-4) p-(--space-5);
+}
+
+.pk-deck__checkout-form [data-paykit-submit] {
+  @apply w-full h-(--control-h-lg) bg-pk-accent text-pk-on-accent border-0 cursor-pointer;
+  font: var(--type-label);
+  transition: var(--transition-control);
+}
+
+.pk-deck__checkout-form [data-paykit-submit]:hover:not(:disabled) {
+  @apply bg-pk-accent-hover;
+}
+
+.pk-deck__checkout-form [data-paykit-submit]:disabled {
+  @apply opacity-50 cursor-not-allowed;
+}
+
+/* PayPal wrapper — Buttons render their own UI, no separate CTA needed */
+.pk-deck__paypal-wrap {
+  @apply p-(--space-5);
+}
+
+/* PayPal adapter DOM — buttons container with border to match site aesthetic */
+.pk-deck__paypal-wrap .pk-paypal__buttons {
+  @apply w-full border border-pk-grid;
+}
+
+/* PayPal adapter DOM — "or pay with card" separator */
+.pk-deck__paypal-wrap .pk-paypal__separator {
+  @apply flex items-center gap-(--space-3) my-(--space-4) text-pk-muted;
+  font: var(--type-body-sm);
+}
+
+.pk-deck__paypal-wrap .pk-paypal__separator::before,
+.pk-deck__paypal-wrap .pk-paypal__separator::after {
+  content: '';
+  @apply flex-1 h-px;
+  background: var(--border-pk-grid);
+}
+
+/* PayPal adapter DOM — card fields (when eligible) */
+.pk-deck__paypal-wrap .pk-paypal__fields {
+  @apply flex flex-col gap-(--space-3);
+}
+
+.pk-deck__paypal-wrap .pk-paypal__fields-row {
+  @apply grid grid-cols-2 gap-(--space-3);
+}
+
+/* Loading state */
+.pk-deck__loading {
+  @apply flex items-center justify-center p-(--space-10);
+  @apply text-pk-muted;
+  font: var(--type-body-sm);
+}
+
+/* Status overlays */
+.pk-deck__overlay {
+  @apply flex flex-col items-center justify-center gap-(--space-3) p-(--space-10);
+  font: var(--type-body-sm);
+}
+
+.pk-deck__overlay--success {
+  color: var(--green-500);
+}
+
+.pk-deck__overlay--error {
+  color: var(--red-500);
+}
+
+/* ─── Standalone checkout preview (pre-activation) ─── */
+.pk-deck-preview {
+  @apply w-full border border-pk-grid;
+  background: var(--surface-primary);
+}
+
+.pk-deck-preview__form {
+  @apply flex flex-col gap-(--space-4) p-(--space-6);
+}
+
+.pk-deck-preview__field {
+  @apply border border-pk-grid;
+  @apply p-(--space-3) px-(--space-4);
+  background: var(--surface-sunken);
+}
+
+.pk-deck-preview__row {
+  @apply grid grid-cols-2 gap-(--space-3);
+}
+
+.pk-deck-preview__label {
+  @apply block mb-(--space-1);
+  @apply text-pk-subtle;
+  font: var(--type-body-sm);
+}
+
+.pk-deck-preview__value {
+  @apply text-pk-body;
+  font: var(--type-code-sm);
+}
+
+.pk-deck-preview__cta {
+  @apply w-full flex items-center justify-center gap-(--space-2);
+  @apply bg-pk-accent text-pk-on-accent border-0 cursor-pointer;
+  height: var(--control-h-lg);
+  font: var(--type-label);
+  transition: var(--transition-control);
+}
+
+.pk-deck-preview__cta:hover {
+  @apply bg-pk-accent-hover;
+}
+
+.pk-deck-preview__cta svg {
+  opacity: 0.7;
+}
+
+/* ─── Fade transitions ─── */
+.pk-deck--fade-out {
+  animation: pk-deck-fade-out 200ms var(--ease-snap) forwards;
+}
+
+.pk-deck--fade-in {
+  animation: pk-deck-fade-in 300ms var(--ease-snap) forwards;
+}
+
+@keyframes pk-deck-fade-out {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+@keyframes pk-deck-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}

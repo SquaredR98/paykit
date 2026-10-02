@@ -1,29 +1,25 @@
 import type { Metadata } from 'next';
-import { Space_Grotesk, Instrument_Sans, JetBrains_Mono } from 'next/font/google';
 import { GoogleTagManager } from '@next/third-parties/google';
 import { RootProvider } from 'fumadocs-ui/provider/next';
-import './globals.css';
 
-const spaceGrotesk = Space_Grotesk({
-  subsets: ['latin'],
-  weight: ['400', '500', '600', '700'],
-  variable: '--font-space-grotesk',
-  display: 'swap',
-});
-
-const instrumentSans = Instrument_Sans({
-  subsets: ['latin'],
-  weight: ['400', '500', '600'],
-  variable: '--font-instrument-sans',
-  display: 'swap',
-});
-
-const jetbrainsMono = JetBrains_Mono({
-  subsets: ['latin'],
-  weight: ['400', '500', '600'],
-  variable: '--font-jetbrains-mono',
-  display: 'swap',
-});
+/*
+ * Root layout — deliberately minimal.
+ *
+ * It owns ONLY the three things Next.js requires at the root plus the theme
+ * provider: <html>, <body>, and RootProvider (which must wrap both site
+ * versions so the theme toggle works on either side).
+ *
+ * It does NOT import any stylesheet or font. That is on purpose:
+ *   app/(old)/layout.tsx   imports globals.css + the Blueprint fonts
+ *   app/(main)/layout.tsx  imports v2-tokens.css + the Glass fonts
+ *
+ * v1 and v2 define 52 of the same CSS custom properties with incompatible
+ * values (e.g. --radius-sm is 0px in v1, 6px in v2). Importing either one
+ * here would leak it into the other. Keeping the root CSS-free is what makes
+ * the two versions genuinely independent instead of fighting the cascade.
+ *
+ * See .plan/v2-marketing-parallel-setup.md §2.5.
+ */
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://paykit.squaredr.tech'),
@@ -57,11 +53,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html
-      lang="en"
-      suppressHydrationWarning
-      className={`${spaceGrotesk.variable} ${instrumentSans.variable} ${jetbrainsMono.variable}`}
-    >
+    <html lang="en" suppressHydrationWarning>
       {process.env.NEXT_PUBLIC_GTM_ID && (
         <GoogleTagManager gtmId={process.env.NEXT_PUBLIC_GTM_ID} />
       )}

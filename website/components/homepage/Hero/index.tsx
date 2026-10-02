@@ -1,70 +1,102 @@
-import Link from 'next/link';
-import { highlight } from '@/lib/shiki';
-import { HeroCardStack } from './HeroCardStack';
-import { TrustSignals } from '@/components/homepage/TrustSignals';
+import { Button, CopyInstall } from '@/components/ui';
 import './styles.css';
 
-const heroCode = `import { PayKit } from '@squaredr/paykit';
-import { StripeAdapter } from '@squaredr/paykit/stripe';
+/**
+ * Homepage hero.
+ *
+ * Copy is carried over from v1 unchanged — it is accurate, which matters here:
+ * the design mockup's hero claims "eleven providers" and "23 webhook events",
+ * neither of which is true. Every number below is counted from source per
+ * Rule M3; see components/CONVENTIONS.md §7.
+ */
 
-const paykit = new PayKit({
-  adapter: new StripeAdapter({ secretKey: 'sk_live_…' }),
-});
+/*
+ * Ordered to lead with depth of normalization, not provider count.
+ *
+ * "3 adapters" as the first number invites the comparison PayKit loses — three
+ * is unimpressive next to "every payment provider", and nobody needs three.
+ * What is actually hard to build is the normalization layer, so the strip leads
+ * with that and ends on the two facts that matter to someone choosing an
+ * abstraction: there is one API to learn, and nothing locks you in.
+ *
+ * Every count is from source per Rule M3 — see components/CONVENTIONS.md §7.
+ */
+const stats = [
+  { value: '22', label: 'Unified webhook events' },
+  { value: '19', label: 'Normalized error codes' },
+  { value: '1', label: 'API to learn' },
+  { value: '0', label: 'Vendor lock-in' },
+];
 
-const charge = await paykit.charges.create({
-  amount: 5000,
-  currency: 'usd',
-});`;
-
-const CARET = '<span class="pk-caret">▍</span>';
-
-export async function Hero() {
-  const raw = await highlight(heroCode);
-  const codeHtml = raw.replace('</code></pre>', `${CARET}</code></pre>`);
+export function Hero() {
   return (
-    <section className="pk-blk pk-hero">
-      <div className="pk-hero__grid">
-        <div className="pk-hero__content">
-          <span className="pk-bdg pk-bdg--accent">Open source &middot; MIT licensed</span>
-          <h1 className="pk-hero__title">
-            Stop juggling payment&nbsp;APIs. Use&nbsp;one.
-          </h1>
-          <p className="pk-hero__lede">
-            A TypeScript-first Node.js library with React components for accepting
-            payments across Stripe, Razorpay, PayPal and more. Write your integration
-            once — swap providers without changing a line of code.
-          </p>
-          <div className="pk-hero__meta">
-            <span>400+ tests</span>
-            <em>/</em>
-            <span>Node.js + React</span>
-            <em>/</em>
-            <span>TypeScript-first</span>
-            <em>/</em>
-            <span>MIT licensed</span>
-          </div>
-          <div className="pk-hero__cta-row">
-            <Link href="/docs" className="pk-btn pk-btn--primary pk-btn--xl">
-              Get started
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="square" aria-hidden="true">
-                <path d="M5 12h14M12 5l7 7-7 7" />
-              </svg>
-            </Link>
-            <a
-              href="https://github.com/SquaredR98/paykit"
-              className="pk-btn pk-btn--secondary pk-btn--xl"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              View on GitHub
-            </a>
-          </div>
-        </div>
-        <div className="pk-hero__deck-wrap">
-          <HeroCardStack codeHtml={codeHtml} />
-          <TrustSignals />
-        </div>
+    <section className="pk-v2-hero">
+      <span className="pk-v2-hero__badge">Open source &middot; MIT licensed</span>
+
+      {/*
+        The one gradient-text phrase allowed per page (Rule M5). Everything else
+        on this page uses solid colour.
+      */}
+      <h1 className="pk-v2-hero__title">
+        Stop juggling payment APIs. <span>One SDK, every provider.</span>
+      </h1>
+
+      {/*
+        "with a config change, not a rewrite" rather than "without changing a
+        line of code" — the stronger claim is not yet true. In multi-provider
+        mode only charges.create() routes; charges.retrieve() still goes to the
+        default provider. See .plan/website-claims-audit.md.
+      */}
+      <p className="pk-v2-hero__lede">
+        A TypeScript-first Node.js library with React components for accepting
+        payments across Stripe, Razorpay and PayPal. Write your integration once
+        — then switch providers with a config change, not a rewrite.
+      </p>
+
+      <div className="pk-v2-hero__actions">
+        <Button href="/docs">
+          Get started
+          <ArrowIcon />
+        </Button>
+        <Button
+          href="https://github.com/SquaredR98/paykit"
+          variant="secondary"
+          external
+        >
+          <StarIcon />
+          Star on GitHub
+        </Button>
+        <CopyInstall command="pnpm add @squaredr/paykit" />
       </div>
+
+      <dl className="pk-v2-hero__stats">
+        {stats.map((stat) => (
+          <div key={stat.label} className="pk-v2-hero__stat">
+            <dt className="pk-v2-hero__stat-value">{stat.value}</dt>
+            <dd className="pk-v2-hero__stat-label">{stat.label}</dd>
+          </div>
+        ))}
+      </dl>
+
+      <p className="pk-v2-hero__stack">
+        Node 20+ &middot; TypeScript-first &middot; Express, Fastify, Hono, Next.js
+      </p>
     </section>
+  );
+}
+
+function ArrowIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+      <path d="M5 12h14M12 5l7 7-7 7" />
+    </svg>
+  );
+}
+
+function StarIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+      <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+    </svg>
   );
 }

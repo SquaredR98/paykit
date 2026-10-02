@@ -108,3 +108,47 @@ export async function createPayPalOrder(): Promise<{
     };
   }
 }
+
+/**
+ * Card-only Stripe PaymentIntent for the v2 demo.
+ *
+ * `charges.create()` sets `automatic_payment_methods: { enabled: true }`, which
+ * surfaces every method enabled in the Stripe dashboard — Amazon Pay, Cash App
+ * Pay and so on. That turns the demo's single card form into a method picker,
+ * so this variant pins `payment_method_types: ['card']` instead.
+ *
+ * It talks to Stripe directly rather than through the adapter because
+ * CreateChargeParams has no field for restricting payment methods. If one is
+ * added later, this should go back to using the adapter.
+ */
+export async function createStripeCardIntent(): Promise<{
+  clientSecret: string | null;
+  error?: string;
+}> {
+  const secretKey = process.env.STRIPE_SECRET_KEY;
+
+  if (!secretKey) {
+    return { clientSecret: null, error: 'Stripe not configured' };
+  }
+
+  try {
+    const { default: Stripe } = await import('stripe');
+    const stripe = new Stripe(secretKey);
+
+    const intent = await stripe.paymentIntents.create({
+      amount: 4900, // $49.00
+      currency: 'usd',
+      payment_method_types: ['card'],
+      description: 'PayKit Demo Payment',
+      metadata: { demo: 'true', source: 'paykit-website-demo-v2' },
+    });
+
+    return { clientSecret: intent.client_secret };
+  } catch (err) {
+    console.error('Stripe PaymentIntent error:', err);
+    return {
+      clientSecret: null,
+      error: err instanceof Error ? err.message : 'Failed to create payment intent',
+    };
+  }
+}

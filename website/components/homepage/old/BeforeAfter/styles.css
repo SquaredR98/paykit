@@ -1,0 +1,74 @@
+@reference "../../../../app/globals.css";
+
+/* ── Diff view ── */
+
+.pk-diff__body {
+  @apply p-[var(--space-10)] max-sm:p-[var(--space-6)];
+}
+
+/* Override default shiki font size for this block */
+.pk-diff__body .pk-term pre.shiki {
+  @apply text-[length:var(--code-size-sm)] leading-[var(--code-leading)];
+  padding: 0;
+}
+
+/* Collapse whitespace nodes between block lines */
+.pk-diff__body .shiki code {
+  font-size: 0;
+}
+
+/* Every line becomes a block so backgrounds span full width */
+.pk-diff__body .shiki code .line {
+  display: block;
+  position: relative;
+  font-size: var(--code-size-sm);
+  padding-left: calc(28px + var(--code-pad-x));
+  padding-right: var(--code-pad-x);
+}
+
+/* Shared marker styles for +/- gutter signs */
+.pk-diff__body .shiki .line.diff::before {
+  position: absolute;
+  left: var(--code-pad-x);
+  width: 28px;
+  text-align: center;
+  user-select: none;
+}
+
+/* Removed lines */
+.pk-diff__body .shiki .line.diff.remove {
+  background: var(--code-removed-bg);
+  box-shadow: inset var(--marker-width) 0 0 var(--code-removed-bar);
+}
+
+.pk-diff__body .shiki .line.diff.remove::before {
+  content: '-';
+  color: var(--code-removed-bar);
+}
+
+/* Added lines */
+.pk-diff__body .shiki .line.diff.add {
+  background: var(--code-added-bg);
+  box-shadow: inset var(--marker-width) 0 0 var(--code-added-bar);
+}
+
+.pk-diff__body .shiki .line.diff.add::before {
+  content: '+';
+  color: var(--code-added-bar);
+}
+
+/* ── Counter ── */
+
+.pk-diff__counter {
+  @apply flex items-baseline justify-center gap-[var(--space-5)] px-[var(--space-10)] py-[var(--space-12)] border-t border-pk-grid
+         max-sm:flex-col max-sm:items-center max-sm:gap-[var(--space-3)] max-sm:px-[var(--space-6)] max-sm:py-[var(--space-8)];
+}
+
+.pk-diff__counter-num {
+  @apply font-display font-bold tabular-nums leading-none text-[length:var(--text-7xl)] tracking-[var(--tracking-tighter)] text-pk-accent-ink;
+}
+
+.pk-diff__counter-cap {
+  @apply text-pk-muted;
+  font: var(--type-body-lg);
+}
