@@ -42,11 +42,15 @@ Yes. Implement the `PaymentAdapter` interface and pass it to the `PayKit` constr
 
 ### How are adapters packaged?
 
-All adapters are subpath exports of `@squaredr/paykit`. For example, import the Stripe adapter from `@squaredr/paykit/stripe`. The provider SDKs (`stripe`, `razorpay`) are optional peer dependencies — install only the ones you use.
+All adapters are subpath exports of `@squaredr/paykit`. For example, import the Stripe adapter from `@squaredr/paykit/stripe`. The provider SDKs (`stripe`, `razorpay`) are optional peer dependencies — install only the ones you use. To use the registry-based provider-by-name mode, call `registerAdapter()` explicitly after importing your adapter.
 
 ### What's the difference between server and client adapters?
 
-Server adapters (`@squaredr/paykit/stripe`) hold your secret key and handle charge creation, refunds, and webhook verification. Client adapters (`@squaredr/paykit/stripe/client`) contain only browser-safe code for confirming payments and rendering checkout UIs. They are separate entry points so your bundler tree-shakes them independently.
+Server adapters (`@squaredr/paykit/stripe`) hold your secret key and handle charge creation, refunds, and webhook verification. They require Node.js and must never be imported in browser code. Client adapters (`@squaredr/paykit/stripe/client`) contain only browser-safe code for confirming payments and rendering checkout UIs. They use your publishable key and require a browser environment (`window`). Importing the wrong one for your environment will cause a runtime error. They are separate entry points so your bundler tree-shakes them independently.
+
+### Do dynamic imports work with adapter subpaths?
+
+Use static `import` statements for adapter subpaths. Dynamic `import()` of subpath exports (e.g. `await import('@squaredr/paykit/stripe/client')`) may fail in some bundlers, notably Next.js Turbopack. Static imports of the same subpaths work correctly in all bundlers.
 
 ### What happens if an adapter doesn't support an operation?
 

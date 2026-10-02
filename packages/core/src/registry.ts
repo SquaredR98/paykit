@@ -19,10 +19,13 @@ const adapterRegistry = new Map<string, AdapterConstructor>();
  * registerAdapter('stripe', StripeAdapter);
  */
 export function registerAdapter(name: string, constructor: AdapterConstructor): void {
-  if (adapterRegistry.has(name)) {
+  const existing = adapterRegistry.get(name);
+  if (existing) {
+    // Same constructor re-registered (e.g. side-effect import twice) — no-op
+    if (existing === constructor) return;
     throw new Error(
-      `Adapter "${name}" is already registered. ` +
-      `Did you import the same adapter package twice?`,
+      `Adapter "${name}" is already registered with a different constructor. ` +
+      `Did you import two different adapter packages for the same provider?`,
     );
   }
   adapterRegistry.set(name, constructor);

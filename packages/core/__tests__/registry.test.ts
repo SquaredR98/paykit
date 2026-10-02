@@ -58,10 +58,16 @@ describe('registry', () => {
     expect(getAdapter('nonexistent')).toBeUndefined();
   });
 
-  it('throws on duplicate registration', () => {
+  it('allows re-registration of the same constructor (idempotent)', () => {
+    registerAdapter('mock', MockAdapter);
+    registerAdapter('mock', MockAdapter); // no-op, should not throw
+    expect(getAdapter('mock')).toBe(MockAdapter);
+  });
+
+  it('throws when a different constructor is registered for the same name', () => {
     registerAdapter('mock', MockAdapter);
     expect(() => registerAdapter('mock', AnotherMockAdapter)).toThrow(
-      'Adapter "mock" is already registered',
+      'Adapter "mock" is already registered with a different constructor',
     );
   });
 

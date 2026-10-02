@@ -355,6 +355,8 @@ import { AcmePayAdapter } from './acme-pay-adapter';
 registerAdapter('acme-pay', AcmePayAdapter);
 ```
 
+Calling `registerAdapter()` with the same constructor more than once is safe (it's a no-op). Registering a different constructor for the same name throws an error.
+
 Once registered, you can reference it by name in multi-provider configs:
 
 ```ts
