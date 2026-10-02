@@ -42,8 +42,10 @@ for d in ('components/shell', 'components/ui', 'components/homepage'):
             problems.append('%s -> styles.css never imported' % css)
 
 # --- 3. every v2 component folder is reachable from HomepageView/Shell ---
-roots = ['components/homepage/HomepageView.tsx', 'components/shell/Shell/index.tsx',
-         'app/(main)/v2-preview/page.tsx', 'app/(main)/layout.tsx']
+# Route entry points. Next.js special files (page/layout/opengraph-image) are
+# reached by the framework, not by an import, so they seed the walk.
+roots = ['app/(main)/page.tsx', 'app/(main)/layout.tsx',
+         'app/(main)/opengraph-image.tsx']
 reached, queue = set(), list(roots)
 while queue:
     f = queue.pop()
