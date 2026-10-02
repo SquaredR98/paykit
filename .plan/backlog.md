@@ -1,7 +1,34 @@
 # PayKit — Development Backlog
 
-> Every shippable item for the next 12 months. Monthly docs pull from this list.
-> Each item is an executable task with a clear deliverable and npm publish outcome.
+> **Role**: Item catalog. The schedule in `roadmap.md` and `active-sprint.md` references IDs from this file.
+> Every shippable item for the project lifetime. Each item has a unique ID and clear deliverable.
+>
+> **Last updated**: August 25, 2026
+
+---
+
+## Completion Status
+
+### Completed Items (as of Aug 25, 2026)
+
+**A1 Error Handling** (19/20): A1.01-A1.18, A1.20 done. Remaining: A1.19
+**A2 Types/Exports** (7/15): A2.04-A2.09, A2.14 done. Remaining: A2.01-A2.03, A2.10-A2.13, A2.15
+**A3 Currency** (7/10): A3.01, A3.03-A3.06, A3.09-A3.10 done. Remaining: A3.02, A3.07-A3.08
+**A4 Router** (1/10): A4.01 done. Remaining: A4.02-A4.10
+**A5 Webhooks** (7/10): A5.01-A5.07 done. Remaining: A5.08-A5.10
+**A6 Testing** (7/10): A6.01-A6.06, A6.09 done. Remaining: A6.07-A6.08, A6.10
+**A7 Observability** (5/8): A7.01-A7.05 done. Remaining: A7.06-A7.08
+**A8 Subscriptions** (0/8): All remaining
+**B Adapters** (4/24+8): B1.01 (PayPal) done + Stripe + Razorpay pre-existing. Remaining: B2.01-B2.04, B3.01-B3.05, B4.01-B4.14, B5.01-B5.08 (Track B)
+**C Frontend** (1/30): C2.01 done. Remaining: C1.01-C1.15, C2.02-C2.15
+**D Testing** (0/25): All remaining
+**E Docs** (4/52): E1.01, E1.08, E2.03, E3.01 done. Remaining: rest
+**F Infra** (4/10): F.01, F.02, F.05, F.06 done. Remaining: F.03-F.04, F.07-F.10
+**G Bug Fixes** (53/61): All 53 remaining from cross-adapter review done. G3.01-G3.08 done earlier.
+
+### Audit Findings (53 new items from Phase 2 deep audit)
+
+These are tracked separately by audit IDs (C1-C24, J1-J16, R1-R13) and scheduled in `roadmap.md` Weeks 1-12. See `active-sprint.md` for the current week's assignments.
 
 ---
 
@@ -32,7 +59,7 @@
 | A1.19 | Add `idempotencyKey` support to `refunds.create` | Same pattern as charges | patch |
 | A1.20 | Add retry logic with exponential backoff for transient errors | `options.retries` config, only retries on `retryable: true` errors | minor |
 
-### A2. Type System & Exports (15 items)
+### A2. Type System & Exports (16 items)
 
 | # | Item | Deliverable | Version Bump |
 |---|------|-------------|-------------|
@@ -51,6 +78,7 @@
 | A2.13 | Export `CreateSubscriptionParams` from root | Same pattern | patch |
 | A2.14 | Add JSDoc comments to all exported types | Every public type gets `@description`, `@example` | patch |
 | A2.15 | Add `@since` tags to all public APIs | Track which version introduced each API | patch |
+| A2.16 | Add `paymentMethodTypes` to `CreateChargeParams` | Restrict a charge to specific methods, e.g. `['card']`. Today `charges.create()` always sets Stripe's `automatic_payment_methods: { enabled: true }`, so every method enabled in the provider dashboard appears in the UI with no way to narrow it. Found while building the website demo, which had to bypass the adapter and call Stripe directly. | minor |
 
 ### A3. Currency & Localization (10 items)
 
@@ -186,6 +214,21 @@
 | B4.13 | Checkout.com adapter | `adapters/checkoutcom/` — hosted payments, network tokens | minor |
 | B4.14 | Klarna adapter | `adapters/klarna/` — BNPL, pay later, pay in 4 | minor |
 
+### B5. Track B — Hard-to-Integrate Providers (8 items)
+
+> Research: `.plan/archive/adapter-research.md`. High demand + poor Node.js DX + test account available.
+
+| # | Item | Region | Difficulty | Deliverable | Version Bump |
+|---|------|--------|-----------|-------------|-------------|
+| B5.01 | Braintree adapter | Global | 4/5 | `adapters/braintree/` — client/server split, Drop-In + Hosted Fields, PayPal/Venmo/Apple Pay configs | minor |
+| B5.02 | Amazon Pay adapter | Global | 5/5 | `adapters/amazonpay/` — RSA key pair auth, checkout session flow, OAuth buyer auth | minor |
+| B5.03 | Instamojo adapter | India SMB | 3/5 | `adapters/instamojo/` — payment links model, no official SDK, webhook delays | minor |
+| B5.04 | Xendit adapter | SEA | 3/5 | `adapters/xendit/` — e-wallets (GoPay, OVO, Dana), QR, bank transfers per country | minor |
+| B5.05 | Midtrans adapter | Indonesia | 3/5 | `adapters/midtrans/` — Snap + Snap Redirect + Core API unified | minor |
+| B5.06 | PayTabs adapter | MENA | 3/5 | `adapters/paytabs/` — SADAD, MADA, Fawry, hosted page + managed form | minor |
+| B5.07 | eWay adapter | AU/NZ | 3/5 | `adapters/eway/` — Rapid API, AU/NZ payment methods | minor |
+| B5.08 | Paystack adapter | Africa | 2/5 | `adapters/paystack/` — mobile money, bank transfers, USSD | minor |
+
 ---
 
 ## Category C: Frontend SDK (sdk-js + react) (30 items)
@@ -210,7 +253,7 @@
 | C1.14 | Add `<WalletButtons>` component | Apple Pay, Google Pay, PayPal buttons | minor |
 | C1.15 | Add SSR-safe provider detection | `useIsClient()` hook, avoid hydration mismatches | patch |
 
-### C2. JS SDK (15 items)
+### C2. JS SDK (16 items)
 
 | # | Item | Deliverable | Version Bump |
 |---|------|-------------|-------------|
@@ -229,6 +272,7 @@
 | C2.13 | Add CDN bundle build | UMD build for `<script>` tag usage | minor |
 | C2.14 | Add event-based payment flow | `bridge.on('success')`, `bridge.on('error')`, `bridge.on('cancel')` | patch |
 | C2.15 | Add iframe security headers config | CSP, frame-ancestors for embedded checkout | patch |
+| C2.16 | Add `rendersOwnSubmit` to `ClientAdapter` | Declare whether an adapter renders its own payment button. PayPal renders branded Buttons and captures via `onApprove`; Stripe and Razorpay rely on the host's submit button. Without this flag every consumer must hardcode `provider === 'paypal'` to avoid showing two CTAs — provider-specific branching in the layer that exists to remove it. PayKit's own demo currently does exactly that. | minor |
 
 ---
 
@@ -449,16 +493,19 @@
 
 ## Item Count Summary
 
-| Category | Count |
-|----------|-------|
-| A. Core SDK improvements | 91 |
-| B. New adapters | 24 |
-| C. Frontend SDK (react + js) | 30 |
-| D. Testing & quality | 25 |
-| E. Docs, blog, README | 52 |
-| F. Infrastructure & DevOps | 10 |
-| G. Adapter bug fixes & security | 61 (8 already fixed ✅, 53 remaining) |
-| **Total** | **285** |
+| Category | Total | Completed | Remaining |
+|----------|-------|-----------|-----------|
+| A. Core SDK improvements | 92 | 54 | 38 |
+| B. New adapters (Track A) | 24 | 1 (PayPal) | 23 |
+| B. New adapters (Track B) | 8 | 0 | 8 |
+| C. Frontend SDK (react + js) | 31 | 1 | 30 |
+| D. Testing & quality | 25 | 0 | 25 |
+| E. Docs, blog, README | 52 | 4 | 48 |
+| F. Infrastructure & DevOps | 10 | 4 | 6 |
+| G. Adapter bug fixes & security | 61 | 61 (all done ✅) | 0 |
+| **Total** | **303** | **125** | **178** |
+
+Plus 53 audit findings (C1-C24, J1-J16, R1-R13) tracked separately = **231 remaining items total**.
 
 ---
 
