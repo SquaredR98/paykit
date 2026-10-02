@@ -19,12 +19,13 @@ paykit/
 │   └── months/                — month-by-month shipping plans (month-01 through month-12)
 ├── turbo.json
 ├── biome.json
-└── package.json      npm workspaces root
+└── package.json      pnpm workspaces root
 ```
 
 ## External References
 
-- **Design system**: `A:\products\payments\design-system\` — Blueprint design system (tokens, components, UI kits)
+- **Design system**: `A:\products\payments\design-system\` — PayKit v2 "Glass" design system (tokens, foundations, UI kits). See Rule M5.
+- **Portfolio reference**: `A:\products\portfolio\portfolio` — the site v2's theme and layout are inherited from; source for shell components (background blobs, glass panel, scroll progress, theme toggle)
 - **Current priorities**: `.plan/current-priorities.md` — **READ FIRST** — Master priority doc governing all work order and decisions
 - **Daily cadence**: `.plan/daily-cadence.md` — Daily shipping rules and schedule structure
 - **Website plan**: `.plan/website.md` — phased website build plan referencing the design system
@@ -58,7 +59,7 @@ Bump version in the relevant `package.json` before committing. Use changesets fo
 
 When referencing counts in docs, READMEs, or comments — always count from source:
 - **Adapter count**: count files in `packages/core/src/adapters/`
-- **Test count**: run `npm test` and read the total
+- **Test count**: run `pnpm test` and read the total
 - **Capability flags**: count fields in `ProviderCapabilities` interface
 - **Error codes**: count entries in `ERROR_SUGGESTIONS` map
 
@@ -73,26 +74,63 @@ All custom CSS classes use the `pk-` prefix:
 
 This mirrors the `fc-` convention in FieldCraft. Never use unprefixed custom class names.
 
-## Rule M5: Design System (Blueprint)
+## Rule M5: Design System (PayKit v2 "Glass")
 
-The website uses the Blueprint design system at `A:\products\payments\design-system\`. Key constraints:
+The website uses the **PayKit v2 "Glass"** design system at `A:\products\payments\design-system\`.
+Its theme and layout are inherited from the portfolio site at `ravi-ranjan.in`
+(reference project: `A:\products\portfolio\portfolio`).
 
-- **Dark by default** — `--surface-page: var(--slate-900)`. Docs pages use light theme.
-- **Zero border-radius** — all `--radius-*` tokens are `0px`. Structure comes from 1px hairlines, never corners.
-- **No shadows** — borders carry all structure. No `box-shadow` anywhere.
-- **One accent color** — electric blue hue 258. No other accent colors.
-- **4px spacing grid** — use `--space-*` tokens, never arbitrary pixel values.
-- **Three fonts**: Space Grotesk (display/headlines), Instrument Sans (body/UI), JetBrains Mono (code/amounts).
-- **Token files** live in `design-system/tokens/` (colors, typography, spacing, motion, elevation, code).
-- **UI kits** in `design-system/ui_kits/` (marketing, docs, dashboard, checkout) are HTML mockups showing expected layouts.
+> **This rule replaced the old Blueprint rule on October 1, 2026.** Blueprint's constraints (zero
+> radius, no shadows, single accent, three fonts) are **void** — v2 contradicts every one of them.
+> Any code or doc still written to Blueprint's rules is stale, not authoritative.
 
-Never invent colors, fonts, spacing, or radii. Always use tokens from the design system.
+### Key constraints
+
+- **Dark by default** — `--bg-page: var(--slate-950)`. Light theme via `[data-theme="light"]` on `<html>`.
+- **Nothing is square** — controls are **pills** (`--radius-pill`); containers are rounded:
+  `--radius-card:12px` (cards, tiles, inputs, code), `--radius-lg:16px` (stats strips, pricing),
+  `--radius-xl:24px` (large panels — demo, CTA).
+- **Elevation is a 1px ring plus a faint shadow** (`--shadow-chip`). Only the primary button gets a
+  cyan glow (`--shadow-glow`), and only on hover.
+- **Accent is cyan** (`--accent`: `cyan-400` dark / `cyan-600` light). **Prose links are teal** (`--link`).
+- **The brand gradient is for primary actions only** — primary button, header CTA chip, progress bar,
+  and the "Kit" wordmark. Gradient **text** (`--grad-text`) appears **at most once per page**, in the hero.
+- **Every gradient is the same two stops: cyan → blue.** `design-system/styles.css` defines
+  `--grad-text` with a third `--purple-600` stop; the website deliberately drops it, because a
+  cyan→blue→purple sweep across a large headline is the most recognisable "generated landing page"
+  signal and it was the system's only three-stop gradient. Do not restore it when syncing from the
+  design system. Never introduce a new gradient — reuse `--grad-brand` / `--grad-text`.
+- **Payment state colors**: emerald (succeeded), amber (pending/beta), red (failed), blue (refunded/info),
+  cyan (tip/test). Use the `--ok` / `--warn` / `--err` / `--info` / `--tip` tokens and their `-soft` pairs.
+- **4px spacing grid** — use `--space-*` tokens (`--space-1:4px` … `--space-28:112px`), never arbitrary pixels.
+- **Four fonts**: Sora 700 (headings, `--tracking-heading:-0.025em`), Inter (body/UI),
+  Fira Code (code blocks), JetBrains Mono (tokens, IDs, meta).
+- **Content never sits directly on the page background.** It goes on the glass panel
+  (`--container-outer:1280px`), inside a `--container-inner:1024px` column with `--gutter:48px`.
+  Sections are `--section-gap:112px` apart.
+- **Code is always dark**, in both themes — `--code-bg` with `--code-ring`.
+- **Card hover** is an overlay at −24px scaling 0.95→1. Leave **≥48px gaps** between cards so
+  overlays don't collide.
+- **`prefers-reduced-motion` disables all motion.**
+
+### Files
+
+- `design-system/styles.css` — all tokens, both themes, plus shared keyframes. **Copy it; never re-derive tokens.**
+- `design-system/foundations.html` — visual reference (logo, color, type, radius, layout, effects, controls, code, motion).
+- `design-system/ui_kits/marketing/index.html` — the marketing page reference.
+- `design-system/ui_kits/docs/index.html` — the docs/API reference page reference.
+- `design-system/assets/` — `logo/mark.svg`, `logo/favicon.svg`, `grid.svg`.
+- `design-system/SKILL.md` — the short "rules you will get wrong if you skim" list.
+
+**Not yet designed in v2**: checkout, dashboard, blog, slides. Do not invent these — ask first.
+
+Never invent colors, fonts, spacing, or radii. Always use tokens from `styles.css`.
 
 ## Rule M6: Build Verification
 
 Before committing:
-1. `npm run build` must pass (all packages + website)
-2. `npm test` must pass (all test suites)
+1. `pnpm run build` must pass (all packages + website)
+2. `pnpm test` must pass (all test suites)
 
 Do not commit broken builds.
 
@@ -126,7 +164,16 @@ Publish blog posts only on squaredr.tech. No cross-posting to third-party platfo
 
 ## Rule M12: Package Manager
 
-This repo uses **npm** workspaces (not pnpm, not yarn). Use `npm install`, `npm run build`, `npm test`.
+This repo uses **pnpm** workspaces (not npm, not yarn). Use `pnpm install`, `pnpm run build`, `pnpm test`.
+
+Verified from the repo root: `pnpm-workspace.yaml`, `pnpm-lock.yaml`, and
+`"packageManager": "pnpm@9.12.0"` in `package.json`. Workspace deps use `workspace:*`, which npm
+does not understand — running `npm install` here will fail or produce a wrong tree.
+
+- Run a single package's script with `--filter`:
+  `pnpm --filter @squaredr/paykit test`
+- Publish a package:
+  `pnpm --filter @squaredr/paykit publish --access public --no-git-checks`
 
 ## Rule M13: Session Start & Context Recovery
 
@@ -161,8 +208,8 @@ Never batch multiple items. Never proceed to the next item without user approval
 ## Checklist — Before Every Commit
 
 - [ ] Version bumped in affected package(s)
-- [ ] `npm run build` passes
-- [ ] `npm test` passes
+- [ ] `pnpm run build` passes
+- [ ] `pnpm test` passes
 - [ ] No hardcoded stale numbers in docs
 - [ ] CSS classes use `pk-` prefix
 - [ ] No `Co-Authored-By` in commit message
