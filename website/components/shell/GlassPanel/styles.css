@@ -1,0 +1,19 @@
+@reference "../../../app/(main)/globals.css";
+
+.pk-v2-glass {
+  @apply fixed inset-0 -z-10 flex justify-center px-8;
+}
+
+/*
+ * The glass panel is the 1280px outer container minus its 32px side padding,
+ * so its max-width is calculated rather than a utility.
+ *
+ * The 1px ring is the only structure — per Rule M5, elevation is a ring plus a
+ * faint shadow, never a heavy drop shadow. `ring` + `ring-inset` would add a
+ * second colour layer here, so the ring is drawn as a zero-offset shadow.
+ */
+.pk-v2-glass__panel {
+  @apply w-full bg-pk-glass-panel backdrop-blur-sm;
+  max-width: calc(var(--container-outer) - 64px);
+  box-shadow: 0 0 0 1px var(--glass-panel-ring);
+}

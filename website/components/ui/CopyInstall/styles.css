@@ -1,0 +1,29 @@
+@reference "../../../app/(main)/globals.css";
+
+/*
+ * This pill is a code surface, so it stays dark in both themes (Rule M5) — which
+ * means its text must NOT use the theme's text tokens. --text-strong becomes
+ * near-black in light mode, which would be invisible here. The --code-* colours
+ * are theme-independent, so they are used instead.
+ */
+.pk-v2-install {
+  @apply inline-flex items-center gap-3 rounded-pk-pill py-1.5 pr-1.5 pl-4
+    font-pk-code text-pk-xs text-(--code-plain) bg-(--code-bg);
+  box-shadow: 0 0 0 1px var(--code-ring);
+}
+
+/* The "$" prompt is decorative, so it is dimmed and not read aloud. */
+.pk-v2-install em {
+  @apply text-(--code-comment) not-italic;
+}
+
+.pk-v2-install__copy {
+  @apply inline-flex cursor-pointer items-center gap-1.5 rounded-pk-pill
+    border-0 bg-transparent px-2 py-1 font-pk-code text-pk-xs
+    text-(--code-comment) transition-colors duration-150
+    hover:bg-white/[0.06] hover:text-(--code-plain);
+}
+
+.pk-v2-install__copy svg {
+  @apply size-3.5;
+}

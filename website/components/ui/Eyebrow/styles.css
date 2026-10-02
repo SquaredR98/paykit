@@ -1,0 +1,11 @@
+@reference "../../../app/(main)/globals.css";
+
+.pk-v2-eyebrow {
+  @apply inline-flex items-center gap-2 text-pk-sm font-medium text-pk-accent;
+}
+
+.pk-v2-eyebrow::before {
+  content: '';
+  @apply h-0.5 w-4 rounded-sm;
+  background: var(--grad-brand);
+}

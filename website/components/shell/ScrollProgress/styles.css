@@ -1,0 +1,11 @@
+@reference "../../../app/(main)/globals.css";
+
+/* z-60 sits above the sticky header (z-40). */
+.pk-v2-progress {
+  @apply pointer-events-none fixed top-0 right-0 left-0 h-[3px] z-60;
+}
+
+.pk-v2-progress__bar {
+  /* Width is set inline from scroll position; rounded only on the leading edge. */
+  @apply block h-full w-0 rounded-r-full bg-(image:--grad-brand);
+}

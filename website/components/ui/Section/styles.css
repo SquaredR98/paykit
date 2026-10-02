@@ -1,0 +1,63 @@
+@reference "../../../app/(main)/globals.css";
+
+/*
+ * Shared section scaffolding, used by every homepage section.
+ *
+ * Lives in ui/ rather than in one section's stylesheet so the rhythm is defined
+ * once — every section is --section-gap (112px = mt-28) apart, and anchor
+ * targets clear the sticky header.
+ */
+
+.pk-v2-section {
+  @apply mt-28 scroll-mt-25;
+}
+
+.pk-v2-section__title {
+  @apply mt-3 font-pk-heading text-pk-4xl font-bold tracking-pk-heading
+    text-pk-heading text-balance;
+}
+
+.pk-v2-section__sub {
+  @apply mt-4 max-w-[60ch] text-pk-body text-pretty;
+}
+
+/* Section head with the title on the left and controls on the right. */
+.pk-v2-section__head {
+  @apply flex flex-wrap items-end justify-between gap-6;
+}
+
+/* ---------- shared bits used across sections ---------- */
+
+/*
+ * Status badge. Variants map to the payment-state tokens (Rule M5) rather than
+ * inventing new colours: ok = emerald, warn = amber, neutral = plain border.
+ */
+.pk-v2-badge {
+  @apply inline-flex items-center gap-1.5 rounded-pk-pill px-2.5 text-xs
+    leading-5 font-medium;
+}
+
+.pk-v2-badge--ok {
+  @apply bg-(--ok-soft) text-pk-ok;
+}
+
+.pk-v2-badge--warn {
+  @apply bg-(--warn-soft) text-pk-warn;
+}
+
+.pk-v2-badge--err {
+  @apply bg-(--err-soft) text-pk-err;
+}
+
+.pk-v2-badge--accent {
+  @apply bg-pk-accent-soft text-pk-accent;
+}
+
+.pk-v2-badge--neutral {
+  @apply border border-pk-border text-pk-meta;
+}
+
+/* Inline code inside prose — accent-coloured, no block surface. */
+.pk-v2-inline-code {
+  @apply font-pk-code text-[0.9em] text-pk-accent;
+}

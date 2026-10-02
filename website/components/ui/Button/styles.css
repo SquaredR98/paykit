@@ -1,0 +1,36 @@
+@reference "../../../app/(main)/globals.css";
+
+.pk-v2-btn {
+  @apply inline-flex cursor-pointer items-center justify-center gap-2
+    rounded-pk-pill border border-transparent px-4.5 py-2.5 text-pk-sm
+    whitespace-nowrap;
+}
+
+.pk-v2-btn svg {
+  @apply size-4;
+}
+
+/*
+ * The scale+glow is the one place Rule M5 allows a glow, and only on hover.
+ * duration-500 matches --dur-slow for the primary's heavier transition.
+ */
+.pk-v2-btn--primary {
+  @apply bg-(image:--grad-brand) font-semibold text-white transition
+    duration-500 hover:scale-105 hover:text-white;
+}
+
+.pk-v2-btn--primary:hover {
+  background: var(--grad-brand-hover);
+  box-shadow: var(--shadow-glow);
+}
+
+.pk-v2-btn--secondary {
+  @apply border-(--accent-ring) bg-transparent font-medium text-pk-accent
+    transition duration-300 hover:scale-105 hover:border-(--accent-ring-hover)
+    hover:bg-pk-accent-soft hover:text-pk-accent;
+}
+
+/* Snap back instantly on press so the button feels mechanical, not springy. */
+.pk-v2-btn:active {
+  @apply scale-100 transition-none;
+}

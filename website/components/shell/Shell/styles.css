@@ -1,0 +1,10 @@
+@reference "../../../app/(main)/globals.css";
+
+/* min-h-screen keeps the footer at the bottom on short pages. */
+.pk-v2-shell {
+  @apply relative flex min-h-screen w-full flex-col;
+}
+
+.pk-v2-shell__main {
+  @apply flex-auto;
+}

@@ -1,0 +1,111 @@
+@reference "../../../app/(main)/globals.css";
+
+/* ---------- shared layout containers ---------- */
+
+/*
+ * .pk-v2-wrap is the glass-panel width minus its 32px side padding;
+ * .pk-v2-inner is the content column inside it. Both are used by the header,
+ * footer and every page section, so they live here next to the header that
+ * defines the top of the page.
+ *
+ * The wrap's max-width is calculated from the outer container, so it stays a
+ * raw property; the inner one is a plain utility.
+ */
+.pk-v2-wrap {
+  @apply mx-auto w-full px-12 max-sm:px-4;
+  max-width: calc(var(--container-outer) - 64px);
+}
+
+.pk-v2-inner {
+  @apply mx-auto max-w-pk-inner;
+}
+
+/* The frosted pill surface shared by the nav and the theme toggle. */
+.pk-v2-chip-glass {
+  @apply rounded-pk-pill bg-pk-glass-chip backdrop-blur-sm;
+  /* Two stacked shadows (elevation + 1px ring) — no utility covers the pair. */
+  box-shadow: var(--shadow-chip), 0 0 0 1px var(--glass-chip-ring);
+}
+
+/* ---------- header ---------- */
+
+.pk-v2-header {
+  @apply sticky top-0 z-40 pt-6;
+}
+
+.pk-v2-header__inner {
+  @apply flex items-center gap-4;
+}
+
+/* The two outer cells flex equally so the nav pill stays optically centred. */
+.pk-v2-header__side {
+  @apply flex flex-1 items-center;
+}
+
+.pk-v2-header__side--end {
+  @apply justify-end gap-2.5;
+}
+
+/* ---------- logo lockup ---------- */
+
+.pk-v2-lockup {
+  @apply inline-flex items-center gap-2.5 text-pk-strong;
+}
+
+.pk-v2-lockup b {
+  @apply font-pk-heading text-xl font-bold tracking-pk-heading;
+}
+
+/* "Kit" is one of the four sanctioned uses of the brand gradient (Rule M5). */
+.pk-v2-lockup b span {
+  @apply bg-clip-text text-transparent bg-(image:--grad-brand);
+}
+
+/* ---------- nav pill ---------- */
+
+.pk-v2-navpill {
+  /* Hidden below the width where it can still sit centred. */
+  @apply flex px-3 text-pk-sm font-medium text-pk-strong max-[860px]:hidden;
+}
+
+.pk-v2-navpill__link {
+  @apply relative px-3 py-2 whitespace-nowrap text-inherit transition-colors duration-150;
+}
+
+.pk-v2-navpill__link:hover,
+.pk-v2-navpill__link.is-active {
+  @apply text-pk-accent;
+}
+
+/* Soft fading underline on the active item, rather than a hard rule. */
+.pk-v2-navpill__link.is-active::after {
+  content: '';
+  @apply absolute right-1 bottom-[-1px] left-1 h-px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgb(34 211 238 / 0.4),
+    transparent
+  );
+}
+
+/* ---------- theme toggle ---------- */
+
+.pk-v2-toggle {
+  @apply grid size-10 cursor-pointer place-items-center border-0 text-pk-meta transition duration-150;
+}
+
+.pk-v2-toggle:hover {
+  @apply text-pk-strong;
+  box-shadow: var(--shadow-chip), 0 0 0 1px var(--glass-chip-ring-hover);
+}
+
+/* ---------- CTA chip ---------- */
+
+.pk-v2-cta-chip {
+  @apply inline-flex items-center rounded-pk-pill px-4 py-2 text-pk-xs
+    font-semibold whitespace-nowrap text-white transition-opacity duration-150
+    bg-(image:--grad-brand) hover:text-white hover:opacity-90 max-[480px]:hidden;
+  /* Cyan-tinted lift, specific to this chip. */
+  box-shadow: 0 4px 6px -1px rgb(6 182 212 / 0.25);
+}

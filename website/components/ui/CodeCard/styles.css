@@ -1,0 +1,105 @@
+@reference "../../../app/(main)/globals.css";
+
+.pk-v2-codecard {
+  @apply relative overflow-hidden rounded-pk-card bg-(--code-bg);
+  /* 1px ring as elevation (Rule M5) — not a border, so it never shifts layout. */
+  box-shadow: 0 0 0 1px var(--code-ring);
+}
+
+/* ---------- filename bar ---------- */
+
+.pk-v2-codecard__bar {
+  @apply flex items-center justify-between border-b border-white/[0.06] px-3.5 py-2.5;
+}
+
+.pk-v2-codecard__dots {
+  @apply flex gap-1.5;
+}
+
+/*
+ * Window dots. Tinted from the payment-state palette rather than macOS red /
+ * amber / green, so they stay inside the design system's colours — red, amber
+ * and emerald are already defined as --err / --warn / --ok.
+ */
+.pk-v2-codecard__dots i {
+  @apply size-2.5 rounded-full;
+}
+
+.pk-v2-codecard__dots i:nth-child(1) {
+  @apply bg-(--red-500);
+}
+
+.pk-v2-codecard__dots i:nth-child(2) {
+  @apply bg-(--amber-500);
+}
+
+.pk-v2-codecard__dots i:nth-child(3) {
+  @apply bg-(--emerald-500);
+}
+
+/* --code-comment, not text-pk-meta: this bar is on the permanently dark code
+   surface, so it must not follow the theme's text colours. */
+.pk-v2-codecard__name {
+  @apply font-pk-code text-xs text-(--code-comment);
+}
+
+/* ---------- code ---------- */
+
+.pk-v2-codecard__code {
+  @apply overflow-x-auto py-4 font-pk-code text-[13.5px]/[1.7];
+}
+
+/*
+ * Shiki emits its own <pre> with an INLINE background-color and color, which
+ * beat any class we put on the wrapper. So both are overridden here with
+ * !important — the card owns its surface, and the --pk-code-* bridge in
+ * globals.css supplies the token colours.
+ *
+ * font-family is restated rather than inherited for the same reason: the
+ * wrapper's font-pk-code would otherwise be the only thing setting it, and
+ * shiki's inline styles make that fragile. Fira Code is the code face (Rule M5).
+ */
+.pk-v2-codecard__code pre {
+  @apply m-0 p-0;
+  background: transparent !important;
+  font-family: var(--font-code) !important;
+}
+
+.pk-v2-codecard__code code {
+  @apply grid font-pk-code;
+}
+
+/* Each shiki line is a span; make it a block so diff backgrounds span the row. */
+.pk-v2-codecard__code .line {
+  @apply block px-4;
+}
+
+/*
+ * Diff rows. transformerNotationDiff() adds .diff.add / .diff.remove from the
+ * `// [!code ++]` and `// [!code --]` annotations in the source strings.
+ * The ± gutter marks are generated here rather than typed into the code, so the
+ * snippets stay copy-pasteable.
+ */
+.pk-v2-codecard__code .line.diff.add {
+  @apply bg-(--code-add-bg);
+}
+
+.pk-v2-codecard__code .line.diff.add::before {
+  content: '+';
+  @apply mr-2 inline-block text-(--code-add);
+}
+
+.pk-v2-codecard__code .line.diff.remove {
+  @apply bg-(--code-rm-bg);
+}
+
+.pk-v2-codecard__code .line.diff.remove::before {
+  content: '-';
+  @apply mr-2 inline-block text-(--code-rm);
+}
+
+/* Highlighted rows get the cyan bar from the design system. */
+.pk-v2-codecard__code .line.highlighted {
+  @apply bg-(--code-hl-bg);
+  box-shadow: inset 3px 0 0 var(--code-hl-bar);
+}

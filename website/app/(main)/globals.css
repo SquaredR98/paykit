@@ -1,0 +1,515 @@
+/* PayKit v2 — "Glass" system. Theme + layout derived from ravi-ranjan.in.
+   Dark first. Light via [data-theme="light"] on <html>.
+
+   Copied from design-system/styles.css — that file is the source of truth.
+   Only two changes were made on copy:
+     1. The Google Fonts @import was removed; app/(main)/layout.tsx loads the
+        same four families through next/font instead (self-hosted, no layout
+        shift, no extra network round-trip).
+     2. The Tailwind setup below was added, so component styles.css files can
+        use @apply as Rule W4 requires.
+
+   This file is imported ONLY by app/(main)/layout.tsx. The v1 stylesheet at
+   app/globals.css is imported ONLY by app/(old)/layout.tsx. They define 52 of
+   the same token names with different values, so they must never both load.
+   See .plan/v2-marketing-parallel-setup.md §2.5. */
+
+@import "tailwindcss";
+
+/* Scan sources — the v2 component trees plus this route group. */
+@source "../../components/shell/**/*.{tsx,css}";
+@source "../../components/ui/**/*.{tsx,css}";
+/*
+ * homepage/old/** is v1 and references app/globals.css instead, so it is
+ * excluded. Do not use a character range like [A-Z]* to do this — Turbopack's
+ * glob parser rejects ranges with "invalid character range" and panics.
+ */
+@source "../../components/homepage/**/*.{tsx,css}";
+@source not "../../components/homepage/old/**";
+@source "./**/*.tsx";
+
+/* =====================================================
+   Glass — Tailwind theme extension
+   Maps the v2 custom properties below into Tailwind utilities,
+   so components can write @apply bg-pk-card text-pk-body etc.
+   Names are prefixed pk- per Rule M4.
+   ===================================================== */
+
+@theme inline {
+  /* Surfaces */
+  --color-pk-page: var(--bg-page);
+  --color-pk-card: var(--surface-card);
+  --color-pk-hover: var(--surface-hover);
+  --color-pk-sunken: var(--surface-sunken);
+
+  /* Text */
+  --color-pk-strong: var(--text-strong);
+  --color-pk-heading: var(--text-heading);
+  --color-pk-body: var(--text-body);
+  --color-pk-meta: var(--text-meta);
+  --color-pk-caption: var(--text-caption);
+
+  /* Accent + links */
+  --color-pk-accent: var(--accent);
+  --color-pk-accent-soft: var(--accent-soft);
+  --color-pk-link: var(--link);
+
+  /* Payment states */
+  --color-pk-ok: var(--ok);
+  --color-pk-warn: var(--warn);
+  --color-pk-err: var(--err);
+  --color-pk-info: var(--info);
+  --color-pk-tip: var(--tip);
+
+  /* Borders */
+  --color-pk-border: var(--border);
+  --color-pk-border-strong: var(--border-strong);
+  --color-pk-border-hairline: var(--border-hairline);
+
+  /* Radii — nothing is square in v2 (Rule M5) */
+  --radius-pk-sm: var(--radius-sm);
+  --radius-pk-md: var(--radius-md);
+  --radius-pk-card: var(--radius-card);
+  --radius-pk-lg: var(--radius-lg);
+  --radius-pk-xl: var(--radius-xl);
+  --radius-pk-pill: var(--radius-pill);
+
+  /* Fonts */
+  --font-pk-heading: var(--font-heading);
+  --font-pk-sans: var(--font-sans);
+  --font-pk-mono: var(--font-mono);
+  --font-pk-code: var(--font-code);
+
+  /* Glass surfaces — so the chip/panel backgrounds are utilities too. */
+  --color-pk-glass-panel: var(--glass-panel);
+  --color-pk-glass-chip: var(--glass-chip);
+
+  /* Type scale, paired with its line height (text-pk-4xl etc). */
+  --text-pk-xs: var(--text-xs);
+  --text-pk-xs--line-height: var(--lh-xs);
+  --text-pk-sm: var(--text-sm);
+  --text-pk-sm--line-height: var(--lh-sm);
+  --text-pk-base: var(--text-base);
+  --text-pk-base--line-height: var(--lh-base);
+  --text-pk-lg: var(--text-lg);
+  --text-pk-lg--line-height: var(--lh-lg);
+  --text-pk-xl: var(--text-xl);
+  --text-pk-xl--line-height: var(--lh-xl);
+  --text-pk-2xl: var(--text-2xl);
+  --text-pk-2xl--line-height: var(--lh-2xl);
+  --text-pk-3xl: var(--text-3xl);
+  --text-pk-3xl--line-height: var(--lh-3xl);
+  --text-pk-4xl: var(--text-4xl);
+  --text-pk-4xl--line-height: var(--lh-4xl);
+  --text-pk-5xl: var(--text-5xl);
+  --text-pk-5xl--line-height: var(--lh-5xl);
+  --text-pk-6xl: var(--text-6xl);
+  --text-pk-7xl: var(--text-7xl);
+
+  /* Heading tracking — tracking-pk-heading. */
+  --tracking-pk-heading: var(--tracking-heading);
+
+  /* Motion — duration-pk-fast / ease-pk-out. */
+  --ease-pk-out: var(--ease-out);
+
+  /* Container widths — max-w-pk-outer / pk-inner / pk-prose. */
+  --container-pk-outer: var(--container-outer);
+  --container-pk-inner: var(--container-inner);
+  --container-pk-prose: var(--container-prose);
+}
+
+/*
+ * Design-system tokens.
+ *
+ * Wrapped in @layer base on purpose. Tailwind v4 treats several prefixes as
+ * reserved theme namespaces — --font-*, --text-*, --radius-*, --tracking-*,
+ * --ease-*, --container-*, --shadow-* — and strips or reinterprets bare :root
+ * declarations that match them. 34 of the tokens below collide, including
+ * --font-code, --text-strong, --radius-card and --shadow-glow.
+ *
+ * Declarations inside @layer base are left alone, so the tokens survive to the
+ * browser and resolve at runtime. Do NOT unwrap this.
+ */
+@layer base {
+
+  :root {
+    /* ---------- raw palette (Tailwind zinc / slate / cyan / blue / teal) ---------- */
+    --zinc-50: #fafafa;
+    --zinc-100: #f4f4f5;
+    --zinc-200: #e4e4e7;
+    --zinc-300: #d4d4d8;
+    --zinc-400: #a1a1aa;
+    --zinc-500: #71717a;
+    --zinc-600: #52525b;
+    --zinc-700: #3f3f46;
+    --zinc-800: #27272a;
+    --zinc-900: #18181b;
+    --slate-800: #1e293b;
+    --slate-900: #0f172a;
+    --slate-950: #020617;
+    --cyan-50: #ecfeff;
+    --cyan-300: #67e8f9;
+    --cyan-400: #22d3ee;
+    --cyan-500: #06b6d4;
+    --cyan-600: #0891b2;
+    --cyan-900: #164e63;
+    --cyan-950: #083344;
+    --blue-50: #eff6ff;
+    --blue-300: #93c5fd;
+    --blue-500: #3b82f6;
+    --blue-600: #2563eb;
+    --blue-700: #1d4ed8;
+    --blue-900: #1e3a8a;
+    --teal-300: #5eead4;
+    --teal-400: #2dd4bf;
+    --teal-500: #14b8a6;
+    --teal-600: #0d9488;
+    --teal-900: #134e4a;
+    --indigo-50: #eef2ff;
+    /* --purple-600 removed: its only use was the third stop of --grad-text. */
+    --emerald-400: #34d399;
+    --emerald-500: #10b981;
+    --amber-400: #fbbf24;
+    --amber-500: #f59e0b;
+    --red-400: #f87171;
+    --red-500: #ef4444;
+
+    /* ---------- type ---------- */
+    /* --font-heading / --font-sans / --font-code / --font-mono are set directly
+       by next/font in (main)/layout.tsx — see the `variable:` option on each
+       font there. They are deliberately NOT redeclared here: a declaration in
+       this block would override the value next/font puts on the wrapper. */
+    --text-xs: 0.8125rem;
+    --lh-xs: 1.5rem;
+    --text-sm: 0.875rem;
+    --lh-sm: 1.5rem;
+    --text-base: 1rem;
+    --lh-base: 1.75rem;
+    --text-lg: 1.125rem;
+    --lh-lg: 1.75rem;
+    --text-xl: 1.25rem;
+    --lh-xl: 2rem;
+    --text-2xl: 1.5rem;
+    --lh-2xl: 2rem;
+    --text-3xl: 1.875rem;
+    --lh-3xl: 2.25rem;
+    --text-4xl: 2rem;
+    --lh-4xl: 2.5rem;
+    --text-5xl: 3rem;
+    --lh-5xl: 3.5rem;
+    --text-6xl: 3.75rem;
+    --text-7xl: 4.5rem;
+    --tracking-heading: -0.025em;
+
+    /* ---------- radius (portfolio: 12px cards, pills for controls) ---------- */
+    --radius-sm: 6px;
+    --radius-md: 8px;
+    --radius-card: 12px;
+    --radius-lg: 16px;
+    --radius-xl: 24px;
+    --radius-pill: 9999px;
+
+    /* ---------- space + layout ---------- */
+    --space-1: 4px;
+    --space-2: 8px;
+    --space-3: 12px;
+    --space-4: 16px;
+    --space-5: 20px;
+    --space-6: 24px;
+    --space-8: 32px;
+    --space-10: 40px;
+    --space-12: 48px;
+    --space-16: 64px;
+    --space-24: 96px;
+    --space-28: 112px;
+    --container-outer: 1280px; /* max-w-7xl — glass panel */
+    --container-inner: 1024px; /* max-w-5xl — content column */
+    --container-prose: 672px; /* max-w-2xl */
+    --gutter: 48px; /* lg:px-12 */
+    --section-gap: 112px; /* md:mt-28 */
+
+    /* ---------- motion ---------- */
+    --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+    --dur-fast: 150ms;
+    --dur-base: 300ms;
+    --dur-slow: 500ms;
+
+    /* ---------- gradients (brand) ---------- */
+    --grad-brand: linear-gradient(90deg, var(--cyan-500), var(--blue-600));
+    --grad-brand-hover: linear-gradient(90deg, var(--cyan-600), var(--blue-700));
+    /*
+     * Headline gradient — cyan to blue, two stops.
+     *
+     * Diverges from design-system/styles.css on purpose: that file ends this
+     * gradient on --purple-600, and a cyan→blue→purple sweep across a 48-72px
+     * headline is the most recognisable "generated landing page" signal there is.
+     * It was also the only three-stop gradient in the system. Ending on blue
+     * keeps the emphasis and matches --grad-brand's palette, so the whole system
+     * is now one two-stop cyan→blue ramp.
+     *
+     * Still used at most once per page, in the hero (Rule M5).
+     */
+    --grad-text: linear-gradient(90deg, var(--cyan-500), var(--blue-600));
+
+    /* ================= DARK (default) ================= */
+    color-scheme: dark;
+    --bg-page: var(--slate-950);
+    --bg-gradient: linear-gradient(135deg, var(--slate-950), var(--slate-900) 50%, var(--slate-950));
+    --blob-cyan: rgb(22 78 99 / 0.2);
+    --blob-blue: rgb(30 58 138 / 0.2);
+    --blob-teal: rgb(19 78 74 / 0.2);
+    --blob-blend: lighten;
+    --grid-opacity: 0.12;
+
+    --glass-panel: rgb(15 23 42 / 0.8); /* slate-900/80 */
+    --glass-panel-ring: rgb(212 212 216 / 0.2);
+    --glass-chip: rgb(30 41 59 / 0.9); /* slate-800/90 — nav pill, toggle */
+    --glass-chip-ring: rgb(255 255 255 / 0.1);
+    --glass-chip-ring-hover: rgb(255 255 255 / 0.2);
+    --surface-card: rgb(15 23 42 / 0.6);
+    --surface-hover: rgb(30 41 59 / 0.5); /* card hover overlay */
+    --surface-sunken: rgb(2 6 23 / 0.45);
+    --surface-dashed: rgb(15 23 42 / 0.5);
+    --surface-dashed-hover: rgb(8 51 68 / 0.5);
+
+    --border: rgb(63 63 70 / 0.6); /* zinc-700/60 */
+    --border-strong: var(--zinc-700);
+    --border-hairline: rgb(244 244 245 / 0.05);
+    --border-dashed: var(--zinc-700);
+
+    --text-strong: var(--zinc-100);
+    --text-heading: var(--zinc-100);
+    --text-body: var(--zinc-400);
+    --text-meta: var(--zinc-400);
+    --text-caption: var(--zinc-500);
+    --text-on-brand: #fff;
+
+    --accent: var(--cyan-400);
+    --accent-soft: rgb(34 211 238 / 0.1);
+    --accent-ring: rgb(34 211 238 / 0.3);
+    --accent-ring-hover: rgb(34 211 238 / 0.6);
+    --link: var(--teal-400);
+    --link-underline: rgb(45 212 191 / 0.3);
+
+    --ok: var(--emerald-400);
+    --ok-soft: rgb(16 185 129 / 0.1);
+    --warn: var(--amber-400);
+    --warn-soft: rgb(245 158 11 / 0.1);
+    --err: var(--red-400);
+    --err-soft: rgb(239 68 68 / 0.1);
+    --info: var(--blue-300);
+    --info-soft: rgb(59 130 246 / 0.1);
+    --tip: var(--cyan-400);
+    --tip-soft: rgb(6 182 212 / 0.1);
+
+    --shadow-chip: 0 10px 15px -3px rgb(39 39 42 / 0.05), 0 4px 6px -4px rgb(39 39 42 / 0.05);
+    --shadow-glow: 0 10px 15px -3px rgb(6 182 212 / 0.3);
+
+    /*
+     * code — always dark, in both themes (Rule M5).
+     *
+     * Diverges from design-system/styles.css, which uses rgb(0 0 0 / .4) here.
+     * That is 40% transparent, so the glass panel and the blobs showed through
+     * and the code surface shifted as the background animated.
+     *
+     * slate-950 is solid, sits in the same blue-grey family as the page and the
+     * glass panel, and is one step darker than the panel's slate-900/80 — so it
+     * separates on dark without the harshness of pure black. The same value is
+     * used in light mode, so a code block never changes when the theme flips.
+     */
+    --code-bg: var(--slate-950);
+    --code-ring: rgb(228 228 231 / 0.1);
+    --code-plain: #e4e4e7;
+    /* zinc-400, not zinc-500: on slate-950 the darker grey fell to 4.2:1, just
+       under AA. This is 7.9:1 and still clearly recedes from --code-plain. */
+    --code-comment: var(--zinc-400);
+    --code-keyword: #c084fc;
+    --code-string: #5eead4;
+    --code-fn: #67e8f9;
+    --code-number: #fbbf24;
+    --code-type: #93c5fd;
+    --code-prop: #f9a8d4;
+    --code-hl-bg: rgb(6 182 212 / 0.08);
+    --code-hl-bar: var(--cyan-500);
+    --code-add-bg: rgb(16 185 129 / 0.1);
+    --code-add: var(--emerald-500);
+    --code-rm-bg: rgb(239 68 68 / 0.08);
+    --code-rm: var(--red-500);
+
+    /*
+     * Shiki bridge. lib/shiki.ts uses createCssVariablesTheme with the
+     * --pk-code- prefix, so it emits var(--pk-code-token-keyword) and friends.
+     * Mapping them onto the v2 --code-* tokens above lets the existing
+     * highlighter work here untouched, with v2's palette.
+     */
+    --pk-code-background: transparent;
+    --pk-code-foreground: var(--code-plain);
+    --pk-code-token-comment: var(--code-comment);
+    --pk-code-token-keyword: var(--code-keyword);
+    --pk-code-token-string: var(--code-string);
+    --pk-code-token-string-expression: var(--code-string);
+    --pk-code-token-function: var(--code-fn);
+    --pk-code-token-constant: var(--code-number);
+    --pk-code-token-parameter: var(--code-prop);
+    --pk-code-token-punctuation: var(--code-plain);
+    --pk-code-token-link: var(--code-type);
+  }
+
+  [data-theme="light"] {
+    color-scheme: light;
+    --bg-page: var(--zinc-50);
+    --bg-gradient: linear-gradient(135deg, var(--cyan-50), var(--blue-50) 50%, var(--indigo-50));
+    --blob-cyan: rgb(103 232 249 / 0.3);
+    --blob-blue: rgb(147 197 253 / 0.3);
+    --blob-teal: rgb(94 234 212 / 0.3);
+    --blob-blend: multiply;
+    --grid-opacity: 0.18;
+
+    --glass-panel: rgb(255 255 255 / 0.8);
+    --glass-panel-ring: var(--zinc-100);
+    --glass-chip: rgb(255 255 255 / 0.9);
+    --glass-chip-ring: rgb(24 24 27 / 0.05);
+    --glass-chip-ring-hover: rgb(24 24 27 / 0.12);
+    --surface-card: rgb(255 255 255 / 0.75);
+    --surface-hover: var(--zinc-50);
+    --surface-sunken: rgb(244 244 245 / 0.7);
+    --surface-dashed: rgb(250 250 250 / 0.5);
+    --surface-dashed-hover: rgb(236 254 255 / 0.5);
+
+    --border: var(--zinc-200);
+    --border-strong: var(--zinc-300);
+    --border-hairline: var(--zinc-100);
+    --border-dashed: var(--zinc-300);
+
+    --text-strong: var(--zinc-900);
+    --text-heading: var(--zinc-800);
+    --text-body: var(--zinc-600);
+    --text-meta: var(--zinc-500);
+    --text-caption: var(--zinc-500);
+
+    --accent: var(--cyan-600);
+    --accent-soft: rgb(6 182 212 / 0.06);
+    --accent-ring: var(--cyan-500);
+    --accent-ring-hover: var(--cyan-500);
+    --link: var(--teal-600);
+    --link-underline: rgb(20 184 166 / 0.25);
+
+    --ok: #047857;
+    --ok-soft: #ecfdf5;
+    --warn: #b45309;
+    --warn-soft: #fffbeb;
+    --err: #b91c1c;
+    --err-soft: #fef2f2;
+    --info: var(--blue-700);
+    --info-soft: var(--blue-50);
+    --tip: #0e7490;
+    --tip-soft: var(--cyan-50);
+
+    /* Same slate-950 as dark mode, so a code block does not change when the
+       theme is toggled (Rule M5: code is always dark). The ring is dropped
+       because the surface already separates itself from a light page. */
+    --code-bg: var(--slate-950);
+    --code-ring: transparent;
+  }
+
+}
+
+/* Base element styles. These are unscoped on purpose: this stylesheet is only
+   ever loaded on (main) routes, so "global" here means global to v2 — it cannot
+   reach a v1 page. The html/body rules still work even though the root layout
+   owns those tags, because CSS applies wherever the stylesheet is loaded. */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+html {
+  -webkit-font-smoothing: antialiased;
+}
+body {
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  line-height: var(--lh-base);
+  color: var(--text-body);
+  background: var(--bg-page);
+}
+a {
+  color: var(--accent);
+  text-decoration: none;
+}
+a:hover {
+  color: var(--cyan-500);
+}
+code,
+pre,
+kbd {
+  font-family: var(--font-code);
+}
+button,
+input {
+  font: inherit;
+  color: inherit;
+}
+::selection {
+  background: rgb(6 182 212 / 0.3);
+}
+
+@keyframes pk-blob {
+  0% {
+    transform: translate(0, 0) scale(1);
+  }
+  33% {
+    transform: translate(30px, -50px) scale(1.1);
+  }
+  66% {
+    transform: translate(-20px, 20px) scale(0.9);
+  }
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+}
+@keyframes pk-rise {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes pk-shine {
+  0% {
+    transform: translateX(-100%) translateY(-100%) rotate(45deg);
+  }
+  100% {
+    transform: translateX(200%) translateY(200%) rotate(45deg);
+  }
+}
+@keyframes pk-ping {
+  75%,
+  100% {
+    transform: scale(2);
+    opacity: 0;
+  }
+}
+@keyframes pk-slide {
+  from {
+    opacity: 0;
+    max-height: 0;
+  }
+  to {
+    opacity: 1;
+    max-height: 600px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}

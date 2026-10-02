@@ -1,0 +1,21 @@
+@reference "../../../app/(main)/globals.css";
+
+.pk-v2-footer {
+  @apply mt-24 border-t border-pk-border-hairline pt-10 pb-14;
+}
+
+.pk-v2-footer__inner {
+  @apply flex flex-wrap items-center justify-between gap-6;
+}
+
+.pk-v2-footer__links {
+  @apply flex flex-wrap gap-6 text-pk-sm font-medium;
+}
+
+.pk-v2-footer__links a {
+  @apply text-pk-heading transition-colors duration-150 hover:text-pk-accent;
+}
+
+.pk-v2-footer__copy {
+  @apply text-pk-sm text-pk-caption;
+}

@@ -1,0 +1,52 @@
+@reference "../../../app/(main)/globals.css";
+
+/*
+ * Page background — fixed, behind everything.
+ *
+ * Layer order (all below content):
+ *   -z-20  this: gradient + blobs + grid
+ *   -z-10  the glass panel (GlassPanel/)
+ *      0   content
+ */
+
+.pk-v2-bg {
+  @apply fixed inset-0 -z-20 overflow-hidden;
+  /* Raw: a gradient, which has no utility equivalent. */
+  background: var(--bg-gradient);
+}
+
+/*
+ * 384px (w-96) circles under a 64px blur. mix-blend-mode flips between themes
+ * — lighten on dark, multiply on light — so the same colours read correctly
+ * either way; hence the --blob-blend token rather than a fixed utility.
+ */
+.pk-v2-blob {
+  @apply absolute h-96 w-96 rounded-full opacity-70 blur-3xl;
+  mix-blend-mode: var(--blob-blend);
+  animation: pk-blob 7s infinite;
+}
+
+.pk-v2-blob--cyan {
+  @apply top-0 left-0 bg-(--blob-cyan);
+}
+
+.pk-v2-blob--blue {
+  @apply top-0 right-0 bg-(--blob-blue);
+  animation-delay: 2s;
+}
+
+.pk-v2-blob--teal {
+  @apply bottom-0 left-1/2 bg-(--blob-teal);
+  animation-delay: 4s;
+}
+
+/*
+ * Tiling 64px grid, faded out by 70% height so it reads as texture behind the
+ * hero and stops competing with content further down.
+ */
+.pk-v2-bg__grid {
+  @apply absolute inset-0 bg-[url('/v2/grid.svg')] bg-size-[64px_64px] bg-repeat;
+  opacity: var(--grid-opacity);
+  -webkit-mask-image: linear-gradient(to bottom, #000, transparent 70%);
+  mask-image: linear-gradient(to bottom, #000, transparent 70%);
+}
