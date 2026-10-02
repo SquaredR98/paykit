@@ -88,7 +88,7 @@ for 34 components scheduled for deletion.
 
 ```
 0. Rewrite Rule M5 (+ M12 pnpm fix)       ← blocks everything; docs-only
-1. SITE_URL extraction                     ← small; redesign inherits it
+1. ~~SITE_URL extraction~~  ← MOVED TO LAST, see note below
 2. Claims audit Batch 1 (docs only)        ← parallel-safe; skip blog files
 3. Blog → portfolio (Workstream C)         ← deletes 34 components
 4. Redesign to v2 Glass (Workstream B)     ← on reduced surface
@@ -96,7 +96,13 @@ for 34 components scheduled for deletion.
 6. runtime-split.md                        ← after docs settle
 ```
 
-**Why `SITE_URL` stays ahead of the redesign** (the one deviation worth keeping): 3 of the 8
+> **SUPERSEDED (October 2, 2026).** The domain work moved to the very end at the user's
+> direction. Changing the canonical domain while the site is mid-transition puts a redirect and a
+> half-migrated site live simultaneously, so any problem then has two possible causes. The
+> argument below is kept only as a record of why it was originally sequenced early — it is
+> overruled. Do not reorder it again.
+
+~~**Why `SITE_URL` stays ahead of the redesign**~~ (superseded): 3 of the 8
 hardcoded domain strings live in `app/layout.tsx` and `lib/og-image.tsx` — files the redesign
 rewrites. Extracting first means the redesign inherits the correct pattern instead of being edited
 twice. `og-image.tsx` renders the domain **into the image artwork**, so a stale value there bakes

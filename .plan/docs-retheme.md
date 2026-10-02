@@ -147,8 +147,14 @@ pass handle.
 The user is starting SDK gap-fix work. This plan is designed to be picked up and put down between
 those sessions — each step is an hour or two and leaves the site shippable.
 
-Suggested interleave:
-1. **`SITE_URL` + `redirects()`** first — small, isolated, unblocks DNS/TLS, and cannot be
-   invalidated by the docs work.
-2. Docs steps 1–6 as time allows.
-3. Blog migration, then `runtime-split.md`.
+1. **Docs steps 1-6** as time allows, interleaved with SDK work.
+2. Blog migration.
+3. `runtime-split.md`.
+4. **`SITE_URL` extraction + `redirects()` LAST.**
+
+> **The domain work goes at the very end — decided by the user, do not reorder it.**
+> The reasoning is not about effort: changing the canonical domain while the site is
+> mid-transition means a redirect and a half-migrated site are live at the same time, and any
+> problem then has two possible causes instead of one. The site must be fully on v2, with the
+> blog moved, before the domain moves. Earlier versions of these plans argued for doing it first
+> because it is cheap and unblocks DNS — that argument is overruled.
