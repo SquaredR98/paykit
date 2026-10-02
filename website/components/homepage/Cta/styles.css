@@ -1,0 +1,44 @@
+@reference "../../../app/(main)/globals.css";
+
+.pk-v2-cta {
+  @apply relative grid items-center gap-8 overflow-hidden rounded-pk-xl
+    border border-pk-border bg-pk-card p-14 max-lg:grid-cols-1 max-sm:p-8;
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+
+/*
+ * Soft colour bleed from the top-right. Decorative only — the one place a glow
+ * appears outside a primary button's hover (Rule M5), and it is static rather
+ * than animated so it needs no reduced-motion guard.
+ */
+.pk-v2-cta__glow {
+  @apply pointer-events-none absolute size-90 rounded-full bg-(--cyan-500)
+    opacity-[0.18] blur-[80px];
+  right: -80px;
+  top: -140px;
+}
+
+.pk-v2-cta__glow--b {
+  @apply bg-(--blue-600) opacity-[0.14];
+  right: 200px;
+  top: 60px;
+}
+
+/* Sits above the glows. */
+.pk-v2-cta__copy {
+  @apply relative;
+}
+
+.pk-v2-cta__title {
+  @apply max-w-[16ch] font-pk-heading text-pk-5xl font-bold text-pk-heading;
+  letter-spacing: -0.03em;
+  line-height: 1.08;
+}
+
+.pk-v2-cta__lede {
+  @apply mt-4 max-w-[50ch] text-pk-body;
+}
+
+.pk-v2-cta__actions {
+  @apply relative flex flex-col items-stretch gap-3;
+}

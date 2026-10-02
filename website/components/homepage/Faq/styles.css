@@ -1,0 +1,62 @@
+@reference "../../../app/(main)/globals.css";
+
+/* Heading column left, questions right — per the kit's 4fr / 7fr split. */
+.pk-v2-faq__grid {
+  @apply grid gap-12 max-lg:grid-cols-1 max-lg:gap-8;
+  grid-template-columns: minmax(0, 4fr) minmax(0, 7fr);
+}
+
+.pk-v2-faq__link {
+  @apply text-pk-link underline decoration-(--link-underline) underline-offset-2
+    transition-colors duration-150 hover:text-pk-accent;
+}
+
+/* ---------- accordion ---------- */
+
+/* Hairlines above the first row and below each one, so the list reads as a
+   table of rules rather than a stack of cards. */
+.pk-v2-faq {
+  @apply border-t border-pk-border;
+}
+
+.pk-v2-faq details {
+  @apply border-b border-pk-border;
+}
+
+.pk-v2-faq summary {
+  @apply flex cursor-pointer list-none items-center justify-between gap-4 py-4.5
+    font-pk-heading text-pk-base font-medium text-pk-heading
+    transition-colors duration-150 hover:text-pk-accent;
+}
+
+/* Safari draws its own disclosure triangle without this. */
+.pk-v2-faq summary::-webkit-details-marker {
+  @apply hidden;
+}
+
+.pk-v2-faq summary svg {
+  @apply size-4.5 shrink-0 text-pk-meta transition-transform duration-300;
+}
+
+.pk-v2-faq details[open] summary svg {
+  @apply rotate-180 text-pk-accent;
+}
+
+.pk-v2-faq__answer {
+  @apply overflow-hidden pb-5 text-pk-sm text-pk-body;
+}
+
+/* max-height rather than height, since the answer's height is unknown. */
+.pk-v2-faq details[open] .pk-v2-faq__answer {
+  animation: pk-slide 0.3s ease-out both;
+}
+
+/* Inline code inside an answer — accent chip, not a code block. */
+.pk-v2-faq__answer code {
+  @apply rounded-pk-sm bg-pk-accent-soft px-1.5 py-px font-pk-code
+    text-[12.5px] text-pk-accent;
+}
+
+.pk-v2-faq__answer strong {
+  @apply font-semibold text-pk-strong;
+}

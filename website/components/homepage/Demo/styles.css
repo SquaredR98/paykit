@@ -1,0 +1,170 @@
+@reference "../../../app/(main)/globals.css";
+
+/* ---------- panel ---------- */
+
+/*
+ * One container split 5fr / 7fr, per the design kit — the checkout and the code
+ * are cells of the same panel, divided by a hairline, not two floating cards.
+ * overflow-hidden clips the shine sweep and the children's corners to the 24px
+ * radius.
+ */
+.pk-v2-demo {
+  @apply relative mt-10 grid overflow-hidden rounded-pk-xl border
+    border-pk-border bg-pk-card max-[900px]:grid-cols-1;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+}
+
+/* Slow diagonal gloss across the panel — the design system's glass shine. */
+.pk-v2-demo__shine {
+  @apply pointer-events-none absolute inset-0 overflow-hidden rounded-[inherit];
+}
+
+.pk-v2-demo__shine::before {
+  content: '';
+  @apply absolute -top-1/2 -left-1/2 h-[200%] w-[40%];
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgb(255 255 255 / 0.06),
+    transparent
+  );
+  animation: pk-shine 6s ease-in-out infinite;
+}
+
+/* ---------- checkout cell ---------- */
+
+.pk-v2-demo__checkout {
+  @apply relative flex flex-col gap-4.5 border-r border-pk-border p-7
+    max-[900px]:border-r-0 max-[900px]:border-b;
+}
+
+/* ---------- segmented control ---------- */
+
+/* Equal thirds, so the control does not reflow as provider names change. */
+.pk-v2-seg {
+  @apply grid grid-cols-3 gap-1 rounded-pk-pill border border-pk-border
+    bg-pk-sunken p-1;
+}
+
+.pk-v2-seg__btn {
+  @apply cursor-pointer rounded-pk-pill border-0 bg-transparent py-1.5
+    text-pk-sm font-medium text-pk-body transition duration-150
+    hover:text-pk-strong disabled:cursor-not-allowed disabled:opacity-50;
+}
+
+.pk-v2-seg__btn[aria-selected='true'] {
+  @apply bg-pk-glass-chip text-pk-strong;
+  box-shadow: var(--shadow-chip), 0 0 0 1px var(--glass-chip-ring);
+}
+
+/* ---------- order row ---------- */
+
+/* Baseline, so the label sits on the same line as the large amount. */
+.pk-v2-demo__order {
+  @apply flex items-baseline justify-between gap-4;
+}
+
+.pk-v2-demo__order-label {
+  @apply text-pk-sm text-pk-meta;
+}
+
+.pk-v2-demo__order-meta {
+  @apply mt-0.5 block text-xs text-pk-caption;
+}
+
+.pk-v2-demo__amount {
+  @apply font-pk-heading text-pk-3xl font-bold tracking-pk-heading text-pk-strong;
+}
+
+/* ---------- states ---------- */
+
+.pk-v2-demo__loading {
+  @apply flex min-h-40 items-center justify-center rounded-pk-card
+    border border-dashed border-pk-border text-pk-sm text-pk-meta;
+}
+
+.pk-v2-demo__result {
+  @apply flex min-h-40 flex-col items-center justify-center gap-2
+    rounded-pk-card bg-(--ok-soft) p-6 text-center;
+  animation: pk-rise 0.4s var(--ease-out) both;
+}
+
+.pk-v2-demo__result svg {
+  @apply size-8 shrink-0 text-pk-ok;
+}
+
+.pk-v2-demo__result-title {
+  @apply font-pk-heading text-pk-lg font-semibold text-pk-ok;
+}
+
+.pk-v2-demo__result-sub {
+  @apply text-pk-sm text-pk-meta;
+}
+
+.pk-v2-demo__retry {
+  @apply mt-2 cursor-pointer rounded-pk-pill border border-(--accent-ring)
+    bg-transparent px-4 py-1.5 text-pk-sm font-medium text-pk-accent
+    transition duration-300 hover:border-(--accent-ring-hover)
+    hover:bg-pk-accent-soft;
+}
+
+.pk-v2-demo__error {
+  @apply rounded-pk-card bg-(--err-soft) px-3 py-2 text-pk-sm text-pk-err;
+}
+
+.pk-v2-demo__fine {
+  @apply text-center text-xs leading-5 text-pk-caption;
+}
+
+.pk-v2-demo__fine code {
+  @apply font-pk-code text-pk-meta;
+}
+
+/*
+ * CheckoutForm ships no layout of its own — it renders the provider's element
+ * and the submit button as adjacent siblings, so without this the button sits
+ * flush against the last field. The gap is set here rather than in the package
+ * so the library stays unopinionated about spacing.
+ */
+.pk-v2-demo__form {
+  @apply flex flex-col gap-4;
+}
+
+/*
+ * Providers that render their own payment button (PayPal) do not need ours —
+ * two CTAs for one action is confusing, and only theirs actually works.
+ */
+.pk-v2-demo__form--self-submit [data-paykit-submit] {
+  @apply hidden;
+}
+
+/*
+ * Full width and 46px tall, matching the kit's .pay.
+ */
+.pk-v2-demo__form [data-paykit-submit] {
+  @apply h-[46px] w-full cursor-pointer rounded-pk-pill border-0 text-pk-base
+    font-semibold text-white transition duration-500 bg-(image:--grad-brand)
+    disabled:cursor-progress disabled:opacity-80;
+}
+
+.pk-v2-demo__form [data-paykit-submit]:hover:not(:disabled) {
+  background: var(--grad-brand-hover);
+  box-shadow: var(--shadow-glow);
+}
+
+/* ---------- code cell ---------- */
+
+/* Sunken surface so the code side reads as recessed against the checkout. */
+.pk-v2-demo__code {
+  @apply relative flex flex-col gap-3.5 bg-pk-sunken p-5;
+}
+
+/* The snippet grows; the response card keeps its natural height. */
+.pk-v2-demo__code > :first-child {
+  @apply flex-1;
+}
+
+.pk-v2-demo__response-body {
+  @apply overflow-x-auto px-4 py-3.5 font-pk-code text-[12.5px]/[1.6]
+    text-(--code-plain);
+}

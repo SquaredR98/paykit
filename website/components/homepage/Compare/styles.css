@@ -1,0 +1,50 @@
+@reference "../../../app/(main)/globals.css";
+
+/* ---------- tab strip ---------- */
+
+.pk-v2-tabs {
+  @apply mt-8 inline-flex gap-1 rounded-pk-pill border border-pk-border
+    bg-pk-sunken p-1;
+}
+
+.pk-v2-tabs__tab {
+  @apply cursor-pointer rounded-pk-pill border-0 bg-transparent px-3.5 py-1.5
+    text-pk-sm font-medium text-pk-body transition-colors duration-150
+    hover:text-pk-strong;
+}
+
+/* The selected tab reads as a raised chip, matching the header's nav pill. */
+.pk-v2-tabs__tab[aria-selected='true'] {
+  @apply bg-pk-glass-chip text-pk-strong;
+  box-shadow: var(--shadow-chip), 0 0 0 1px var(--glass-chip-ring);
+}
+
+/* ---------- before / after grid ---------- */
+
+/*
+ * minmax(0, 1fr) rather than 1fr: code blocks scroll horizontally, and a plain
+ * 1fr track would let a long line stretch the column instead of scrolling.
+ */
+.pk-v2-compare {
+  @apply mt-8 grid gap-5;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+}
+
+/* Stack on narrow screens — two code columns are unreadable below ~900px. */
+@media (max-width: 900px) {
+  .pk-v2-compare {
+    @apply grid-cols-1;
+  }
+}
+
+.pk-v2-compare__label {
+  @apply mb-2.5 flex items-center justify-between text-pk-sm;
+}
+
+.pk-v2-compare__label b {
+  @apply font-pk-heading font-semibold text-pk-heading;
+}
+
+.pk-v2-compare__label span {
+  @apply font-pk-code text-xs text-pk-meta;
+}

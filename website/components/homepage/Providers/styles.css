@@ -1,112 +1,68 @@
-@reference "../../../app/globals.css";
+@reference "../../../app/(main)/globals.css";
 
-/* ── Grids ── */
+/* ---------- group labels ---------- */
 
-.pk-g3 {
-  @apply grid grid-cols-3 max-lg:grid-cols-2 max-sm:grid-cols-1;
+.pk-v2-providers__group {
+  @apply mt-10 flex items-center gap-3;
 }
 
-.pk-providers__band {
-  @apply border-b border-pk-grid;
+.pk-v2-providers__label {
+  @apply flex items-center gap-2.5 text-pk-sm font-medium text-pk-heading;
 }
 
-/* ── Sub-row (band header) ── */
+/* ---------- grid ---------- */
 
-.pk-subrow {
-  @apply flex items-center gap-4 bg-pk-sunken border-b border-pk-grid
-         px-(--space-10) py-(--space-3)
-         max-lg:px-(--space-6)
-         max-sm:px-(--space-5);
+/*
+ * Four across, collapsing to two then one. gap-4 rather than the 48px the card
+ * hover overlay would need, because these tiles lift on hover rather than
+ * painting an overlay — so they cannot collide.
+ */
+.pk-v2-providers {
+  @apply mt-4 grid grid-cols-4 gap-4 max-lg:grid-cols-2 max-sm:grid-cols-1;
 }
 
-.pk-subrow__spacer {
-  @apply flex-1;
+/* ---------- tile ---------- */
+
+.pk-v2-prov {
+  @apply relative flex flex-col gap-3.5 rounded-pk-card border border-pk-border
+    bg-pk-card p-4.5 transition duration-300 hover:-translate-y-0.5
+    hover:border-(--accent-ring);
 }
 
-/* ── Provider cell ── */
-
-.pk-pcell {
-  @apply flex flex-col gap-3 p-(--space-5) border-r border-pk-grid
-         max-sm:border-r-0 max-sm:border-b max-sm:border-pk-grid;
+/* Planned adapters are dimmed so the shipped three read as the real list. */
+.pk-v2-prov--planned {
+  @apply opacity-60 hover:opacity-100;
 }
 
-/* Last column in 3-col grid: no right border */
-.pk-g3 > .pk-pcell:nth-child(3n) {
-  @apply border-r-0;
+.pk-v2-prov__top {
+  @apply flex items-center justify-between;
 }
 
-/* Horizontal divider between rows: top border on 4th child onward (row 2+) */
-.pk-g3 > .pk-pcell:nth-child(n + 4) {
-  @apply border-t border-pk-grid;
+.pk-v2-prov__glyph {
+  @apply grid size-9 place-items-center rounded-[10px] border border-pk-border
+    bg-pk-sunken font-pk-heading text-sm font-bold text-pk-strong;
 }
 
-/* 2-col: switch right border to every 2nd, row border from 3rd child */
-@media (max-width: 1023px) {
-  .pk-g3 > .pk-pcell:nth-child(3n) {
-    border-right: 1px solid var(--border-grid);
-  }
-  .pk-g3 > .pk-pcell:nth-child(2n) {
-    @apply border-r-0;
-  }
-  .pk-g3 > .pk-pcell:nth-child(n + 4) {
-    border-top: none;
-  }
-  .pk-g3 > .pk-pcell:nth-child(n + 3) {
-    @apply border-t border-pk-grid;
-  }
+.pk-v2-prov__name {
+  @apply font-pk-heading text-pk-base font-semibold text-pk-heading;
+  letter-spacing: -0.01em;
 }
 
-/* 1-col: last child no bottom border */
-.pk-pcell:last-child {
-  @apply max-sm:border-b-0;
+.pk-v2-prov__summary {
+  @apply mt-0.5 text-xs leading-[18px] text-pk-meta;
 }
 
-/* ── Standalone CTA (Build your own adapter) ── */
+/* ---------- request tile ---------- */
 
-.pk-providers__cta {
-  @apply flex flex-col items-center text-center gap-4
-         px-(--space-10) py-(--space-8)
-         border-b border-pk-grid bg-pk-sunken
-         max-sm:px-(--space-5);
+/* Dashed, per the design system's rule for "view all" / request tiles. */
+.pk-v2-providers__request {
+  @apply flex flex-col items-center justify-center gap-2 rounded-pk-card
+    border border-dashed border-pk-border-strong bg-(--surface-dashed) p-4.5
+    text-center text-pk-sm text-pk-body transition duration-300
+    hover:border-(--cyan-500) hover:bg-(--surface-dashed-hover)
+    hover:text-pk-accent;
 }
 
-.pk-pcell--soon {
-  @apply opacity-55;
-}
-
-.pk-pcell--request {
-  @apply justify-center items-start gap-4 opacity-100;
-}
-
-.pk-pcell__desc {
-  @apply text-pk-muted;
-  font: var(--type-body-sm);
-}
-
-.pk-pcell__powered {
-  @apply text-pk-subtle;
-  font: var(--type-code-sm);
-}
-
-.pk-pcell__powered a {
-  @apply text-pk-muted underline underline-offset-2;
-  transition: color var(--dur-fast) var(--ease-standard);
-}
-
-.pk-pcell__powered a:hover {
-  @apply text-pk-strong;
-}
-
-.pk-pslug {
-  @apply inline-flex items-center w-fit h-[26px] px-(--space-2) border border-pk-hairline bg-pk-sunken text-pk-muted;
-  font: var(--type-code-sm);
-}
-
-.pk-pname {
-  @apply text-pk-strong;
-  font: var(--type-subheading);
-}
-
-.pk-tags {
-  @apply flex gap-2 flex-wrap;
+.pk-v2-providers__request svg {
+  @apply size-5;
 }
