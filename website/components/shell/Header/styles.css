@@ -109,3 +109,20 @@
   /* Cyan-tinted lift, specific to this chip. */
   box-shadow: 0 4px 6px -1px rgb(6 182 212 / 0.25);
 }
+
+/* ---------- docs variant ---------- */
+
+/*
+ * Docs use the full panel width rather than the 1024px content column, so the
+ * header lines up with the sidebar and TOC columns beneath it.
+ */
+.pk-v2-wrap--docs {
+  @apply px-8 max-sm:px-4;
+  max-width: calc(var(--container-docs) - 64px);
+}
+
+/* A label, not a control — so it is a span, not a button. */
+.pk-v2-version {
+  @apply inline-flex items-center rounded-pk-pill border border-pk-border
+    px-3 py-1 font-pk-mono text-xs text-pk-meta;
+}

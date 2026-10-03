@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 interface NavLink {
@@ -9,15 +10,23 @@ interface NavLink {
 }
 
 /**
- * The centre nav pill, with scroll-spy on same-page anchors.
+ * The centre nav pill.
  *
- * Only `#anchor` links take part in the highlight; real routes like /docs are
- * rendered as plain links. The kit highlights the section currently in view,
- * which needs an observer because anchors do not update on scroll by themselves.
+ * Two kinds of link, highlighted differently: `#anchor` links use scroll-spy,
+ * because anchors do not update as you scroll; route links are active when the
+ * current path matches. Docs pass `spy={false}` — their nav is all routes, and
+ * running an observer for sections that do not exist is wasted work.
  */
-export function NavPill({ links }: { links: NavLink[] }) {
-  const anchors = links.filter((l) => l.href.startsWith('#'));
+export function NavPill({
+  links,
+  spy = true,
+}: {
+  links: NavLink[];
+  spy?: boolean;
+}) {
+  const anchors = spy ? links.filter((l) => l.href.startsWith('#')) : [];
   const [active, setActive] = useState<string | null>(anchors[0]?.href ?? null);
+  const pathname = usePathname();
 
   useEffect(() => {
     if (anchors.length === 0) return;
@@ -54,11 +63,30 @@ export function NavPill({ links }: { links: NavLink[] }) {
         <Link
           key={link.href}
           href={link.href}
-          className={link.href === active ? 'pk-v2-navpill__link is-active' : 'pk-v2-navpill__link'}
+          className={
+            isActive(link.href, active, pathname)
+              ? 'pk-v2-navpill__link is-active'
+              : 'pk-v2-navpill__link'
+          }
         >
           {link.label}
         </Link>
       ))}
     </nav>
   );
+}
+
+/**
+ * Anchors are active when scroll-spy says so. Routes are active when the path
+ * starts with them, except "/" which must match exactly or it would light up
+ * on every page.
+ */
+function isActive(
+  href: string,
+  spiedAnchor: string | null,
+  pathname: string,
+): boolean {
+  if (href.startsWith('#')) return href === spiedAnchor;
+  if (href === '/') return pathname === '/';
+  return pathname.startsWith(href);
 }

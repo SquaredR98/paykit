@@ -26,7 +26,10 @@
  */
 @source "../../components/homepage/**/*.{tsx,css}";
 @source not "../../components/homepage/old/**";
-@source "./**/*.tsx";
+/* {tsx,css}, not tsx alone: a .css file under this group that is not scanned
+   makes this stylesheet fail to parse, which removes EVERY utility and breaks
+   unrelated pages with a confusing "unknown utility class" error. */
+@source "./**/*.{tsx,css}";
 
 /* =====================================================
    Glass — Tailwind theme extension
@@ -116,6 +119,8 @@
   --container-pk-outer: var(--container-outer);
   --container-pk-inner: var(--container-inner);
   --container-pk-prose: var(--container-prose);
+  --container-pk-docs: var(--container-docs);
+  --container-pk-docs-prose: var(--docs-prose);
 }
 
 /*
@@ -222,7 +227,12 @@
     --space-16: 64px;
     --space-24: 96px;
     --space-28: 112px;
-    --container-outer: 1280px; /* max-w-7xl — glass panel */
+    --container-outer: 1280px; /* max-w-7xl — glass panel, marketing */
+    /* Docs widen the panel and split it three ways. */
+    --container-docs: 1376px;
+    --docs-sidebar: 256px;
+    --docs-toc: 224px;
+    --docs-prose: 760px;
     --container-inner: 1024px; /* max-w-5xl — content column */
     --container-prose: 672px; /* max-w-2xl */
     --gutter: 48px; /* lg:px-12 */
