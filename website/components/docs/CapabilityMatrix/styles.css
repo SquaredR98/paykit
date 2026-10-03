@@ -1,91 +1,96 @@
-@reference "../../../app/globals.css";
+@reference "../../../app/(main)/globals.css";
 
-/* ── Capability Matrix ── */
+/*
+ * Capability matrix — converted from Blueprint to v2 Glass.
+ *
+ * The v1 --type-* tokens were CSS `font` shorthands; v2 has no equivalent, so
+ * each becomes separate utilities. See .plan/docs-retheme.md §3 for the full
+ * mapping.
+ */
 
 .pk-capmatrix {
-  @apply min-w-0 px-(--space-10) pt-(--space-10) pb-(--space-24)
-         max-md:px-(--space-5) max-md:pt-(--space-6) max-md:pb-(--space-16);
-  max-width: 920px;
+  @apply min-w-0 max-w-pk-docs-prose;
 }
 
+/* ---------- header ---------- */
+
 .pk-capmatrix__header {
-  @apply mb-(--space-8);
+  @apply mb-8;
 }
 
 .pk-capmatrix__header h1 {
-  @apply mt-(--space-2) tracking-(--tracking-tighter) text-pk-strong;
-  font: var(--type-display-1);
+  @apply mt-2 font-pk-heading text-pk-4xl font-bold tracking-pk-heading
+    text-pk-heading text-balance;
 }
 
 .pk-capmatrix__header p {
-  @apply mt-(--space-3) text-pk-muted;
-  font: var(--type-body-lg);
+  @apply mt-3 text-pk-lg text-pk-body text-pretty;
 }
 
-/* ── Table wrapper ── */
+/* ---------- table ---------- */
 
 .pk-capmatrix__wrap {
-  @apply overflow-x-auto mt-(--space-6);
+  @apply mt-6 overflow-x-auto rounded-pk-card border border-pk-border;
 }
 
 .pk-capmatrix__table {
-  @apply w-full border-collapse border border-pk-border bg-pk-card;
+  @apply w-full border-collapse bg-pk-card;
 }
 
 .pk-capmatrix__table th {
-  @apply text-left uppercase whitespace-nowrap text-pk-muted tracking-(--tracking-caps)
-         px-(--space-4) h-(--control-h-md) bg-pk-sunken border-b border-pk-grid;
-  font: var(--type-eyebrow);
+  @apply h-9 px-4 text-left font-pk-mono text-xs font-semibold
+    whitespace-nowrap uppercase text-pk-meta
+    border-b border-pk-border bg-pk-sunken;
+  letter-spacing: 0.04em;
 }
 
 .pk-capmatrix__table th + th {
-  @apply border-l border-pk-hairline text-center;
+  @apply border-l border-pk-border-hairline text-center;
 }
 
 .pk-capmatrix__table td {
-  @apply align-middle px-(--space-4) py-(--space-3) border-t border-pk-hairline text-pk-body;
-  font: var(--type-body-sm);
+  @apply border-t border-pk-border-hairline px-4 py-3 align-middle
+    text-pk-sm text-pk-body;
 }
 
 .pk-capmatrix__table td + td {
-  @apply border-l border-pk-hairline text-center;
+  @apply border-l border-pk-border-hairline text-center;
 }
 
-/* ── Status cells ── */
+/* ---------- status cells ---------- */
 
 .pk-capmatrix__yes {
-  color: var(--text-ok);
+  @apply rounded-pk-sm text-pk-ok transition-colors duration-150
+    hover:bg-pk-accent-soft;
 }
 
 .pk-capmatrix__no {
-  color: var(--text-subtle);
+  @apply text-pk-caption;
 }
 
-/* ── Capability description ── */
+/* ---------- capability description ---------- */
 
 .pk-capmatrix__desc {
-  @apply text-pk-muted mt-0.5;
-  font: var(--type-code-sm);
+  @apply mt-0.5 font-pk-code text-xs text-pk-meta;
 }
 
-/* ── Legend ── */
+/* ---------- legend ---------- */
 
 .pk-capmatrix__legend {
-  @apply flex gap-(--space-6) mt-(--space-5) text-pk-muted;
-  font: var(--type-body-sm);
+  @apply mt-5 flex flex-wrap gap-6 text-pk-sm text-pk-meta;
 }
 
 .pk-capmatrix__legend-item {
-  @apply flex items-center gap-(--space-2);
+  @apply flex items-center gap-2;
 }
 
-/* ── Code snippet panel ── */
+/* ---------- snippet panel ---------- */
 
 .pk-capmatrix__snippet {
-  @apply mt-(--space-6) pt-(--space-5) border-t border-pk-grid;
+  @apply mt-6 border-t border-pk-border pt-5;
 }
 
 .pk-capmatrix__snippet-label {
-  @apply text-pk-muted uppercase tracking-(--tracking-caps) mb-(--space-2);
-  font: var(--type-eyebrow);
+  @apply mb-2 font-pk-mono text-xs font-semibold uppercase text-pk-meta;
+  letter-spacing: 0.04em;
 }

@@ -30,6 +30,10 @@
    makes this stylesheet fail to parse, which removes EVERY utility and breaks
    unrelated pages with a confusing "unknown utility class" error. */
 @source "./**/*.{tsx,css}";
+/* Docs components are converted one at a time (see .plan/docs-retheme.md).
+   Only those already on v2 tokens are scanned; the rest still reference
+   app/globals.css and are served from the (old) group. */
+@source "../../components/docs/CapabilityMatrix/**/*.{tsx,css}";
 
 /* =====================================================
    Glass — Tailwind theme extension

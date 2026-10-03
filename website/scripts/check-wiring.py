@@ -44,8 +44,12 @@ for d in ('components/shell', 'components/ui', 'components/homepage'):
 # --- 3. every v2 component folder is reachable from HomepageView/Shell ---
 # Route entry points. Next.js special files (page/layout/opengraph-image) are
 # reached by the framework, not by an import, so they seed the walk.
-roots = ['app/(main)/page.tsx', 'app/(main)/layout.tsx',
-         'app/(main)/opengraph-image.tsx']
+# Every Next.js special file under (main) is an entry point reached by the
+# framework rather than by an import, so each one seeds the walk.
+roots = []
+for pat in ('app/(main)/**/page.tsx', 'app/(main)/**/layout.tsx',
+            'app/(main)/**/opengraph-image.tsx'):
+    roots.extend(glob.glob(pat, recursive=True))
 reached, queue = set(), list(roots)
 while queue:
     f = queue.pop()

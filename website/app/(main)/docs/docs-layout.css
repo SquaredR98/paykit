@@ -1,0 +1,12 @@
+@reference "../globals.css";
+
+/*
+ * Docs content grid.
+ *
+ * One column for now — the sidebar and TOC are still shared with the v1 layout
+ * and move here in step 4, at which point this becomes
+ * `var(--docs-sidebar) minmax(0, 1fr) var(--docs-toc)`.
+ */
+.pk-v2-docs {
+  @apply pt-10 pb-24;
+}

@@ -1,7 +1,9 @@
 'use client';
 
 import { useState } from 'react';
+import type { ProviderCapabilities } from '@squaredr/paykit';
 import { syntaxHighlight } from '@/lib/json-highlight';
+import { CodeCard, Eyebrow } from '@/components/ui';
 import './styles.css';
 
 /* ── Capability data (sourced from adapter source code) ── */
@@ -94,40 +96,33 @@ const CAPABILITIES: CapabilityDef[] = [
   },
 ];
 
-type ProviderName = 'stripe' | 'razorpay' | 'paypal';
+/*
+ * Capability data now arrives as a prop, read from the adapters themselves in
+ * lib/provider-capabilities.ts. It used to be 13 flags x 3 providers hardcoded
+ * here, which violated Rule M3 and had drifted: the table advertised payouts
+ * for Stripe and PayPal, neither of which implements any payout operation.
+ */
+export type ProviderName = 'stripe' | 'razorpay' | 'paypal';
 
-const PROVIDER_CAPS: Record<ProviderName, Record<string, boolean>> = {
-  stripe: {
-    charges: true, authAndCapture: true, refunds: true, partialRefunds: true,
-    subscriptions: true, savedPaymentMethods: true, hostedCheckout: true,
-    embeddableUI: true, payouts: true, multiCurrency: true, directDebit: true,
-    webhooks: true, threeDS: true,
-  },
-  razorpay: {
-    charges: true, authAndCapture: true, refunds: true, partialRefunds: true,
-    subscriptions: true, savedPaymentMethods: false, hostedCheckout: true,
-    embeddableUI: true, payouts: false, multiCurrency: true, directDebit: false,
-    webhooks: true, threeDS: true,
-  },
-  paypal: {
-    charges: true, authAndCapture: true, refunds: true, partialRefunds: true,
-    subscriptions: true, savedPaymentMethods: true, hostedCheckout: true,
-    embeddableUI: true, payouts: true, multiCurrency: true, directDebit: false,
-    webhooks: true, threeDS: true,
-  },
-};
-
-const PROVIDERS: ProviderName[] = ['stripe', 'razorpay', 'paypal'];
+export interface CapabilityMatrixProps {
+  capabilities: Record<ProviderName, ProviderCapabilities>;
+  providers: ProviderName[];
+  providerLabels: Record<ProviderName, string>;
+}
 
 /* ── Component ── */
 
-export function CapabilityMatrix() {
+export function CapabilityMatrix({
+  capabilities,
+  providers,
+  providerLabels,
+}: CapabilityMatrixProps) {
   const [selected, setSelected] = useState<{ cap: CapabilityDef; provider: ProviderName } | null>(null);
 
   return (
     <div className="pk-capmatrix">
       <div className="pk-capmatrix__header">
-        <span className="pk-eyebrow">Provider Capabilities</span>
+        <Eyebrow>Provider capabilities</Eyebrow>
         <h1>Capability Matrix</h1>
         <p>
           Compare what each payment provider supports. Click any supported cell to see
@@ -140,8 +135,8 @@ export function CapabilityMatrix() {
           <thead>
             <tr>
               <th>Capability</th>
-              {PROVIDERS.map((p) => (
-                <th key={p}>{p.charAt(0).toUpperCase() + p.slice(1)}</th>
+              {providers.map((p) => (
+                <th key={p}>{providerLabels[p]}</th>
               ))}
             </tr>
           </thead>
@@ -152,8 +147,8 @@ export function CapabilityMatrix() {
                   <div className="text-pk-strong font-medium">{cap.label}</div>
                   <div className="pk-capmatrix__desc">{cap.description}</div>
                 </td>
-                {PROVIDERS.map((p) => {
-                  const supported = PROVIDER_CAPS[p][cap.key];
+                {providers.map((p) => {
+                  const supported = capabilities[p][cap.key as keyof ProviderCapabilities];
                   const isSelected = selected?.cap.key === cap.key && selected?.provider === p;
                   return (
                     <td key={p}>
@@ -164,7 +159,7 @@ export function CapabilityMatrix() {
                           onClick={() => setSelected(isSelected ? null : { cap, provider: p })}
                           title={`View ${cap.label} code for ${p}`}
                           style={{
-                            background: isSelected ? 'var(--surface-accent-soft)' : 'none',
+                            background: isSelected ? 'var(--accent-soft)' : 'none',
                             border: 'none',
                             padding: '4px 8px',
                             font: 'inherit',
@@ -198,18 +193,12 @@ export function CapabilityMatrix() {
           <p className="pk-capmatrix__snippet-label">
             {selected.cap.label} — {selected.provider.charAt(0).toUpperCase() + selected.provider.slice(1)}
           </p>
-          <div className="pk-term">
-            <div className="pk-term__bar">
-              <span className="pk-term__file">{selected.cap.key}.ts</span>
-            </div>
-            <pre className="pk-term__code">
-              <code
-                dangerouslySetInnerHTML={{
-                  __html: syntaxHighlight(selected.cap.snippet(selected.provider)),
-                }}
-              />
-            </pre>
-          </div>
+          <CodeCard
+            filename={`${selected.cap.key}.ts`}
+            html={`<pre><code>${syntaxHighlight(
+              selected.cap.snippet(selected.provider),
+            )}</code></pre>`}
+          />
         </div>
       )}
     </div>
