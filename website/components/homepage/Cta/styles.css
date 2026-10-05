@@ -1,9 +1,10 @@
 @reference "../../../app/(main)/globals.css";
 
 .pk-v2-cta {
-  @apply relative grid items-center gap-8 overflow-hidden rounded-pk-xl
-    border border-pk-border bg-pk-card p-14 max-lg:grid-cols-1 max-sm:p-8;
-  grid-template-columns: minmax(0, 1fr) auto;
+  @apply relative grid grid-cols-1 items-center gap-8 overflow-hidden
+    rounded-pk-xl border border-pk-border bg-pk-card p-8
+    sm:p-14
+    lg:grid-cols-[minmax(0,1fr)_auto];
 }
 
 /*
@@ -30,7 +31,8 @@
 }
 
 .pk-v2-cta__title {
-  @apply max-w-[16ch] font-pk-heading text-pk-5xl font-bold text-pk-heading;
+  @apply max-w-[16ch] font-pk-heading text-pk-3xl font-bold text-pk-heading
+    sm:text-pk-4xl lg:text-pk-5xl;
   letter-spacing: -0.03em;
   line-height: 1.08;
 }

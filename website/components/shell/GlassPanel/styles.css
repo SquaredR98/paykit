@@ -1,7 +1,13 @@
 @reference "../../../app/(main)/globals.css";
 
+/*
+ * No side padding below sm, so the panel runs edge to edge on a phone — the
+ * portfolio does the same (`fixed inset-0 flex justify-center sm:px-8`).
+ * Insetting it on a 375px screen wastes 64px of width and makes the panel read
+ * as a floating card rather than the page surface.
+ */
 .pk-v2-glass {
-  @apply fixed inset-0 -z-10 flex justify-center px-8;
+  @apply fixed inset-0 -z-10 flex justify-center sm:px-8;
 }
 
 /*
@@ -16,9 +22,4 @@
   @apply w-full bg-pk-glass-panel backdrop-blur-sm;
   max-width: calc(var(--container-outer) - 64px);
   box-shadow: 0 0 0 1px var(--glass-panel-ring);
-}
-
-/* Docs widen to fit sidebar + prose + TOC. */
-.pk-v2-glass__panel--wide {
-  max-width: calc(var(--container-docs) - 64px);
 }

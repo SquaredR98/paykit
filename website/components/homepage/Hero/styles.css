@@ -3,7 +3,7 @@
 /* The whole hero rises 10px on load; pk-rise is defined in globals.css and is
    disabled wholesale by the prefers-reduced-motion block there. */
 .pk-v2-hero {
-  @apply pt-24;
+  @apply pt-12 sm:pt-24;
   animation: pk-rise 1s var(--ease-out) both;
 }
 
@@ -21,8 +21,12 @@
  * 72px the default pair looks loose. max-w-[16ch] keeps the line breaks
  * deliberate rather than viewport-dependent.
  */
+/* Mobile-first, like the portfolio's `text-4xl md:text-5xl` headings: the
+   small size is the base and larger screens step up. */
 .pk-v2-hero__title {
-  @apply mt-6 max-w-[20ch] font-pk-heading text-pk-7xl font-bold text-pk-heading;
+  @apply mt-6 max-w-[20ch] font-pk-heading text-pk-4xl font-bold text-pk-heading
+    sm:text-pk-5xl
+    lg:text-pk-7xl;
   letter-spacing: -0.035em;
   line-height: 1.02;
 }
@@ -31,12 +35,6 @@
 .pk-v2-hero__title span {
   @apply bg-clip-text text-transparent;
   background-image: var(--grad-text);
-}
-
-@media (max-width: 640px) {
-  .pk-v2-hero__title {
-    @apply text-pk-5xl;
-  }
 }
 
 /* ---------- lede ---------- */
@@ -61,9 +59,8 @@
  * screens without a media query.
  */
 .pk-v2-hero__stats {
-  @apply mt-10 grid gap-px overflow-hidden rounded-pk-lg border border-pk-border
-    bg-pk-border;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  @apply mt-10 grid grid-cols-[repeat(auto-fit,minmax(150px,1fr))] gap-px
+    overflow-hidden rounded-pk-lg border border-pk-border bg-pk-border;
 }
 
 .pk-v2-hero__stat {

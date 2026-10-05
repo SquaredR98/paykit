@@ -12,7 +12,7 @@
  * raw property; the inner one is a plain utility.
  */
 .pk-v2-wrap {
-  @apply mx-auto w-full px-12 max-sm:px-4;
+  @apply mx-auto w-full px-4 sm:px-8 lg:px-12;
   max-width: calc(var(--container-outer) - 64px);
 }
 
@@ -29,12 +29,30 @@
 
 /* ---------- header ---------- */
 
+/*
+ * Sticky header.
+ *
+ * The scrolled background lives on __inner, not here, so it stays confined to
+ * the content column instead of being painted edge to edge across the panel.
+ */
 .pk-v2-header {
-  @apply sticky top-0 z-40 pt-6;
+  @apply sticky top-0 z-40 py-3 sm:py-4;
 }
 
+/*
+ * Vertical padding is on this element rather than on .pk-v2-header, so the
+ * scrolled background fills the header's full height. With the padding on the
+ * parent, the background covered only the row of items and content showed
+ * through above and below it.
+ */
 .pk-v2-header__inner {
-  @apply flex items-center gap-4;
+  @apply flex w-full items-center gap-4 rounded-pk-xl border border-transparent
+    px-4 py-2 transition-colors duration-300 sm:px-5;
+}
+
+.pk-v2-header[data-scrolled='true'] .pk-v2-header__inner {
+  @apply border-pk-border-hairline backdrop-blur-3xl;
+  background: var(--glass-header);
 }
 
 /* The two outer cells flex equally so the nav pill stays optically centred. */
@@ -69,7 +87,7 @@
 }
 
 .pk-v2-navpill__link {
-  @apply relative px-3 py-2 whitespace-nowrap text-inherit transition-colors duration-150;
+  @apply relative px-3 py-1 whitespace-nowrap text-inherit transition-colors duration-150;
 }
 
 .pk-v2-navpill__link:hover,
@@ -92,7 +110,7 @@
 /* ---------- theme toggle ---------- */
 
 .pk-v2-toggle {
-  @apply grid size-10 cursor-pointer place-items-center border-0 text-pk-meta transition duration-150;
+  @apply grid size-8 cursor-pointer place-items-center border-0 text-pk-meta transition duration-150;
 }
 
 .pk-v2-toggle:hover {
@@ -103,7 +121,7 @@
 /* ---------- CTA chip ---------- */
 
 .pk-v2-cta-chip {
-  @apply inline-flex items-center rounded-pk-pill px-4 py-2 text-pk-xs
+  @apply inline-flex items-center rounded-pk-pill px-4 py-1 text-pk-xs
     font-semibold whitespace-nowrap text-white transition-opacity duration-150
     bg-(image:--grad-brand) hover:text-white hover:opacity-90 max-[480px]:hidden;
   /* Cyan-tinted lift, specific to this chip. */
@@ -112,17 +130,123 @@
 
 /* ---------- docs variant ---------- */
 
-/*
- * Docs use the full panel width rather than the 1024px content column, so the
- * header lines up with the sidebar and TOC columns beneath it.
- */
-.pk-v2-wrap--docs {
-  @apply px-8 max-sm:px-4;
-  max-width: calc(var(--container-docs) - 64px);
-}
-
 /* A label, not a control — so it is a span, not a button. */
 .pk-v2-version {
   @apply inline-flex items-center rounded-pk-pill border border-pk-border
     px-3 py-1 font-pk-mono text-xs text-pk-meta;
+}
+
+/* ---------- nav pill dropdowns ---------- */
+
+/*
+ * Used by the docs sections. The pill itself stays a single row; sections with
+ * several pages open beneath their own entry.
+ */
+.pk-v2-navpill__menu {
+  @apply relative;
+}
+
+.pk-v2-navpill__link[aria-expanded] {
+  @apply inline-flex cursor-pointer items-center gap-1.5 border-0
+    bg-transparent;
+}
+
+.pk-v2-navpill__link svg {
+  @apply size-3.5 transition-transform duration-150;
+}
+
+.pk-v2-navpill__link[aria-expanded='true'] svg {
+  @apply rotate-180;
+}
+
+.pk-v2-navpill__dropdown {
+  @apply absolute left-1/2 top-full z-40 mt-2 flex min-w-48 -translate-x-1/2
+    flex-col gap-0.5 rounded-pk-card border border-pk-border bg-pk-glass-chip
+    p-1.5 backdrop-blur-sm;
+  box-shadow: var(--shadow-chip), 0 0 0 1px var(--glass-chip-ring);
+  animation: pk-rise 0.15s var(--ease-out) both;
+}
+
+.pk-v2-navpill__item {
+  @apply rounded-pk-sm px-2.5 py-1.5 text-pk-sm whitespace-nowrap text-pk-body
+    transition-colors duration-150 hover:bg-pk-hover hover:text-pk-strong;
+}
+
+.pk-v2-navpill__item.is-active {
+  @apply bg-pk-accent-soft text-pk-accent;
+}
+
+/* ---------- mobile nav ---------- */
+
+/*
+ * Shown exactly where .pk-v2-navpill hides (860px), so there is never a width
+ * with both or neither.
+ */
+.pk-v2-mobilenav__btn {
+  @apply hidden cursor-pointer items-center gap-1.5 border-0 px-4 py-2
+    text-pk-sm font-medium text-pk-strong max-[860px]:inline-flex;
+}
+
+.pk-v2-mobilenav__btn svg {
+  @apply size-3.5;
+}
+
+.pk-v2-mobilenav__backdrop {
+  @apply fixed inset-0 z-50 bg-black/60 backdrop-blur-sm;
+  animation: pk-rise 0.15s var(--ease-out) both;
+}
+
+.pk-v2-mobilenav__panel {
+  @apply fixed inset-x-4 top-8 z-50 max-h-[80vh] overflow-y-auto
+    rounded-pk-xl border border-pk-border bg-pk-glass-panel p-5 sm:p-6
+    backdrop-blur-sm;
+  box-shadow: var(--shadow-chip), 0 0 0 1px var(--glass-panel-ring);
+  animation: pk-rise 0.2s var(--ease-out) both;
+}
+
+.pk-v2-mobilenav__head {
+  @apply flex items-center justify-between border-b border-pk-border-hairline
+    pb-4;
+}
+
+.pk-v2-mobilenav__head h2 {
+  @apply font-pk-heading text-pk-sm font-semibold text-pk-heading;
+}
+
+.pk-v2-mobilenav__close {
+  @apply grid size-8 cursor-pointer place-items-center rounded-pk-pill border-0
+    bg-transparent text-pk-meta transition-colors duration-150
+    hover:text-pk-strong;
+}
+
+.pk-v2-mobilenav__close svg {
+  @apply size-4;
+}
+
+.pk-v2-mobilenav__list {
+  @apply mt-4 flex flex-col gap-4;
+}
+
+.pk-v2-mobilenav__group {
+  @apply flex flex-col;
+}
+
+.pk-v2-mobilenav__group-label {
+  @apply mb-1 font-pk-mono text-xs font-semibold uppercase text-pk-caption;
+  letter-spacing: 0.04em;
+}
+
+.pk-v2-mobilenav__link {
+  @apply border-l border-pk-border py-2 pl-3 text-pk-sm text-pk-body
+    transition-colors duration-150 hover:text-pk-strong;
+}
+
+.pk-v2-mobilenav__link.is-active {
+  @apply border-l-pk-accent text-pk-accent;
+}
+
+.pk-v2-mobilenav__cta {
+  @apply mt-2 inline-flex items-center justify-center rounded-pk-pill px-4 py-2.5
+    text-pk-sm font-semibold text-white bg-(image:--grad-brand)
+    hover:text-white;
 }

@@ -7,6 +7,18 @@
  * and move here in step 4, at which point this becomes
  * `var(--docs-sidebar) minmax(0, 1fr) var(--docs-toc)`.
  */
+/*
+ * Content column. The TOC track is NOT reserved here: only the catch-all route
+ * renders a TOC, so declaring the column unconditionally left every other docs
+ * page squeezed into 1fr with 224px of empty space beside it.
+ *
+ * Pages that have a TOC opt in with .pk-v2-docs--toc, following the
+ * portfolio's `lg:grid lg:grid-cols-[1fr_240px]` pattern.
+ */
 .pk-v2-docs {
-  @apply pt-10 pb-24;
+  @apply pt-8 pb-16 sm:pt-10 sm:pb-24;
+}
+
+.pk-v2-docs--toc {
+  @apply xl:grid xl:grid-cols-[minmax(0,1fr)_var(--docs-toc)] xl:gap-12;
 }

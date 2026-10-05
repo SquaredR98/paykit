@@ -26,8 +26,8 @@
  * 1fr track would let a long line stretch the column instead of scrolling.
  */
 .pk-v2-compare {
-  @apply mt-8 grid gap-5;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  @apply mt-8 grid grid-cols-1 gap-5
+    lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)];
 }
 
 /* Stack on narrow screens — two code columns are unreadable below ~900px. */

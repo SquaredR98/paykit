@@ -2,8 +2,8 @@
 
 /* Heading column left, questions right — per the kit's 4fr / 7fr split. */
 .pk-v2-faq__grid {
-  @apply grid gap-12 max-lg:grid-cols-1 max-lg:gap-8;
-  grid-template-columns: minmax(0, 4fr) minmax(0, 7fr);
+  @apply grid grid-cols-1 gap-8
+    lg:grid-cols-[minmax(0,4fr)_minmax(0,7fr)] lg:gap-12;
 }
 
 .pk-v2-faq__link {

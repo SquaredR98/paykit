@@ -8,13 +8,16 @@
  * targets clear the sticky header.
  */
 
+/* Sections sit --section-gap apart on desktop; tighter on a phone, where
+   112px of whitespace between sections reads as the page having ended. */
 .pk-v2-section {
-  @apply mt-28 scroll-mt-25;
+  @apply mt-16 scroll-mt-25 sm:mt-28;
 }
 
 .pk-v2-section__title {
-  @apply mt-3 font-pk-heading text-pk-4xl font-bold tracking-pk-heading
-    text-pk-heading text-balance;
+  @apply mt-3 font-pk-heading text-pk-3xl font-bold tracking-pk-heading
+    text-pk-heading text-balance
+    sm:text-pk-4xl;
 }
 
 .pk-v2-section__sub {
