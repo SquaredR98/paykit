@@ -9,9 +9,9 @@
  * radius.
  */
 .pk-v2-demo {
-  @apply relative mt-10 grid overflow-hidden rounded-pk-xl border
-    border-pk-border bg-pk-card max-[900px]:grid-cols-1;
-  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  @apply relative mt-10 overflow-hidden rounded-pk-xl border border-pk-border
+    bg-pk-card
+    lg:grid lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)];
 }
 
 /* Slow diagonal gloss across the panel — the design system's glass shine. */
@@ -19,23 +19,58 @@
   @apply pointer-events-none absolute inset-0 overflow-hidden rounded-[inherit];
 }
 
+/*
+ * A narrow band that the keyframe rotates 45deg and sweeps across the panel.
+ *
+ * The gradient is 90deg, not 45deg: pk-shine already applies the rotation, so
+ * angling the gradient too cancels the diagonal and the streak reads as a flat
+ * wash. The band is 40% of the panel width for the same reason — at w-full the
+ * whole surface brightens instead of a highlight travelling across it.
+ */
 .pk-v2-demo__shine::before {
   content: '';
-  @apply absolute -top-1/2 -left-1/2 h-[200%] w-[40%];
+  @apply absolute -top-1/2 -left-1/2 h-[200%] w-3/5;
+  /*
+   * Three strips with eased falloff, not one hard band.
+   *
+   * A three-stop gradient (transparent -> white -> transparent) interpolates
+   * linearly, which draws a triangle: a hard peak in the middle and straight
+   * sides. That straight edge is what reads as a sharp end passing by.
+   *
+   * These stops ramp up and down gradually and sit at uneven widths, so each
+   * strip fades out rather than terminating, and the group reads as a gleam
+   * rather than a bar. The leading and trailing strips are dimmer, so the
+   * highlight has no defined start or finish.
+   */
   background: linear-gradient(
     90deg,
-    transparent,
-    rgb(255 255 255 / 0.06),
-    transparent
+    transparent 0%,
+    rgb(255 255 255 / 0.012) 14%,
+    rgb(255 255 255 / 0.028) 22%,
+    rgb(255 255 255 / 0.01) 30%,
+    transparent 36%,
+    rgb(255 255 255 / 0.02) 44%,
+    rgb(255 255 255 / 0.065) 52%,
+    rgb(255 255 255 / 0.02) 60%,
+    transparent 66%,
+    rgb(255 255 255 / 0.014) 74%,
+    rgb(255 255 255 / 0.03) 82%,
+    rgb(255 255 255 / 0.01) 90%,
+    transparent 100%
   );
-  animation: pk-shine 6s ease-in-out infinite;
+  /* linear: easing decelerates the band into a visible stop at the end of its
+     travel. The keyframe holds it off-panel for the rest of the cycle. */
+  animation: pk-shine 7s linear infinite;
 }
 
 /* ---------- checkout cell ---------- */
 
+/* Divider follows the grid: a bottom border when stacked, a right border once
+   the two cells sit side by side at lg. */
 .pk-v2-demo__checkout {
-  @apply relative flex flex-col gap-4.5 border-r border-pk-border p-7
-    max-[900px]:border-r-0 max-[900px]:border-b;
+  @apply relative flex flex-col gap-4.5 border-b border-pk-border p-5
+    sm:p-7
+    lg:border-r lg:border-b-0;
 }
 
 /* ---------- segmented control ---------- */
@@ -73,7 +108,8 @@
 }
 
 .pk-v2-demo__amount {
-  @apply font-pk-heading text-pk-3xl font-bold tracking-pk-heading text-pk-strong;
+  @apply font-pk-heading text-pk-2xl font-bold tracking-pk-heading
+    text-pk-strong sm:text-pk-3xl;
 }
 
 /* ---------- states ---------- */

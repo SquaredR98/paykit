@@ -123,7 +123,6 @@
   --container-pk-outer: var(--container-outer);
   --container-pk-inner: var(--container-inner);
   --container-pk-prose: var(--container-prose);
-  --container-pk-docs: var(--container-docs);
   --container-pk-docs-prose: var(--docs-prose);
 }
 
@@ -231,9 +230,13 @@
     --space-16: 64px;
     --space-24: 96px;
     --space-28: 112px;
-    --container-outer: 1280px; /* max-w-7xl — glass panel, marketing */
-    /* Docs widen the panel and split it three ways. */
-    --container-docs: 1376px;
+    --container-outer: 1280px; /* max-w-7xl — the glass panel, every page */
+    /*
+     * Docs once widened the panel for a three-column layout. The sidebar was
+     * dropped in favour of navigation in the header, so docs now use the same
+     * panel and content column as everything else — a docs page that is wider
+     * than the homepage reads as a different site.
+     */
     --docs-sidebar: 256px;
     --docs-toc: 224px;
     --docs-prose: 760px;
@@ -278,6 +281,13 @@
     --glass-panel: rgb(15 23 42 / 0.8); /* slate-900/80 */
     --glass-panel-ring: rgb(212 212 216 / 0.2);
     --glass-chip: rgb(30 41 59 / 0.9); /* slate-800/90 — nav pill, toggle */
+    /*
+     * The scrolled header. Deliberately darker than --glass-panel, which is
+     * the surface directly behind it — at the same value the header reads as
+     * flat against the page. slate-950 with alpha keeps the blur visible while
+     * separating the two layers.
+     */
+    --glass-header: rgb(2 6 23 / 0.72);
     --glass-chip-ring: rgb(255 255 255 / 0.1);
     --glass-chip-ring-hover: rgb(255 255 255 / 0.2);
     --surface-card: rgb(15 23 42 / 0.6);
@@ -380,6 +390,8 @@
     --grid-opacity: 0.18;
 
     --glass-panel: rgb(255 255 255 / 0.8);
+    /* A touch grey rather than white, so it separates from the panel. */
+    --glass-header: rgb(244 244 245 / 0.82);
     --glass-panel-ring: var(--zinc-100);
     --glass-chip: rgb(255 255 255 / 0.9);
     --glass-chip-ring: rgb(24 24 27 / 0.05);
@@ -494,12 +506,24 @@ input {
     transform: translateY(0);
   }
 }
+/*
+ * The highlight sweep.
+ *
+ * translateX/Y are percentages of the BAND's own size, not the panel's. The
+ * band is 60% of the panel wide, so 250% is where its left edge clears the
+ * right edge; 300% leaves a little margin.
+ *
+ * Travel finishes at 45% of the cycle and holds off-panel for the rest. Running
+ * it across the whole duration meant the band stopped at the end and jumped
+ * back to the start — the band is already out of sight when the loop restarts.
+ */
 @keyframes pk-shine {
   0% {
     transform: translateX(-100%) translateY(-100%) rotate(45deg);
   }
+  45%,
   100% {
-    transform: translateX(200%) translateY(200%) rotate(45deg);
+    transform: translateX(300%) translateY(300%) rotate(45deg);
   }
 }
 @keyframes pk-ping {
