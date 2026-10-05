@@ -1,38 +1,34 @@
 import { Background } from '@/components/shell/Background';
 import { GlassPanel } from '@/components/shell/GlassPanel';
 import { ScrollProgress } from '@/components/shell/ScrollProgress';
-import { Header } from '@/components/shell/Header';
 import { Footer } from '@/components/shell/Footer';
 import './styles.css';
 
 /**
- * The v2 page frame. Everything sits on the glass panel, over the blobs and
- * grid, with the sticky header above and the footer below.
+ * The v2 page frame: background, glass panel, progress bar and footer.
  *
  * Background and GlassPanel are fixed and sit on negative z-indexes, so they
  * take part in painting but not in layout. Only .pk-v2-shell flows.
  *
- * `variant` switches the only two surfaces that differ between marketing and
- * docs: the panel widens to 1376px, and the header swaps its anchors and CTA
- * for routes and a version pill. Background, progress bar and footer are
- * shared, which is why this is one shell with a variant rather than two.
+ * The header is passed in rather than chosen here, because each route group
+ * owns its own — (marketing) renders MarketingHeader, docs renders DocsHeader.
+ * The layout file decides, so there is no runtime branching and no shared
+ * component that has to know which section of the site it is on.
  */
 export function Shell({
+  header,
   children,
-  variant = 'marketing',
 }: {
+  header: React.ReactNode;
   children: React.ReactNode;
-  variant?: 'marketing' | 'docs';
 }) {
-  const docs = variant === 'docs';
-
   return (
     <>
       <Background />
-      <GlassPanel wide={docs} />
+      <GlassPanel />
       <ScrollProgress />
       <div className="pk-v2-shell">
-        <Header variant={variant} />
+        {header}
         <main className="pk-v2-shell__main">{children}</main>
         <Footer />
       </div>

@@ -1,13 +1,12 @@
 import type { Metadata } from 'next';
-import { Shell } from '@/components/shell';
 import { HomepageView } from '@/components/homepage/HomepageView';
 
 /**
  * The homepage.
  *
- * Layer 3 per Rule W1 — this file is a thin route that renders one view inside
- * the shell. The metadata and JSON-LD carried over from the v1 route so the
- * swap does not lose structured data.
+ * Layer 3 per Rule W1 — a thin route that renders exactly one view. The shell
+ * and header come from (marketing)/layout.tsx. Metadata and JSON-LD carried
+ * over from the v1 route so the swap did not lose structured data.
  */
 
 export const metadata: Metadata = {
@@ -36,9 +35,7 @@ export default function HomePage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <Shell>
-        <HomepageView />
-      </Shell>
+      <HomepageView />
     </>
   );
 }
